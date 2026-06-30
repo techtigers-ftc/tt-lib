@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.examples;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -8,13 +10,18 @@ import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 public class ExampleSubsystem extends Subsystem {
-    private DcMotor exampleMotor;
+    private DcMotorEx exampleMotor;
     private Servo exampleServo;
 
-    public ExampleSubsystem() {
+    public ExampleSubsystem(HardwareMap hardwareMap) {
         super("ExampleSubsystem");
-        hardwareMap.get(DcMotor.class, "example_motor");
-        hardwareMap.get(Servo.class, "example_servo");
+        exampleMotor = hardwareMap.get(DcMotorEx.class, "example_motor");
+        exampleServo = hardwareMap.get(Servo.class, "example_servo");
+
+        exampleMotor.setDirection(DcMotor.Direction.FORWARD);
+        exampleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        exampleServo.setDirection(Servo.Direction.FORWARD);
     }
     @Override
     public void initLoop() {
@@ -23,7 +30,11 @@ public class ExampleSubsystem extends Subsystem {
 
     @Override
     public void justAfterStart() {
-        exampleServo.setPosition(0.5);
+        if (exampleServo.getPosition() == 1){
+            exampleServo.setPosition(-1);
+        } else {
+            exampleServo.setPosition(1);
+        }
     }
 
     @Override

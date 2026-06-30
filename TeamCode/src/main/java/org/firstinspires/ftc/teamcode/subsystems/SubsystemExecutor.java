@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 
@@ -19,10 +17,10 @@ public class SubsystemExecutor {
         return instance;
     }
 
-    public void registerSubsystem(HardwareMap hardwareMap, Telemetry telemetry, RobotState robotState, Subsystem... subsystems) {
+    public void registerSubsystem(Telemetry telemetry, RobotState robotState, Subsystem... subsystems) {
        this.subsystems = subsystems;
        for (Subsystem subsystem : subsystems) {
-           subsystem.setParameters(hardwareMap, telemetry, robotState);
+           subsystem.setParameters(telemetry, robotState);
        }
     }
 
@@ -48,5 +46,12 @@ public class SubsystemExecutor {
         for (Subsystem subsystem : subsystems) {
             subsystem.close();
         }
+    }
+
+    /**
+     * Resets the instance of this class to be null
+     */
+    public static void reset() {
+        instance = null;
     }
 }

@@ -19,8 +19,7 @@ public abstract class Subsystem {
     public abstract void periodic();
     public abstract void close();
 
-    public void setParameters(HardwareMap hardwareMap, Telemetry telemetry, RobotState robotState){
-        this.hardwareMap = hardwareMap;
+    public void setParameters(Telemetry telemetry, RobotState robotState){
         this.telemetry = telemetry;
         this.robotState = robotState;
     };

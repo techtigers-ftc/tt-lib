@@ -21,7 +21,8 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     protected void registerSubsystems(Subsystem... subsystems) {
-        SubsystemExecutor.getInstance().registerSubsystem(hardwareMap, telemetry, robotState, subsystems);
+        SubsystemExecutor.reset();
+        SubsystemExecutor.getInstance().registerSubsystem(telemetry, robotState, subsystems);
     }
 
     protected void initialize() {
