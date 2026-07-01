@@ -57,4 +57,8 @@ public class ExampleSubsystem extends Subsystem {
     public void close() {
         exampleMotor.setPower(0);
     }
+
+    public void setMotorPower(double power) {
+        exampleMotor.setPower(power);
+    }
 }
