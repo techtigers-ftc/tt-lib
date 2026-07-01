@@ -11,12 +11,10 @@ public class ExampleBaseOpMode extends BaseOpMode {
     public void initialize() {
         ExampleSubsystem exampleSubsystem = new ExampleSubsystem(hardwareMap);
         registerSubsystems(exampleSubsystem);
-        super.initialize();
     }
 
     @Override
     public void update() {
-        super.update();
         telemetry.addLine("Update Loop Running");
     }
 

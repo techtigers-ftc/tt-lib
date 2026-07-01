@@ -11,12 +11,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     protected RobotState robotState;
     @Override
     public void runOpMode() throws InterruptedException {
+        robotState = new RobotState(isBlue());
+        SubsystemExecutor.getInstance().initLoop();
         initialize();
         waitForStart();
+        SubsystemExecutor.getInstance().justAfterStart();
         justAfterStart();
         while(opModeIsActive()) {
+            SubsystemExecutor.getInstance().periodic();
+            telemetry.update();
             update();
         }
+        SubsystemExecutor.getInstance().close();
         close();
     }
 
@@ -26,21 +32,18 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     protected void initialize() {
-        robotState = new RobotState(isBlue());
-        SubsystemExecutor.getInstance().initLoop();
+
     }
 
     protected void justAfterStart() {
-        SubsystemExecutor.getInstance().justAfterStart();
     }
 
     protected void update() {
-        SubsystemExecutor.getInstance().periodic();
-        telemetry.update();
+
     }
 
     protected void close() {
-        SubsystemExecutor.getInstance().close();
+
     }
 
     protected abstract boolean isBlue();
