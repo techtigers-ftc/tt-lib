@@ -8,10 +8,19 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
+/**
+ * ExampleSubsystem is a simple implementation of the Subsystem class that demonstrates how to use TTLib.
+ * It initializes the motor and servo, sets their directions, and demonstrates the subsystem architecture.
+ */
 public class ExampleSubsystem extends Subsystem {
     private DcMotorEx exampleMotor;
     private Servo exampleServo;
 
+    /**
+     * Constructor for ExampleSubsystem.
+     *
+     * @param hardwareMap The hardware map used to initialize the motor and servo
+     */
     public ExampleSubsystem(HardwareMap hardwareMap) {
         super("ExampleSubsystem");
         exampleMotor = hardwareMap.get(DcMotorEx.class, "example_motor");
@@ -22,6 +31,7 @@ public class ExampleSubsystem extends Subsystem {
 
         exampleServo.setDirection(Servo.Direction.FORWARD);
     }
+
     @Override
     public void initLoop() {
 
