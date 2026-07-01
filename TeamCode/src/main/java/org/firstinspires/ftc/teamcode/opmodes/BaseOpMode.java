@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SubsystemController;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
@@ -27,6 +28,7 @@ public abstract class BaseOpMode extends LinearOpMode {
 
         while(opModeIsActive()) {
             SubsystemController.getInstance().periodic();
+            CommandScheduler.getInstance().update();
             update();
             telemetry.update();
         }
