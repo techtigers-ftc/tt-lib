@@ -3,16 +3,16 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 
-public class SubsystemExecutor {
-    private static SubsystemExecutor instance;
+public class SubsystemController {
+    private static SubsystemController instance;
     private Subsystem[] subsystems;
 
-    private SubsystemExecutor() {
+    private SubsystemController() {
     }
 
-    public static SubsystemExecutor getInstance() {
+    public static SubsystemController getInstance() {
         if (instance == null) {
-            instance = new SubsystemExecutor();
+            instance = new SubsystemController();
         }
         return instance;
     }

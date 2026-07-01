@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.examples;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.subsystems.SubsystemExecutor;
+import org.firstinspires.ftc.teamcode.subsystems.SubsystemController;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 
 @TeleOp(name = "Example Linear OpMode", group = "Examples")
@@ -13,15 +13,15 @@ public class ExampleLinearOpMode extends LinearOpMode {
         ExampleSubsystem exampleSubsystem = new ExampleSubsystem(hardwareMap);
         RobotState robotState = new RobotState(true);
 
-        SubsystemExecutor.reset();
-        SubsystemExecutor.getInstance().registerSubsystem(telemetry, robotState, exampleSubsystem);
-        SubsystemExecutor.getInstance().initLoop();
+        SubsystemController.reset();
+        SubsystemController.getInstance().registerSubsystem(telemetry, robotState, exampleSubsystem);
+        SubsystemController.getInstance().initLoop();
         waitForStart();
 
-        SubsystemExecutor.getInstance().justAfterStart();
+        SubsystemController.getInstance().justAfterStart();
 
         while(opModeIsActive()) {
-            SubsystemExecutor.getInstance().periodic();
+            SubsystemController.getInstance().periodic();
             telemetry.update();
         }
     }
