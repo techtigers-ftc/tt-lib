@@ -1,0 +1,18 @@
+package org.firstinspires.ftc.teamcode.examples;
+
+import org.firstinspires.ftc.teamcode.commands.SequentialCommandGroup;
+
+public class ExampleSequentialCommand extends SequentialCommandGroup {
+
+    ExampleSubsystem exampleSubsystem;
+
+    public ExampleSequentialCommand(ExampleSubsystem exampleSubsystem) {
+        this.exampleSubsystem = exampleSubsystem;
+
+        addCommands(
+            new ExampleCommand(exampleSubsystem),
+            new ExampleCommand(exampleSubsystem),
+            new ExampleCommand(exampleSubsystem)
+        );
+    }
+}
