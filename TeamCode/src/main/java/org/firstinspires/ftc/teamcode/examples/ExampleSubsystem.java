@@ -61,4 +61,12 @@ public class ExampleSubsystem extends Subsystem {
     public void setMotorPower(double power) {
         exampleMotor.setPower(power);
     }
+
+    public void setServoPosition(double position) {
+        exampleServo.setPosition(position);
+    }
+
+    public double getServoPosition() {
+        return exampleServo.getPosition();
+    }
 }

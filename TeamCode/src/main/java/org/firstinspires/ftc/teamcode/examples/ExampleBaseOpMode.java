@@ -8,13 +8,15 @@ import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode;
 @TeleOp(name = "Example Base OpMode", group = "Examples")
 public class ExampleBaseOpMode extends BaseOpMode {
     ExampleCommand exampleCommand;
+    ExampleSequentialCommand exampleSequentialCommand;
 
     @Override
     public void initialize() {
         ExampleSubsystem exampleSubsystem = new ExampleSubsystem(hardwareMap);
         registerSubsystems(exampleSubsystem);
 
-        exampleCommand = new ExampleCommand(exampleSubsystem);
+        exampleCommand = new ExampleCommand(exampleSubsystem, 1.0);
+        exampleSequentialCommand = new ExampleSequentialCommand(exampleSubsystem);
     }
 
     @Override

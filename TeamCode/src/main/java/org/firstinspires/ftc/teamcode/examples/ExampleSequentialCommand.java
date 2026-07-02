@@ -10,9 +10,10 @@ public class ExampleSequentialCommand extends SequentialCommandGroup {
         this.exampleSubsystem = exampleSubsystem;
 
         addCommands(
-            new ExampleCommand(exampleSubsystem),
-            new ExampleCommand(exampleSubsystem),
-            new ExampleCommand(exampleSubsystem)
+            new ExampleCommand(exampleSubsystem, 1.0),
+            new ExampleServoAction(exampleSubsystem, () -> 0.5, 1000),
+            new ExampleCommand(exampleSubsystem, -1.0),
+            new ExampleServoAction(exampleSubsystem, () -> 0.0, 300)
         );
     }
 }

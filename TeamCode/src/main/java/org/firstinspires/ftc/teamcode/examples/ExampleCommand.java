@@ -8,9 +8,11 @@ public class ExampleCommand extends Command {
 
     private ExampleSubsystem exampleSubsystem;
     private ElapsedTime timer;
+    private double power;
 
-    public ExampleCommand (ExampleSubsystem exampleSubsystem) {
+    public ExampleCommand (ExampleSubsystem exampleSubsystem, double power) {
         this.exampleSubsystem = exampleSubsystem;
+        this.power = power;
 
         timer = new ElapsedTime();
     }
@@ -22,7 +24,7 @@ public class ExampleCommand extends Command {
 
     @Override
     public void update() {
-        exampleSubsystem.setMotorPower(1.0);
+        exampleSubsystem.setMotorPower(power);
     }
 
     @Override
