@@ -23,19 +23,19 @@ public abstract class Subsystem {
     /**
      * Initializes the subsystem. This method is called once when the subsystem is registered.
      */
-    public abstract void initLoop();
+    public void initLoop() {}
     /**
      * Called after the start of the opmode. This method is called once after the start of the opmode.
      */
-    public abstract void justAfterStart();
+    public void justAfterStart() {}
     /**
      * Called periodically during the opmode. This method is called repeatedly during the opmode.
      */
-    public abstract void periodic();
+    public void periodic() {}
     /**
      * Cleans up the subsystem. This method is called once when the opmode is stopped.
      */
-    public abstract void close();
+    public void close() {}
 
     /**
      * Sets the parameters for the subsystem. This method is called by the SubsystemController when
