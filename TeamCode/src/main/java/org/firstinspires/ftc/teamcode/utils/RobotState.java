@@ -12,6 +12,7 @@ public class RobotState extends GlobalState{
     private Waypoint robotPose;
     private Waypoint robotVelocity;
     private double driveCurrent;
+    private double intakeCurrent;
     private Acceleration robotAcceleration;
 
     /**
@@ -98,5 +99,21 @@ public class RobotState extends GlobalState{
      */
     public void setRobotAcceleration(Acceleration robotAcceleration) {
         this.robotAcceleration = robotAcceleration;
+    }
+
+    /**
+     * @return the current drawn by the intake
+     */
+    public double getIntakeCurrent() {
+        return intakeCurrent;
+    }
+
+    /**
+     * Sets the current drawn by the intake
+     *
+     * @param intakeCurrent the current drawn by the intake
+     */
+    public void setIntakeCurrent(double intakeCurrent) {
+        this.intakeCurrent = intakeCurrent;
     }
 }
