@@ -6,7 +6,6 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
 public class IntakeTestOpMode extends BaseOpMode {
     private IntakeSubsystem intake;
-    private Gamepad gamepad;
     @Override
     protected void initialize() {
         intake = new IntakeSubsystem(hardwareMap);
