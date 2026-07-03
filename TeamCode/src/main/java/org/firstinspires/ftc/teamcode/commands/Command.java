@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 public abstract class Command {
+    protected String tag = this.getClass().getSimpleName();
     protected void initialize(){
 
     }
