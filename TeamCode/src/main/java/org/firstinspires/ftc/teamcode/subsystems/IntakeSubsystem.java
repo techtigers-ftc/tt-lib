@@ -17,9 +17,13 @@ public class IntakeSubsystem extends Subsystem {
      */
     public IntakeSubsystem(HardwareMap hardwareMap) {
         super("Intake Subsystem");
-        intakeMotor = hardwareMap.get(CachedMotor.class, "intake_motor");
+        intakeMotor = new CachedMotor(hardwareMap, "intake_motor");
     }
 
+    /**
+     * A method to set the intake power
+     * @param power the power for the intake to run at
+     */
     public void setIntakePower(double power) {
         intakeMotor.setPower(power);
     }
