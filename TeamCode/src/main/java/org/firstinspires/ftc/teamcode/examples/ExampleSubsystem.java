@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
@@ -13,7 +14,7 @@ import org.firstinspires.ftc.teamcode.utils.TTLogger;
  * It initializes the motor and servo, sets their directions, and demonstrates the subsystem architecture.
  */
 public class ExampleSubsystem extends Subsystem {
-    private DcMotorEx exampleMotor;
+    private CachedMotor exampleMotor;
     private Servo exampleServo;
 
     /**
@@ -23,7 +24,7 @@ public class ExampleSubsystem extends Subsystem {
      */
     public ExampleSubsystem(HardwareMap hardwareMap) {
         super("ExampleSubsystem");
-        exampleMotor = hardwareMap.get(DcMotorEx.class, "example_motor");
+        exampleMotor = new CachedMotor(hardwareMap, "example_motor");
         exampleServo = hardwareMap.get(Servo.class, "example_servo");
 
         exampleMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -48,7 +49,7 @@ public class ExampleSubsystem extends Subsystem {
 
     @Override
     public void periodic() {
-        exampleMotor.setPower(0.5);
+//        exampleMotor.setPower(0.5);
         telemetry.addData("Example Motor Power", exampleMotor.getPower());
         TTLogger.dd(tag, "Example Motor Power: %.2f", exampleMotor.getPower());
     }

@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 @TeleOp(name = "Example Base OpMode", group = "Examples")
 public class ExampleBaseOpMode extends BaseOpMode {
-    ExampleCommand exampleCommand;
-    ExampleSequentialCommand exampleSequentialCommand;
+    private ExampleCommand exampleCommand;
+    private ExampleSequentialCommand exampleSequentialCommand;
 
     @Override
     public void initialize() {
@@ -17,6 +18,7 @@ public class ExampleBaseOpMode extends BaseOpMode {
 
         exampleCommand = new ExampleCommand(exampleSubsystem, 1.0);
         exampleSequentialCommand = new ExampleSequentialCommand(exampleSubsystem);
+        TTLogger.setLoggingLevel(TTLogger.DEBUG);
     }
 
     @Override
@@ -24,6 +26,10 @@ public class ExampleBaseOpMode extends BaseOpMode {
         if (gamepad1.a){
             CommandScheduler.getInstance().schedule(exampleCommand);
         }
+
+//        else if (gamepad1.b) {
+//            CommandScheduler.getInstance().schedule(exampleSequentialCommand);
+//        }
         telemetry.addLine("Update Loop Running");
     }
 

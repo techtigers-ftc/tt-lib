@@ -1,12 +1,19 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class CommandScheduler {
     private static CommandScheduler instance;
     private ArrayList<Command> commands;
+    private Iterator<Command> commandItterator;
+
 
     private CommandScheduler() {
+        commands = new ArrayList<>();
+        commandItterator = commands.iterator();
     }
 
     public static CommandScheduler getInstance() {
@@ -24,20 +31,22 @@ public class CommandScheduler {
     }
 
     public void update() {
-        for (Command command : commands) {
+        while (commandItterator.hasNext()) {
+            Command command = commandItterator.next();
             if (!command.isFinished()) {
                 command.update();
             } else {
                 command.end(false);
-                commands.remove(command);
+                commandItterator.remove();
             }
         }
     }
 
     public void cancel() {
-        for (Command command : commands) {
+        while (commandItterator.hasNext()) {
+            Command command = commandItterator.next();
             command.end(true);
-            commands.remove(command);
+            commandItterator.remove();
         }
     }
 
