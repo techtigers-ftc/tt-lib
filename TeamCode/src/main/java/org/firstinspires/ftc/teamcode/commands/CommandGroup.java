@@ -7,11 +7,8 @@ public abstract class CommandGroup extends Command {
 
     protected ArrayList<Command> commands;
 
-    public CommandGroup() {
-        commands = new ArrayList<>();
-    }
-
     protected void addCommands(Command... commands) {
+        this.commands = new ArrayList<>();
         this.commands.addAll(Arrays.asList(commands));
     }
 }

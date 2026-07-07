@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.commands;
 
 public class SequentialCommandGroup extends CommandGroup {
     private Command currentCommand;
-    public SequentialCommandGroup (Command... commands) {
-        super();
+
+    public SequentialCommandGroup(Command... commands) {
         addCommands(commands);
     }
 
@@ -17,11 +17,13 @@ public class SequentialCommandGroup extends CommandGroup {
     @Override
     public void update() {
         currentCommand.update();
-        if (currentCommand.isFinished()){
+        if (currentCommand.isFinished()) {
             currentCommand.end(false);
-            currentCommand = commands.get(commands.indexOf(currentCommand) + 1) ;
+            currentCommand = commands.get(commands.indexOf(currentCommand) + 1);
+            currentCommand.initialize();
         }
     }
+
     @Override
     public boolean isFinished() {
         return commands.get(commands.size() - 1).isFinished();
