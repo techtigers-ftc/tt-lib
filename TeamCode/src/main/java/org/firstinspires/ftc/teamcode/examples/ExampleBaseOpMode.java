@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.utils.TTLogger;
 public class ExampleBaseOpMode extends BaseOpMode {
     private ExampleCommand exampleCommand;
     private ExampleSequentialCommand exampleSequentialCommand;
+    private ExampleParallelCommandGroup exampleParallelCommandGroup;
     private ElapsedTime timeBeforeNextCommand;
 
     @Override
@@ -21,6 +22,7 @@ public class ExampleBaseOpMode extends BaseOpMode {
 
         exampleCommand = new ExampleCommand(exampleSubsystem, 1.0);
         exampleSequentialCommand = new ExampleSequentialCommand(exampleSubsystem);
+        exampleParallelCommandGroup = new ExampleParallelCommandGroup(exampleSubsystem);
         TTLogger.setLoggingLevel(TTLogger.DEBUG);
         timeBeforeNextCommand.reset();
     }
@@ -32,6 +34,8 @@ public class ExampleBaseOpMode extends BaseOpMode {
             CommandScheduler.getInstance().schedule(exampleCommand);
         } else if (gamepad1.b) {
             CommandScheduler.getInstance().schedule(exampleSequentialCommand);
+        } else if (gamepad1.x){
+            CommandScheduler.getInstance().schedule(exampleParallelCommandGroup);
         }
         telemetry.addLine("Update Loop Running");
     }

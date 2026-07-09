@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.examples;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 public class ExampleCommand extends Command {
 
@@ -34,6 +35,7 @@ public class ExampleCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        TTLogger.dd(tag, "End Running");
         exampleSubsystem.setMotorPower(0.0);
     }
 }
