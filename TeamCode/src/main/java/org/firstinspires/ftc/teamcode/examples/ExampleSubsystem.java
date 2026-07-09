@@ -50,7 +50,6 @@ public class ExampleSubsystem extends Subsystem {
     @Override
     public void periodic() {
         telemetry.addData("Example Motor Power", exampleMotor.getPower());
-        TTLogger.dd(tag, "Example Motor Power: %.2f", exampleMotor.getPower());
     }
 
     @Override

@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -35,6 +37,7 @@ public class CommandScheduler {
             if (!command.isFinished()) {
                 command.update();
             } else {
+//                TTLogger.dd("Command Scheduler", "End Ran");
                 command.end(false);
                 commandItterator.remove();
             }

@@ -29,7 +29,7 @@ public class ExampleBaseOpMode extends BaseOpMode {
     public void update() {
         if (gamepad1.a && timeBeforeNextCommand.seconds() > 0.5){
             timeBeforeNextCommand.reset();
-            TTLogger.dd("Example Op Mode", "Scheduled");
+//            TTLogger.dd("Example Op Mode", "Scheduled");
             CommandScheduler.getInstance().schedule(exampleCommand);
         } else if (gamepad1.b) {
             CommandScheduler.getInstance().schedule(exampleSequentialCommand);

@@ -12,31 +12,39 @@ public class SequentialCommandGroup extends CommandGroup {
 
     @Override
     public void initialize() {
-        TTLogger.dd(tag, "Initalize Running on Sequential Command Greoup");
+//        TTLogger.dd(tag, "Initialize Running on Sequential Command Group");
         currentCommand = commands.get(0);
         currentCommand.initialize();
     }
 
     @Override
     public void update() {
-        currentCommand.update();
         if (currentCommand.isFinished()) {
             currentCommand.end(false);
-            try {
+            if ((commands.indexOf(currentCommand) + 1) < commands.size()) {
                 currentCommand = commands.get(commands.indexOf(currentCommand) + 1);
                 currentCommand.initialize();
-            } catch (IndexOutOfBoundsException e) {
-                // No more commands to execute
             }
+        } else {
+            currentCommand.update();
         }
     }
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "Is Finished: %b", commands.get(commands.size() - 1).isFinished());
-        for (Command command: commands){
-            TTLogger.dd(tag, "Each Command Is Finished %b", command.isFinished());
+        for (Command command : commands) {
+            if (!command.isFinished()) {
+                return false;
+            }
         }
-        return commands.get(commands.size() - 1).isFinished();
+
+        return true;
+    }
+
+    @Override
+    public void end(boolean interrupted){
+       for (Command command: commands){
+           command.initialize();
+       }
     }
 }

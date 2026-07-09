@@ -20,20 +20,20 @@ public class ExampleCommand extends Command {
 
     @Override
     public void initialize() {
-        TTLogger.dd(tag, "Init Running");
+//        TTLogger.dd(tag, "Init Running");
         timer.reset();
     }
 
     @Override
     public void update() {
-        TTLogger.dd(tag, "Update Running, Seconds: %f", timer.seconds());
+//        TTLogger.dd(tag, "Update Running, Seconds: %f", timer.seconds());
         exampleSubsystem.setMotorPower(power);
     }
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "IsFinished? : %b", timer.seconds() > 2);
-        return timer.seconds() > 2;
+//        TTLogger.dd(tag, "IsFinished? : %b", timer.seconds() > 2);
+        return timer.seconds() >= 2;
     }
 
     @Override
