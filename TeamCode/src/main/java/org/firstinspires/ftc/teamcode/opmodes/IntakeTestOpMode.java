@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
+@TeleOp(name = "Intake Test")
 public class IntakeTestOpMode extends BaseOpMode {
     private IntakeSubsystem intake;
     @Override
