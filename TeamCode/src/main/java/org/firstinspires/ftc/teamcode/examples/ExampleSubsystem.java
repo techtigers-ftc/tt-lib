@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.examples;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
-import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
  * ExampleSubsystem is a simple implementation of the Subsystem class that demonstrates how to use TTLib.
@@ -40,7 +38,7 @@ public class ExampleSubsystem extends Subsystem {
 
     @Override
     public void justAfterStart() {
-        if (exampleServo.getPosition() == 1){
+        if (exampleServo.getPosition() == 1) {
             exampleServo.setPosition(-1);
         } else {
             exampleServo.setPosition(1);
