@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
+
 import java.util.function.DoubleSupplier;
 
 /**
@@ -76,6 +78,11 @@ public abstract class ServoActionCommand extends Command {
     @Override
     public boolean isFinished() {
         return isFinished;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        TTLogger.dd(tag, "End Running");
     }
 
     /**
