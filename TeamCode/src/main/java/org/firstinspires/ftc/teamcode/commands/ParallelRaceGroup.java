@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.commands;
 public class ParallelRaceGroup extends CommandGroup {
 
     public ParallelRaceGroup(Command... commands) {
-        super();
         addCommands(commands);
     }
 
