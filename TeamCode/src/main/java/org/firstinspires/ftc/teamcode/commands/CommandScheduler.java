@@ -31,9 +31,8 @@ public class CommandScheduler {
         commandItterator = commands.iterator();
         while (commandItterator.hasNext()) {
             Command command = commandItterator.next();
-            if (!command.isFinished()) {
-                command.update();
-            } else {
+            command.update();
+            if (command.isFinished()) {
                 command.end(false);
                 commandItterator.remove();
             }
