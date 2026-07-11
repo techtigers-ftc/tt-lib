@@ -4,13 +4,13 @@ public class ParallelDeadlineGroup extends CommandGroup {
     private Command deadline;
 
     public ParallelDeadlineGroup(Command deadline, Command... commands) {
-        super();
         this.deadline = deadline;
         addCommands(commands);
     }
 
     @Override
     public void initialize() {
+        deadline.initialize();
         for (Command command : commands) {
             command.initialize();
         }
@@ -19,6 +19,7 @@ public class ParallelDeadlineGroup extends CommandGroup {
     @Override
     public void update() {
        if (!deadline.isFinished()) {
+           deadline.update();
            for (Command command : commands) {
                if (!command.isFinished()) {
                    command.update();

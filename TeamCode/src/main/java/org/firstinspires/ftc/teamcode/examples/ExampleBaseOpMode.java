@@ -12,6 +12,7 @@ public class ExampleBaseOpMode extends BaseOpMode {
     private ExampleCommand exampleCommand;
     private ExampleSequentialCommand exampleSequentialCommand;
     private ExampleParallelCommandGroup exampleParallelCommandGroup;
+    private ExampleParallelDeadlineGroup exampleParallelDeadlineGroup;
     private ElapsedTime timeBeforeNextCommand;
 
     @Override
@@ -23,6 +24,7 @@ public class ExampleBaseOpMode extends BaseOpMode {
         exampleCommand = new ExampleCommand(exampleSubsystem, 1.0);
         exampleSequentialCommand = new ExampleSequentialCommand(exampleSubsystem);
         exampleParallelCommandGroup = new ExampleParallelCommandGroup(exampleSubsystem);
+        exampleParallelDeadlineGroup = new ExampleParallelDeadlineGroup(exampleSubsystem);
         TTLogger.setLoggingLevel(TTLogger.DEBUG);
         timeBeforeNextCommand.reset();
     }
@@ -36,6 +38,8 @@ public class ExampleBaseOpMode extends BaseOpMode {
             CommandScheduler.getInstance().schedule(exampleSequentialCommand);
         } else if (gamepad1.x){
             CommandScheduler.getInstance().schedule(exampleParallelCommandGroup);
+        } else if (gamepad1.y){
+            CommandScheduler.getInstance().schedule(exampleParallelDeadlineGroup);
         }
         telemetry.addLine("Update Loop Running");
     }
