@@ -20,14 +20,25 @@ public abstract class Subsystem {
     public Subsystem(String tag){
         this.tag = tag;
     }
+
     /**
-     * Initializes the subsystem. This method is called once when the subsystem is registered.
+     * Overload constructor for Subsystem that uses its name as the tag for logs
      */
-    public abstract void initLoop();
+    public Subsystem() {
+        tag = this.getClass().getSimpleName();
+    }
+    /**
+     * Called repeatedly while the op mode is in INIT.
+     */
+    protected void initLoop() {
+
+    }
     /**
      * Called after the start of the opmode. This method is called once after the start of the opmode.
      */
-    public abstract void justAfterStart();
+    protected void justAfterStart() {
+
+    }
     /**
      * Called periodically during the opmode. This method is called repeatedly during the opmode.
      */
@@ -35,7 +46,9 @@ public abstract class Subsystem {
     /**
      * Cleans up the subsystem. This method is called once when the opmode is stopped.
      */
-    public abstract void close();
+    protected void close() {
+
+    }
 
     /**
      * Sets the parameters for the subsystem. This method is called by the SubsystemController when
@@ -47,5 +60,5 @@ public abstract class Subsystem {
     public void setParameters(Telemetry telemetry, RobotState robotState){
         this.telemetry = telemetry;
         this.robotState = robotState;
-    };
+    }
 }

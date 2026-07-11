@@ -39,11 +39,8 @@ public class ExampleSubsystem extends Subsystem {
 
     @Override
     public void justAfterStart() {
-        if (exampleServo.getPosition() == 1){
-            exampleServo.setPosition(-1);
-        } else {
-            exampleServo.setPosition(1);
-        }
+        double pos = exampleServo.getPosition();
+        exampleServo.setPosition(pos > 0.5 ? 0.0 : 1.0);
     }
 
     @Override

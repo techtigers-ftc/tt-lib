@@ -3,15 +3,19 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * SubsystemController is a singleton class that runs of all the subsystems methods and loops.
  * It provides methods to register subsystems, initialize them, and call their periodic methods.
  */
 public class SubsystemController {
     private static SubsystemController instance;
-    private Subsystem[] subsystems;
+    private ArrayList<Subsystem> subsystems;
 
     private SubsystemController() {
+        subsystems = new ArrayList<>();
     }
 
     /**
@@ -34,10 +38,10 @@ public class SubsystemController {
      * @param subsystems the subsystems to be registered
      */
     public void registerSubsystem(Telemetry telemetry, RobotState robotState, Subsystem... subsystems) {
-       this.subsystems = subsystems;
-       for (Subsystem subsystem : subsystems) {
-           subsystem.setParameters(telemetry, robotState);
-       }
+        this.subsystems.addAll(Arrays.asList(subsystems));
+        for (Subsystem subsystem : subsystems) {
+            subsystem.setParameters(telemetry, robotState);
+        }
     }
 
     /**
