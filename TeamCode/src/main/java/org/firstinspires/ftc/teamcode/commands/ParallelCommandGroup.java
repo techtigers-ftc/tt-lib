@@ -31,10 +31,12 @@ public class ParallelCommandGroup extends CommandGroup {
     public boolean isFinished() {
         TTLogger.dd(tag, "---------------------------------------------------");
         for (Command command : commands) {
-            TTLogger.dd(tag, "Is Command Finished: %b", command.isFinished());
+//            TTLogger.dd(tag, "Is Command Finished: %b", command.isFinished());
            if (!command.isFinished()) {
+               TTLogger.dd(tag, "Command Not Finished");
                return false;
            }
+            TTLogger.dd(tag, "Command Finished");
         }
         return true;
     }

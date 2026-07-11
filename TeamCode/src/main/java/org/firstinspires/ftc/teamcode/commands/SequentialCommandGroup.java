@@ -5,19 +5,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 public class SequentialCommandGroup extends CommandGroup {
     private Command currentCommand;
-    private ElapsedTime timer;
     private boolean isFinished;
 
     public SequentialCommandGroup(Command... commands) {
         addCommands(commands);
-        timer = new ElapsedTime();
     }
 
     @Override
     public void initialize() {
         currentCommand = commands.get(0);
         currentCommand.initialize();
-        timer.reset();
     }
 
     @Override
