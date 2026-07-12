@@ -77,6 +77,7 @@ public abstract class ServoActionCommand extends Command {
 
     @Override
     public boolean isFinished() {
+        TTLogger.dd(tag, "IsFinished: %b", isFinished);
         return isFinished;
     }
 

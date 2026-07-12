@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
+
 public class ParallelRaceGroup extends CommandGroup {
+    private boolean isFinished;
 
     public ParallelRaceGroup(Command... commands) {
         addCommands(commands);
@@ -8,6 +11,7 @@ public class ParallelRaceGroup extends CommandGroup {
 
     @Override
     public void initialize() {
+        isFinished = false;
         for (Command command : commands) {
             command.initialize();
         }
@@ -15,12 +19,14 @@ public class ParallelRaceGroup extends CommandGroup {
 
     @Override
     public void update() {
+        TTLogger.dd(tag, "------------------------------------");
         for (Command command : commands) {
-            if (command.isFinished()){
+            TTLogger.dd(tag, "IsFinished %b", command.isFinished());
+            if (command.isFinished()) {
                 command.end(false);
-                commands.remove(command);
                 commands.forEach(c -> c.end(true));
-            } else {
+                isFinished = true;
+            } else if (!isFinished) {
                 command.update();
             }
         }
@@ -28,11 +34,11 @@ public class ParallelRaceGroup extends CommandGroup {
 
     @Override
     public boolean isFinished() {
-        for (Command command : commands) {
-            if (command.isFinished()) {
-                return true;
-            }
-        }
-        return false;
+        return isFinished;
     }
+
+//    @Override
+//    public void end(boolean interruptible) {
+//       isFinished = false;
+//    }
 }
