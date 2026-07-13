@@ -37,7 +37,7 @@ public class SubsystemController {
      * @param robotState the robotState object to be used by the subsystems
      * @param subsystems the subsystems to be registered
      */
-    public void registerSubsystem(Telemetry telemetry, RobotState robotState, Subsystem... subsystems) {
+    public void registerSubsystems(Telemetry telemetry, RobotState robotState, Subsystem... subsystems) {
         this.subsystems.addAll(Arrays.asList(subsystems));
         for (Subsystem subsystem : subsystems) {
             subsystem.setParameters(telemetry, robotState);

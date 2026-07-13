@@ -42,7 +42,9 @@ public abstract class Subsystem {
     /**
      * Called periodically during the opmode. This method is called repeatedly during the opmode.
      */
-    public abstract void periodic();
+    public void periodic() {
+
+    }
     /**
      * Cleans up the subsystem. This method is called once when the opmode is stopped.
      */
