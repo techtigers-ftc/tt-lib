@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-
-import com.qualcomm.robotcore.util.ElapsedTime;
+import androidx.annotation.CallSuper;
 
 public class SequentialCommandGroup extends CommandGroup {
     private Command currentCommand;
@@ -12,12 +11,14 @@ public class SequentialCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void initialize() {
         currentCommand = commands.get(0);
         currentCommand.initialize();
     }
 
     @Override
+    @CallSuper
     public void update() {
         if (currentCommand.isFinished()) {
             currentCommand.end(false);
@@ -33,6 +34,7 @@ public class SequentialCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public boolean isFinished() {
         return isFinished;
     }
