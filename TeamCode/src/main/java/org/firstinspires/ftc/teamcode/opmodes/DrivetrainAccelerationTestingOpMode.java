@@ -18,6 +18,7 @@ public class DrivetrainAccelerationTestingOpMode extends BaseOpMode {
     protected void initialize() {
         drive = new DriveSubsystem(hardwareMap);
         GoBodometrySubsystem odometry = new GoBodometrySubsystem(hardwareMap, new Waypoint(0, 0, Math.toRadians(0)));
+        time = new ElapsedTime();
 
         registerSubsystems(drive, odometry);
     }
