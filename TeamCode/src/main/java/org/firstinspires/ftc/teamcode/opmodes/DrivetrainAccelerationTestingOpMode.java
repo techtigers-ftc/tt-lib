@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.GoBodometrySubsystem;
@@ -8,10 +9,10 @@ import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.Waypoint;
 
 @TeleOp
-public class DrivetrainTestingOpMode extends BaseOpMode {
-    private double maxVelocity = 0;
-    private double maxCurrentDraw = 0;
+public class DrivetrainAccelerationTestingOpMode extends BaseOpMode {
     private DriveSubsystem drive;
+    private double accelerationTime;
+    private ElapsedTime time;
 
     @Override
     protected void initialize() {
@@ -22,35 +23,26 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
     }
 
     @Override
-    protected void update() {
-        drive.driveRobotCentric(gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
+    protected void justAfterStart() {
+        time.reset();
+    }
 
+    @Override
+    protected void update() {
         double velocity = robotState.getRobotVelocity().getPoint().magnitude();
         double currentDraw = robotState.getDriveCurrent();
 
-        if (velocity > maxVelocity) {
-            maxVelocity = velocity;
-        }
-        if (currentDraw > maxCurrentDraw) {
-            maxCurrentDraw = currentDraw;
-        }
-
-        if (gamepad1.a) {
-           drive.setMotorPowers(1, 0, 0, 0);
-        } else if (gamepad1.b) {
-            drive.setMotorPowers(0, 1, 0, 0);
-        } else if (gamepad1.x) {
-            drive.setMotorPowers(0, 0, 1, 0);
-        } else if (gamepad1.y) {
-            drive.setMotorPowers(0, 0, 0, 1);
+        if (velocity < 60) {
+            drive.driveRobotCentric(1.0, 0, 0);
+        } else {
+            drive.driveRobotCentric(0, 0, 0);
+            accelerationTime = time.seconds();
         }
 
+        telemetry.addData("Acceleration Time", accelerationTime);
         telemetry.addData("Current Velocity", velocity);
         telemetry.addData("Current Draw", currentDraw);
 
-
-        telemetry.addData("Max Velocity", maxVelocity);
-        telemetry.addData("Max Current Draw", maxCurrentDraw);
 
         TTLogger.setLoggingLevel(TTLogger.DEBUG);
     }
