@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.utils.Waypoint;
  */
 public class GoBodometrySubsystem extends Subsystem {
     private final GoBildaPinpointDriver odo;
-    private final Pose2D startPose;
+    private final Waypoint startPose;
     private boolean resetComplete = false;
 
     /**
@@ -72,8 +72,9 @@ public class GoBodometrySubsystem extends Subsystem {
          */
         odo.resetPosAndIMU();
 
-        this.startPose = new Pose2D(DistanceUnit.INCH, startPose.getX(),
-                startPose.getY(), AngleUnit.RADIANS, startPose.getHeading());
+//        this.startPose = new Pose2D(DistanceUnit.INCH, startPose.getX(),
+//                startPose.getY(), AngleUnit.RADIANS, startPose.getHeading());
+        this.startPose = startPose;
         robotState.setRobotPose(startPose);
     }
 
@@ -98,7 +99,8 @@ public class GoBodometrySubsystem extends Subsystem {
 
     @Override
     public void justAfterStart() {
-        odo.setPosition(startPose);
+        odo.setPosition(new Pose2D(DistanceUnit.INCH, startPose.getX(),
+                startPose.getY(), AngleUnit.RADIANS, startPose.getHeading()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,14 +11,14 @@ import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
 
-public class DriveSubsystem extends Subsystem{
+public class DriveSubsystem extends Subsystem {
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
     private final SlidingAverageCalculator frontLeftSlideCurrentAverage;
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
-    private BNO055IMU imu;
+//    private BNO055IMU imu;
 
     /**
      * Constructs a new DriveSubsystem.
@@ -30,7 +31,17 @@ public class DriveSubsystem extends Subsystem{
         frontRight = new CachedMotor(hardwareMap, "right_front");
         backLeft = new CachedMotor(hardwareMap, "left_back");
         backRight = new CachedMotor(hardwareMap, "right_back");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//        imu = hardwareMap.get(BNO055IMU.class, "imu");
+//
+//        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+//        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+//        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+//        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode
+//        parameters.loggingEnabled      = true;
+//        parameters.loggingTag          = "IMU";
+//        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+//
+//        imu.initialize(parameters);
 
         frontRightSlideCurrentAverage = new SlidingAverageCalculator(10);
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
@@ -38,10 +49,10 @@ public class DriveSubsystem extends Subsystem{
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
 
         CachedMotor[] motors = {frontLeft, backLeft, frontRight, backRight};
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         for (CachedMotor motor : motors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -137,7 +148,7 @@ public class DriveSubsystem extends Subsystem{
      * @param bl The back left motor power
      * @param br The back right motor power
      */
-    private void setMotorPowers(double fl, double bl, double fr, double br) {
+    public void setMotorPowers(double fl, double bl, double fr, double br) {
         frontLeft.setPower(fl);
         frontRight.setPower(fr);
         backLeft.setPower(bl);
@@ -153,6 +164,6 @@ public class DriveSubsystem extends Subsystem{
 
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
-        robotState.setRobotAcceleration(imu.getLinearAcceleration());
+//        robotState.setRobotAcceleration(imu.getLinearAcceleration());
     }
 }
