@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
 
 public class DriveSubsystem extends Subsystem {
-    private double maxCurrentDraw = 100;
-    private double currentMultiplier;
+    private double maxCurrentDraw = 10;
+    private double currentMultiplier = 1;
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
     private final SlidingAverageCalculator frontLeftSlideCurrentAverage;
@@ -158,6 +158,8 @@ public class DriveSubsystem extends Subsystem {
 
         if (robotState.getDriveCurrent() > maxCurrentDraw) {
             currentMultiplier = currentMultiplier * 0.95;
+        } else {
+            currentMultiplier = 1.0;
         }
 
         TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500/6000 * 60);

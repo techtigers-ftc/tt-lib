@@ -11,7 +11,8 @@ import org.firstinspires.ftc.teamcode.utils.Waypoint;
 @TeleOp
 public class DrivetrainAccelerationTestingOpMode extends BaseOpMode {
     private DriveSubsystem drive;
-    private double accelerationTime;
+    private boolean isFinished = false;
+    private double accelerationTime = 0;
     private ElapsedTime time;
 
     @Override
@@ -33,11 +34,14 @@ public class DrivetrainAccelerationTestingOpMode extends BaseOpMode {
         double velocity = robotState.getRobotVelocity().getPoint().magnitude();
         double currentDraw = robotState.getDriveCurrent();
 
-        if (velocity < 60) {
-            drive.driveRobotCentric(1.0, 0, 0);
+        if (velocity < 60 && !isFinished) {
+            drive.driveRobotCentric(-1.0, 0, 0);
         } else {
+            isFinished = true;
             drive.driveRobotCentric(0, 0, 0);
-            accelerationTime = time.seconds();
+            if (accelerationTime == 0){
+                accelerationTime = time.seconds();
+            }
         }
 
         telemetry.addData("Acceleration Time", accelerationTime);
