@@ -23,7 +23,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
 
     @Override
     protected void update() {
-        drive.driveRobotCentric(gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x);
+        drive.driveRobotCentric(gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
         double velocity = robotState.getRobotVelocity().getPoint().magnitude();
         double currentDraw = robotState.getDriveCurrent();
