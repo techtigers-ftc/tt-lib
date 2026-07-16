@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.hardware.bosch.BHI260IMU;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -12,9 +10,9 @@ import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
-
+@Configurable
 public class DriveSubsystem extends Subsystem {
-    private double maxCurrentDraw = 10;
+    public static double MAX_CURRENT_DRAW = 10;
     private double currentMultiplier = 1;
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
@@ -156,7 +154,7 @@ public class DriveSubsystem extends Subsystem {
 
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
-        if (robotState.getDriveCurrent() > maxCurrentDraw) {
+        if (robotState.getDriveCurrent() > MAX_CURRENT_DRAW) {
             currentMultiplier = currentMultiplier * 0.95;
         } else {
             currentMultiplier = 1.0;

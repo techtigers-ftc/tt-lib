@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.bylazar.telemetry.JoinedTelemetry;
+import com.bylazar.telemetry.PanelsTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -12,6 +14,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
     private double maxVelocity = 0;
     private double maxCurrentDraw = 0;
     private DriveSubsystem drive;
+    JoinedTelemetry joinedTelemetry = new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), telemetry);;
 
     @Override
     protected void initialize() {
@@ -45,12 +48,12 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
             drive.setMotorPowers(0, 0, 0, 1);
         }
 
-        telemetry.addData("Current Velocity", velocity);
-        telemetry.addData("Current Draw", currentDraw);
+        joinedTelemetry.addData("Current Velocity", velocity);
+        joinedTelemetry.addData("Current Draw", currentDraw);
 
-
-        telemetry.addData("Max Velocity", maxVelocity);
-        telemetry.addData("Max Current Draw", maxCurrentDraw);
+        joinedTelemetry.addData("Max Velocity", maxVelocity);
+        joinedTelemetry.addData("Max Current Draw", maxCurrentDraw);
+        joinedTelemetry.update();
 
         TTLogger.setLoggingLevel(TTLogger.DEBUG);
     }
