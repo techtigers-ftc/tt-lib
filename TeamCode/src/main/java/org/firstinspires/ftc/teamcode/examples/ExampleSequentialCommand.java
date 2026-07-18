@@ -11,7 +11,7 @@ public class ExampleSequentialCommand extends SequentialCommandGroup {
 
         addCommands(
             new ExampleCommand(exampleSubsystem, 1.0),
-            new ExampleServoAction(exampleSubsystem, () -> 0.5, 1000),
+            new ExampleServoAction(exampleSubsystem, () -> 0.5, 600),
             new ExampleCommand(exampleSubsystem, -1.0),
             new ExampleServoAction(exampleSubsystem, () -> 0.0, 300)
         );

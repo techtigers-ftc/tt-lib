@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import androidx.annotation.CallSuper;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 public class SequentialCommandGroup extends CommandGroup {
-    private Command currentCommand;
+    private int currentCommandIndex;
     private boolean isFinished;
 
     public SequentialCommandGroup(Command... commands) {
@@ -11,36 +11,38 @@ public class SequentialCommandGroup extends CommandGroup {
     }
 
     @Override
-    @CallSuper
     public void initialize() {
-        currentCommand = commands.get(0);
-        currentCommand.initialize();
+        currentCommandIndex = 0;
+        isFinished = false;
+        CommandScheduler.getInstance().schedule(commands.get(currentCommandIndex));
     }
 
     @Override
-    @CallSuper
     public void update() {
-        if (currentCommand.isFinished()) {
-            currentCommand.end(false);
-            if ((commands.indexOf(currentCommand) + 1) < commands.size()) {
-                currentCommand = commands.get(commands.indexOf(currentCommand) + 1);
-                currentCommand.initialize();
-            } else {
+        if (isFinished) {
+            return;
+        }
+
+        if (commands.get(currentCommandIndex).isFinished()) {
+            currentCommandIndex++;
+            if (currentCommandIndex == commands.size()) {
                 isFinished = true;
+            } else {
+                TTLogger.dd(tag, "Scheduled next Command, Index: %d", currentCommandIndex);
+                CommandScheduler.getInstance().schedule(commands.get(currentCommandIndex));
             }
-        } else {
-            currentCommand.update();
         }
     }
 
     @Override
-    @CallSuper
     public boolean isFinished() {
         return isFinished;
     }
 
     @Override
-    public void end(boolean interrupted){
-        isFinished = false;
+    public void end(boolean interrupted) {
+        if (interrupted && !isFinished) {
+            CommandScheduler.getInstance().cancel(commands.get(currentCommandIndex));
+        }
     }
 }

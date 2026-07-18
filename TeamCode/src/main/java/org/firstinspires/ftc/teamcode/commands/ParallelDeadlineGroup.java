@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 public class ParallelDeadlineGroup extends CommandGroup {
-    private Command deadline;
+    private final Command deadline;
+    private boolean isFinished;
 
     public ParallelDeadlineGroup(Command deadline, Command... commands) {
         this.deadline = deadline;
@@ -10,33 +11,28 @@ public class ParallelDeadlineGroup extends CommandGroup {
 
     @Override
     public void initialize() {
-        deadline.initialize();
-        for (Command command : commands) {
-            command.initialize();
-        }
+        isFinished = false;
+        CommandScheduler scheduler = CommandScheduler.getInstance();
+        scheduler.schedule(deadline);
+        scheduler.schedule(commands.toArray(new Command[0]));
     }
 
     @Override
     public void update() {
-       if (!deadline.isFinished()) {
-           deadline.update();
-           for (Command command : commands) {
-               if (!command.isFinished()) {
-                   command.update();
-               } else {
-                   command.end(false);
-               }
-           }
-       } else {
-           deadline.end(false);
-           for (Command command : commands) {
-                    command.end(true);
-              }
-       }
+       isFinished = deadline.isFinished();
     }
 
     @Override
     public boolean isFinished() {
-       return deadline.isFinished();
+        return isFinished;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        for (Command command: commands) {
+            if (!command.isFinished()) {
+                CommandScheduler.getInstance().cancel(command);
+            }
+        }
     }
 }

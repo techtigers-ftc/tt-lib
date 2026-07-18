@@ -25,6 +25,7 @@ public class ExampleCommand extends Command {
 
     @Override
     public void update() {
+        TTLogger.dd(tag, "Update Running, isFinished: %b", isFinished());
         exampleSubsystem.setMotorPower(power);
     }
 

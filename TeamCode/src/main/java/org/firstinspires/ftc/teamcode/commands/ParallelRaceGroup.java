@@ -12,33 +12,34 @@ public class ParallelRaceGroup extends CommandGroup {
     @Override
     public void initialize() {
         isFinished = false;
-        for (Command command : commands) {
-            command.initialize();
+
+        for (Command command: commands) {
+            CommandScheduler.getInstance().schedule(command);
         }
     }
 
     @Override
     public void update() {
-        TTLogger.dd(tag, "------------------------------------");
         for (Command command : commands) {
-            TTLogger.dd(tag, "IsFinished %b", command.isFinished());
             if (command.isFinished()) {
-                command.end(false);
-                commands.forEach(c -> c.end(true));
                 isFinished = true;
-            } else if (!isFinished) {
-                command.update();
+                return;
             }
         }
     }
 
     @Override
     public boolean isFinished() {
+        TTLogger.dd(tag, "IsFinished %b", isFinished);
         return isFinished;
     }
 
-//    @Override
-//    public void end(boolean interruptible) {
-//       isFinished = false;
-//    }
+    @Override
+    public void end(boolean interrupted) {
+       for (Command command: commands) {
+           if (!command.isFinished()) {
+               CommandScheduler.getInstance().cancel(command);
+           }
+       }
+    }
 }

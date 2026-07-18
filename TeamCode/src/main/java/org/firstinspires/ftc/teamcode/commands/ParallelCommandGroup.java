@@ -1,43 +1,43 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import org.firstinspires.ftc.teamcode.utils.TTLogger;
-
 public class ParallelCommandGroup extends CommandGroup {
+    private boolean isFinished;
 
-    public ParallelCommandGroup (Command... commands) {
+    public ParallelCommandGroup(Command... commands) {
         addCommands(commands);
     }
 
     @Override
     public void initialize() {
+        isFinished = false;
+
         for (Command command : commands) {
-            command.initialize();
+            CommandScheduler.getInstance().schedule(command);
         }
     }
 
     @Override
     public void update() {
+        isFinished = true;
         for (Command command : commands) {
-            TTLogger.dd(tag, "Update Running");
-            if (command.isFinished()) {
-                command.end(false);
-            } else {
-                command.update();
+            if (!command.isFinished()) {
+                isFinished = false;
+                return;
             }
         }
     }
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "---------------------------------------------------");
+        return isFinished;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
         for (Command command : commands) {
-//            TTLogger.dd(tag, "Is Command Finished: %b", command.isFinished());
-           if (!command.isFinished()) {
-               TTLogger.dd(tag, "Command Not Finished");
-               return false;
-           }
-            TTLogger.dd(tag, "Command Finished");
+            if (!command.isFinished()) {
+                CommandScheduler.getInstance().cancel(command);
+            }
         }
-        return true;
     }
 }
