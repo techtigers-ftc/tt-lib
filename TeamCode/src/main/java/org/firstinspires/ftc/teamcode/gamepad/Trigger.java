@@ -58,6 +58,18 @@ public class Trigger {
         toggleCommands.put(new InstantCommand(firstRunnable), new InstantCommand(secondRunnable));
     }
 
+    public Trigger and(Trigger trigger) {
+        return new Trigger(() -> this.condition.getAsBoolean() && trigger.condition.getAsBoolean());
+    }
+
+    public Trigger or(Trigger trigger) {
+        return new Trigger(() -> this.condition.getAsBoolean() || trigger.condition.getAsBoolean());
+    }
+
+    public Trigger negate() {
+        return new Trigger(() -> !this.condition.getAsBoolean());
+    }
+
     public void updateWhenActive() {
         boolean isActive = condition.getAsBoolean();
         if (isActive && !wasActive) {
