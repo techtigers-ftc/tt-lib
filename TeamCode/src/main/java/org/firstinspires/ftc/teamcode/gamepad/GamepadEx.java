@@ -2,8 +2,11 @@ package org.firstinspires.ftc.teamcode.gamepad;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
+
 public class GamepadEx {
     private Gamepad gamepad;
+    private final String tag = this.getClass().getSimpleName();
     public GamepadEx(Gamepad gamepad) {
         this.gamepad = gamepad;
     }
@@ -11,6 +14,7 @@ public class GamepadEx {
     public Trigger getGamepadButton(GamepadButtons button) {
         switch(button) {
             case A:
+                TTLogger.dd(tag, "Case A ran");
                 return new Trigger(() -> gamepad.a);
             case B:
                 return new Trigger(() -> gamepad.b);

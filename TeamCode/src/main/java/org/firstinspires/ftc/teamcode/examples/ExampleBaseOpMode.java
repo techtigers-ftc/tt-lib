@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.gamepad.GamepadButtons;
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
@@ -31,24 +32,17 @@ public class ExampleBaseOpMode extends BaseOpMode {
         exampleServoAction = new ExampleServoAction(exampleSubsystem, () -> -1.0, 1000);
         TTLogger.setLoggingLevel(TTLogger.DEBUG);
         timeBeforeNextCommand.reset();
+
+        driverGamepad.getGamepadButton(GamepadButtons.B).whenActive(exampleSequentialCommand);
+        driverGamepad.getGamepadButton(GamepadButtons.X).whenActive(exampleParallelCommandGroup);
+        driverGamepad.getGamepadButton(GamepadButtons.Y).whenActive(exampleParallelDeadlineGroup);
+        driverGamepad.getGamepadButton(GamepadButtons.DPAD_UP).whenActive(exampleParallelRaceGroup);
+        driverGamepad.getGamepadButton(GamepadButtons.DPAD_DOWN).whenActive(exampleServoAction);
     }
 
     @Override
     public void update() {
-        if (gamepad1.a && timeBeforeNextCommand.seconds() > 0.5){
-            timeBeforeNextCommand.reset();
-            CommandScheduler.getInstance().schedule(exampleCommand);
-        } else if (gamepad1.b) {
-            CommandScheduler.getInstance().schedule(exampleSequentialCommand);
-        } else if (gamepad1.x){
-            CommandScheduler.getInstance().schedule(exampleParallelCommandGroup);
-        } else if (gamepad1.y){
-            CommandScheduler.getInstance().schedule(exampleParallelDeadlineGroup);
-        } else if (gamepad1.dpad_up) {
-            CommandScheduler.getInstance().schedule(exampleParallelRaceGroup);
-        } else if (gamepad1.dpad_down) {
-            CommandScheduler.getInstance().schedule(exampleServoAction);
-        }
+        driverGamepad.getGamepadButton(GamepadButtons.A).whenActive(exampleCommand);
         telemetry.addLine("Update Loop Running");
     }
 
