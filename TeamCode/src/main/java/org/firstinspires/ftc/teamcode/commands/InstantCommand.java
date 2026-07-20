@@ -1,9 +1,17 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+/**
+ * Runs an action once when the command is initialized.
+ */
 public class InstantCommand extends Command {
 
     private Runnable runnable;
 
+    /**
+     * Creates a command that runs the supplied action immediately.
+     *
+     * @param runnable the action to run
+     */
     public InstantCommand(Runnable runnable) {
         this.runnable = runnable;
     }
