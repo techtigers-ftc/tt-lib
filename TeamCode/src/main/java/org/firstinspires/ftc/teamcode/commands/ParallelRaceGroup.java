@@ -20,10 +20,7 @@ public class ParallelRaceGroup extends CommandGroup {
     @Override
     public void initialize() {
         isFinished = false;
-
-        for (Command command: commands) {
-            CommandScheduler.getInstance().schedule(command);
-        }
+       CommandScheduler.getInstance().schedule(commands.toArray(new Command[0]));
     }
 
     @Override
@@ -38,7 +35,6 @@ public class ParallelRaceGroup extends CommandGroup {
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "IsFinished %b", isFinished);
         return isFinished;
     }
 

@@ -16,13 +16,21 @@ public class InstantCommand extends Command {
         this.runnable = runnable;
     }
 
+    /**
+     * Overload constructor for InstantCommand that does not use a runnable.
+     * The initialize should be overridden in this case to provide the desired behavior.
+     */
+    public InstantCommand() {
+        runnable = () -> {};
+    }
+
     @Override
     public void initialize() {
         runnable.run();
     }
 
     @Override
-    public boolean isFinished() {
+    public final boolean isFinished() {
         return true;
     }
 }
