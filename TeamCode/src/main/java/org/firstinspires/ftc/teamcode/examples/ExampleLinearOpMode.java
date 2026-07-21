@@ -16,9 +16,11 @@ public class ExampleLinearOpMode extends LinearOpMode {
         ExampleSubsystem exampleSubsystem = new ExampleSubsystem(hardwareMap);
         RobotState robotState = new RobotState(true);
 
-        SubsystemController.reset();
-        SubsystemController.getInstance().registerSubsystem(telemetry, robotState, exampleSubsystem);
-        SubsystemController.getInstance().initLoop();
+        while (opModeInInit()) {
+            SubsystemController.reset();
+            SubsystemController.getInstance().registerSubsystems(telemetry, robotState, exampleSubsystem);
+            SubsystemController.getInstance().initLoop();
+        }
         waitForStart();
 
         SubsystemController.getInstance().justAfterStart();
