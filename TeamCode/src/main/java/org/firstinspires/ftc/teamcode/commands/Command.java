@@ -3,20 +3,18 @@ package org.firstinspires.ftc.teamcode.commands;
 /**
  * Represents an action that can be scheduled and run by the command scheduler.
  */
-public abstract class Command {
-    protected String tag = this.getClass().getSimpleName();
-
+public interface Command {
     /**
      * Initializes the command before its first update.
      */
-    protected void initialize(){
+    default void initialize(){
 
     }
 
     /**
      * Runs one iteration of the command while it is scheduled.
      */
-    protected void update(){
+    default void update(){
 
     }
 
@@ -32,7 +30,7 @@ public abstract class Command {
      *
      * @param interrupted true when the command was canceled before completing
      */
-    protected void end(boolean interrupted){
+    default void end(boolean interrupted){
 
     }
 }

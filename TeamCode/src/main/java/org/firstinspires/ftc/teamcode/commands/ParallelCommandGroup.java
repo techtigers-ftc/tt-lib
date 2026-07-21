@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import androidx.annotation.CallSuper;
+
 /**
  * Runs child commands concurrently and completes when every child command finishes.
  */
@@ -16,6 +18,7 @@ public class ParallelCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void initialize() {
         isFinished = false;
 
@@ -25,6 +28,7 @@ public class ParallelCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void update() {
         isFinished = true;
         for (Command command : commands) {
@@ -41,6 +45,7 @@ public class ParallelCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void end(boolean interrupted) {
         for (Command command : commands) {
             if (!command.isFinished()) {
