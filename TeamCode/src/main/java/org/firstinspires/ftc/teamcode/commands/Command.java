@@ -23,7 +23,7 @@ public interface Command {
      *
      * @return true when the command should be ended and removed from the scheduler
      */
-    public abstract boolean isFinished();
+    boolean isFinished();
 
     /**
      * Cleans up the command after completion or interruption.

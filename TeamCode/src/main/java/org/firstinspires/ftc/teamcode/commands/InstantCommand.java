@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.commands;
  * Runs an action once when the command is initialized.
  */
 public class InstantCommand extends CommandBase {
-
     private Runnable runnable;
 
     /**
