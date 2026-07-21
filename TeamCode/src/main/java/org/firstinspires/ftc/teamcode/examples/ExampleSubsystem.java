@@ -1,0 +1,57 @@
+package org.firstinspires.ftc.teamcode.examples;
+
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
+
+/**
+ * ExampleSubsystem is a simple implementation of the Subsystem class that demonstrates how to use TTLib.
+ * It initializes the motor and servo, sets their directions, and demonstrates the subsystem architecture.
+ */
+public class ExampleSubsystem extends Subsystem {
+    private DcMotorEx exampleMotor;
+    private Servo exampleServo;
+
+    /**
+     * Constructor for ExampleSubsystem.
+     *
+     * @param hardwareMap The hardware map used to initialize the motor and servo
+     */
+    public ExampleSubsystem(HardwareMap hardwareMap) {
+        super("ExampleSubsystem");
+        exampleMotor = hardwareMap.get(DcMotorEx.class, "example_motor");
+        exampleServo = hardwareMap.get(Servo.class, "example_servo");
+
+        exampleMotor.setDirection(DcMotor.Direction.FORWARD);
+        exampleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        exampleServo.setDirection(Servo.Direction.FORWARD);
+    }
+
+    @Override
+    public void initLoop() {
+
+    }
+
+    @Override
+    public void justAfterStart() {
+        double pos = exampleServo.getPosition();
+        exampleServo.setPosition(pos > 0.5 ? 0.0 : 1.0);
+    }
+
+    @Override
+    public void periodic() {
+        exampleMotor.setPower(0.5);
+        telemetry.addData("Example Motor Power", exampleMotor.getPower());
+        TTLogger.dd(tag, "Example Motor Power: %.2f", exampleMotor.getPower());
+    }
+
+    @Override
+    public void close() {
+        exampleMotor.setPower(0);
+    }
+}
