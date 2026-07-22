@@ -83,12 +83,14 @@ public class StateMachine<T> {
      *
      * @param fromState the state to transition from
      * @param toState   the state to transition to
-     * @param condition the condition that must be met for the transition
+     * @param conditions the condition(s) that must be met for the transition
      * @return the state machine to allow for method chaining
      */
-    public StateMachine<T> addTransition(State<T> fromState, State<T> toState,
-                                         T condition) {
-        addCondition(fromState, new Transition<>(condition, toState));
+    public StateMachine<T> addTransitions(State<T> fromState, State<T> toState,
+                                          T... conditions) {
+        for (T condition : conditions) {
+            addCondition(fromState, new Transition<>(condition, toState));
+        }
         return this;
     }
 
@@ -97,19 +99,22 @@ public class StateMachine<T> {
      *
      * @param fromStateName the name of the state to transition from
      * @param toStateName the name of the state to transition to
-     * @param condition the condition that must be met for the transition
+     * @param conditions the condition(s) that must be met for the transition
      * @return the state machine to allow for method chaining
      */
-    public StateMachine<T> addTransition(String fromStateName, String toStateName, T condition) {
+    public StateMachine<T> addTransitions(String fromStateName, String toStateName, T... conditions) {
         State<T> fromState = stateMap.get(fromStateName);
         State<T> toState = stateMap.get(toStateName);
+
         if (fromState == null) {
             throw new IllegalArgumentException("State: " + fromStateName + " does not exist");
         }
         if (toState == null) {
             throw new IllegalArgumentException("State: " + toStateName + " does not exist");
         }
-        addCondition(fromState, new Transition<>(condition, toState));
+
+        addTransitions(fromState, toState, conditions);
+
         return this;
     }
 
