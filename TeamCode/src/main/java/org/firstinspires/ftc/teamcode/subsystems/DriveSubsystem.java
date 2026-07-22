@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
-import org.firstinspires.ftc.teamcode.utils.Vector2d;
 @Configurable
 public class DriveSubsystem extends Subsystem {
     public static double MAX_CURRENT_DRAW = 10;
