@@ -17,7 +17,7 @@ public abstract class Subsystem {
      *
      * @param tag the tag for the subsystem
      */
-    public Subsystem(String tag){
+    public Subsystem(String tag) {
         this.tag = tag;
     }
 
@@ -27,39 +27,39 @@ public abstract class Subsystem {
     public Subsystem() {
         tag = this.getClass().getSimpleName();
     }
+
     /**
      * Called repeatedly while the op mode is in INIT.
      */
     protected void initLoop() {
-
     }
+
     /**
      * Called after the start of the opmode. This method is called once after the start of the opmode.
      */
     protected void justAfterStart() {
-
     }
+
     /**
      * Called periodically during the opmode. This method is called repeatedly during the opmode.
      */
     public void periodic() {
-
     }
+
     /**
      * Cleans up the subsystem. This method is called once when the opmode is stopped.
      */
     protected void close() {
-
     }
 
     /**
      * Sets the parameters for the subsystem. This method is called by the SubsystemController when
      * the subsystem is registered.
      *
-     * @param telemetry the telemetry object to be used by the subsystem
+     * @param telemetry  the telemetry object to be used by the subsystem
      * @param robotState the robotState object to be used by the subsystem
      */
-    public void setParameters(Telemetry telemetry, RobotState robotState){
+    public void setParameters(Telemetry telemetry, RobotState robotState) {
         this.telemetry = telemetry;
         this.robotState = robotState;
     }

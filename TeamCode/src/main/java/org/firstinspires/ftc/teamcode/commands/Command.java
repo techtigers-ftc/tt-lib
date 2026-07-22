@@ -7,15 +7,13 @@ public interface Command {
     /**
      * Initializes the command before its first update.
      */
-    default void initialize(){
-
+    default void initialize() {
     }
 
     /**
      * Runs one iteration of the command while it is scheduled.
      */
-    default void update(){
-
+    default void update() {
     }
 
     /**
@@ -30,7 +28,7 @@ public interface Command {
      *
      * @param interrupted true when the command was canceled before completing
      */
-    default void end(boolean interrupted){
+    default void end(boolean interrupted) {
 
     }
 }
