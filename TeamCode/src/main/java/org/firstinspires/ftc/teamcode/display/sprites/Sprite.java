@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.display.sprites;
 
-import team.techtigers.core.display.Color;
+import org.firstinspires.ftc.teamcode.display.Color;
 
 /**
  * An abstract class which represents a sprite with a position and size

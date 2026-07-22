@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.display.sprites.numbers;
 
 
-import team.techtigers.core.display.Color;
-import team.techtigers.core.display.sprites.Sprite;
+import org.firstinspires.ftc.teamcode.display.Color;
+import org.firstinspires.ftc.teamcode.display.sprites.Sprite;
 
 /**
  * A class which represents a sprite in the shape of a 6

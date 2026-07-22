@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.display;
 
-
-import team.techtigers.core.display.sprites.Sprite;
+import org.firstinspires.ftc.teamcode.display.sprites.Sprite;
 
 /**
  * An interface for a display region on the LEDs

@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.display.sprites;
 
-
-import team.techtigers.core.display.Color;
-
+import org.firstinspires.ftc.teamcode.display.Color;
 /**
  * A class which represents a X shaped sprite
  */
