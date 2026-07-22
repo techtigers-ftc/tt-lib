@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 
 import java.util.Arrays;
@@ -26,12 +27,11 @@ import java.util.List;
  * @version 1.0, 4/30/2025
  */
 public class Mecanum extends Drivetrain {
+    private final RobotState robotState;
+    private final DriveSubsystem drive;
     public MecanumConstants constants;
-    private final double[] lastMotorPowers;
-    private double motorCachingThreshold;
     private boolean useBrakeModeInTeleOp;
     private double staticFrictionCoefficient;
-    private RobotState robotState;
 
     /**
      * This creates a new Mecanum, which takes in various movement vectors and outputs
@@ -41,21 +41,13 @@ public class Mecanum extends Drivetrain {
      * @param hardwareMap      this is the HardwareMap object that contains the motors and other hardware
      * @param mecanumConstants this is the MecanumConstants object that contains the names of the motors and directions etc.
      */
-    public Mecanum(HardwareMap hardwareMap, MecanumConstants mecanumConstants) {
+    public Mecanum(HardwareMap hardwareMap, MecanumConstants mecanumConstants, DriveSubsystem drive, RobotState robotState) {
         constants = mecanumConstants;
+        this.robotState = robotState;
+        this.drive = drive;
 
         this.maxPowerScaling = mecanumConstants.maxPower;
-        this.motorCachingThreshold = mecanumConstants.motorCachingThreshold;
         this.useBrakeModeInTeleOp = mecanumConstants.useBrakeModeInTeleOp;
-
-        motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
-        lastMotorPowers = new double[] {0,0,0,0};
-
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
 
         setMotorsToFloat();
         breakFollowing();
@@ -70,11 +62,6 @@ public class Mecanum extends Drivetrain {
 
     @Override
     public void updateConstants() {
-        leftFront.setDirection(constants.leftFrontMotorDirection);
-        leftRear.setDirection(constants.leftRearMotorDirection);
-        rightFront.setDirection(constants.rightFrontMotorDirection);
-        rightRear.setDirection(constants.rightRearMotorDirection);
-        this.motorCachingThreshold = constants.motorCachingThreshold;
         this.useBrakeModeInTeleOp = constants.useBrakeModeInTeleOp;
         this.voltageCompensation = constants.useVoltageCompensation;
         this.nominalVoltage = constants.nominalVoltage;
@@ -188,38 +175,25 @@ public class Mecanum extends Drivetrain {
      * This sets the motors to the zero power behavior of brake.
      */
     private void setMotorsToBrake() {
-        for (DcMotorEx motor : motors) {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
+        drive.setMotorsToBrake();
     }
 
     /**
      * This sets the motors to the zero power behavior of float.
      */
     private void setMotorsToFloat() {
-        for (DcMotorEx motor : motors) {
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }
+        drive.setMotorsToFloat();
     }
 
     @Override
     public void breakFollowing() {
-        for (int i = 0; i < motors.size(); i++) {
-            lastMotorPowers[i] = 0;
-            motors.get(i).setPower(0);
-        }
+        drive.stop();
         setMotorsToFloat();
     }
 
     @Override
     public void runDrive(double[] drivePowers) {
-        for (int i = 0; i < motors.size(); i++) {
-            if (Math.abs(lastMotorPowers[i] - drivePowers[i]) > motorCachingThreshold ||
-                    (drivePowers[i] == 0 && lastMotorPowers[i] != 0)) {
-                lastMotorPowers[i] = drivePowers[i];
-                motors.get(i).setPower(drivePowers[i]);
-            }
-        }
+        drive.setMotorPowers(drivePowers);
     }
 
     @Override
@@ -263,7 +237,7 @@ public class Mecanum extends Drivetrain {
 
     @Override
     public double getVoltage() {
-        return voltageSensor.getVoltage();
+        return robotState.getVoltage();
     }
 
     @Override

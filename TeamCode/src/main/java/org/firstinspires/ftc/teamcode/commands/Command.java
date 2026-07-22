@@ -21,7 +21,9 @@ public interface Command {
      *
      * @return true when the command should be ended and removed from the scheduler
      */
-    boolean isFinished();
+    default boolean isFinished() {
+        return false;
+    }
 
     /**
      * Cleans up the command after completion or interruption.

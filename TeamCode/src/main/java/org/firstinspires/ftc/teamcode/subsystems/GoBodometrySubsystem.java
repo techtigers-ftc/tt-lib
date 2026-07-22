@@ -9,9 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.robotcore.internal.ui.FilledPolygonDrawable;
-import org.firstinspires.ftc.teamcode.utils.RobotState;
-import org.firstinspires.ftc.teamcode.utils.Waypoint;
 
 /**
  * The odometry subsystem, using Gobilda Pinpoint.
@@ -108,7 +105,7 @@ public class GoBodometrySubsystem extends Subsystem {
         double heading = odo.getHeading(AngleUnit.RADIANS);
         double headingVelocity = odo.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
 
-        Waypoint robotPose = new Waypoint(odo.getPosX(DistanceUnit.INCH),
+        Pose robotPose = new Pose(odo.getPosX(DistanceUnit.INCH),
                 odo.getPosY(DistanceUnit.INCH), heading);
 
         if (Double.isNaN(robotPose.getX()) || Double.isNaN(robotPose.getY()) || Double.isNaN(robotPose.getHeading())) {
@@ -117,7 +114,7 @@ public class GoBodometrySubsystem extends Subsystem {
 
         robotState.setRobotPose(robotPose);
 
-        Waypoint robotVelocity = new Waypoint(odo.getVelX(DistanceUnit.INCH),
+        Pose robotVelocity = new Pose(odo.getVelX(DistanceUnit.INCH),
                 odo.getVelY(DistanceUnit.INCH), headingVelocity);
 
         if (Double.isNaN(robotVelocity.getX()) || Double.isNaN(robotVelocity.getY()) || Double.isNaN(robotVelocity.getHeading())) {

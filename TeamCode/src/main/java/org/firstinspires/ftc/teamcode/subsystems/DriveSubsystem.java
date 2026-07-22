@@ -9,16 +9,17 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
+import org.firstinspires.ftc.teamcode.utils.Vector2d;
+
 @Configurable
 public class DriveSubsystem extends Subsystem {
-    public static double MAX_CURRENT_DRAW = 10;
-    private double currentMultiplier = 1;
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
     private final SlidingAverageCalculator frontLeftSlideCurrentAverage;
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
+    private final CachedMotor[] motors;
 
     /**
      * Constructs a new DriveSubsystem.
@@ -37,7 +38,7 @@ public class DriveSubsystem extends Subsystem {
         backRightSlideCurrentAverage = new SlidingAverageCalculator(10);
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
 
-        CachedMotor[] motors = {frontLeft, backLeft, frontRight, backRight};
+        motors = new CachedMotor[]{frontLeft, backLeft, frontRight, backRight};
         frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -130,7 +131,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     /**
-     * Private method to set the motor powers.
+     * Method to set the motor powers.
      *
      * @param fl The front left motor power
      * @param fr The front right motor power
@@ -138,10 +139,43 @@ public class DriveSubsystem extends Subsystem {
      * @param br The back right motor power
      */
     public void setMotorPowers(double fl, double bl, double fr, double br) {
-        frontLeft.setPower(fl * currentMultiplier);
-        frontRight.setPower(fr * currentMultiplier);
-        backLeft.setPower(bl * currentMultiplier);
-        backRight.setPower(br * currentMultiplier);
+        frontLeft.setPower(fl);
+        frontRight.setPower(fr);
+        backLeft.setPower(bl);
+        backRight.setPower(br);
+    }
+
+    /**
+     * Overload method to set the motor powers.
+     *
+     * @param motorPowers the array of motor powers to take in
+     */
+    public void setMotorPowers(double[] motorPowers) {
+        setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);
+    }
+
+    /**
+     * Sets all drive motors to the brake zero power behavior
+     */
+    public void setMotorsToBrake() {
+        for (CachedMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
+
+    /**
+     * Sets all drive motors to the float zero power behavior
+     */
+    public void setMotorsToFloat() {
+        for (CachedMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+    }
+
+    public void stop() {
+        for (CachedMotor motor : motors) {
+            motor.stop();
+        }
     }
 
     @Override
@@ -152,12 +186,6 @@ public class DriveSubsystem extends Subsystem {
         backRightSlideCurrentAverage.add(backRight.getCurrent());
 
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
-
-        if (robotState.getDriveCurrent() > MAX_CURRENT_DRAW) {
-            currentMultiplier = currentMultiplier * 0.95;
-        } else {
-            currentMultiplier = 1.0;
-        }
 
         TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500/6000 * 60);
     }

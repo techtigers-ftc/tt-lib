@@ -14,7 +14,11 @@ public class RobotState extends GlobalState{
     private Pose robotPose;
     private Pose robotVelocity;
     private double driveCurrent;
-    private Acceleration robotAcceleration;
+    private double voltage;
+    private Pose robotFinalPose;
+    private String currentAutoState;
+    private String previousAutoState;
+    private double autoRemainingTime;
 
     /**
      * Creates a new RobotState with the specified alliance color.
@@ -26,7 +30,7 @@ public class RobotState extends GlobalState{
         robotPose = new Pose(0, 0, 0);
         robotVelocity = new Pose(0, 0, 0);
         driveCurrent = 0;
-        robotAcceleration = new Acceleration();
+        voltage = 0;
     }
 
     /**
@@ -87,18 +91,78 @@ public class RobotState extends GlobalState{
     }
 
     /**
-     * @return the current acceleration of the robot, in m/s^2
+     * @return the final pose of the robot in a trajectory
      */
-    public Acceleration getRobotAcceleration() {
-        return robotAcceleration;
+    public Pose getRobotFinalPose() {
+        return robotFinalPose;
     }
 
     /**
-     * Sets the current acceleration of the robot, in m/s^2
+     * Sets the final pose of the robot in a trajectory
      *
-     * @param robotAcceleration the current acceleration of the robot
+     * @param robotFinalPose the final pose of the robot
      */
-    public void setRobotAcceleration(Acceleration robotAcceleration) {
-        this.robotAcceleration = robotAcceleration;
+    public void setRobotFinalPose(Pose robotFinalPose) {
+        this.robotFinalPose = robotFinalPose;
+    }
+
+    /**
+     * @return the current voltage of the robot
+     */
+    public double getVoltage() {
+        return voltage;
+    }
+
+    /**
+     * Sets the current voltage of the robot
+     *
+     * @param voltage the current voltage of the robot
+     */
+    public void setVoltage(double voltage) {
+        this.voltage = voltage;
+    }
+
+    /**
+     * @return the current state of the autonomous command
+     */
+    public String getCurrentAutoState() {
+        return currentAutoState;
+    }
+
+    /**
+     * Sets the current state of the autonomous command
+     */
+    public void setCurrentAutoState(String currentAutoState) {
+        this.currentAutoState = currentAutoState;
+    }
+
+    /**
+     * @return the previous state of the autonomous command
+     */
+    public String getPreviousAutoState() {
+        return previousAutoState;
+    }
+
+    /**
+     * Sets the previous state of the autonomous command
+     */
+    public void setPreviousAutoState(String previousAutoState) {
+        this.previousAutoState = previousAutoState;
+    }
+
+    /**
+     * @return the amount of time remaining in the autonomous
+     */
+    public double getAutoRemainingTime() {
+        return (double) autoRemainingTime;
+    }
+
+    /**
+     * Sets the amount of time remaining in the autonomous
+     *
+     * @param autoRemainingTime the amount of time remaining in the autonomous
+     */
+    public void setAutoRemainingTime(double autoRemainingTime) {
+        this.autoRemainingTime = autoRemainingTime;
     }
 }
