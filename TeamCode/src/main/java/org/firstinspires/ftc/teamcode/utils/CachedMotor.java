@@ -121,7 +121,7 @@ public class CachedMotor {
     }
 
     /**
-     * @return the current position of the motor in inches, based on the motor's ticks per revolution and the wheel diameter
+     * @return the current draw of the motor in amps
      */
     public double getCurrent() {
         return motor.getCurrent(CurrentUnit.AMPS);

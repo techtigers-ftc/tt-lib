@@ -47,9 +47,11 @@ public class ParallelCommandGroup extends CommandGroup {
     @Override
     @CallSuper
     public void end(boolean interrupted) {
-        for (Command command : commands) {
-            if (!command.isFinished()) {
-                CommandScheduler.getInstance().cancel(command);
+        if (interrupted) {
+            for (Command command : commands) {
+                if (!command.isFinished()) {
+                    CommandScheduler.getInstance().cancel(command);
+                }
             }
         }
     }

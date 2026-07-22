@@ -31,16 +31,11 @@ public class SequentialCommandGroup extends CommandGroup {
     @Override
     @CallSuper
     public void update() {
-        if (isFinished) {
-            return;
-        }
-
         if (commands.get(currentCommandIndex).isFinished()) {
             currentCommandIndex++;
             if (currentCommandIndex == commands.size()) {
                 isFinished = true;
             } else {
-                TTLogger.dd(tag, "Scheduled next Command, Index: %d", currentCommandIndex);
                 CommandScheduler.getInstance().schedule(commands.get(currentCommandIndex));
             }
         }
