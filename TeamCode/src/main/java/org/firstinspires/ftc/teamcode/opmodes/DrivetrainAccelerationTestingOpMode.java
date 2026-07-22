@@ -13,6 +13,11 @@ public class DrivetrainAccelerationTestingOpMode extends BaseOpMode {
     private DriveSubsystem drive;
     private boolean isFinished = false;
     private double accelerationTime = 0;
+    private double totalCurrentDraw = 0;
+    private double averageCurrentDraw = 0;
+    private double maxCurrentDraw = 0;
+    private double maxVelocity = 0;
+    private int currentDrawCounter = 0;
     private ElapsedTime time;
 
     @Override
@@ -34,7 +39,17 @@ public class DrivetrainAccelerationTestingOpMode extends BaseOpMode {
         double velocity = robotState.getRobotVelocity().getPoint().magnitude();
         double currentDraw = robotState.getDriveCurrent();
 
+        if (velocity > maxVelocity) {
+            maxVelocity = velocity;
+        }
+
+        if (currentDraw > maxCurrentDraw) {
+            maxCurrentDraw = currentDraw;
+        }
+
         if (velocity < 60 && !isFinished) {
+            totalCurrentDraw += currentDraw;
+            averageCurrentDraw = totalCurrentDraw / ++currentDrawCounter;
             drive.driveRobotCentric(-1.0, 0, 0);
         } else {
             isFinished = true;
@@ -45,8 +60,9 @@ public class DrivetrainAccelerationTestingOpMode extends BaseOpMode {
         }
 
         telemetry.addData("Acceleration Time", accelerationTime);
-        telemetry.addData("Current Velocity", velocity);
-        telemetry.addData("Current Draw", currentDraw);
+        telemetry.addData("Max Velocity", maxVelocity);
+        telemetry.addData("Max Current Draw", maxCurrentDraw);
+        telemetry.addData("Average current draw", averageCurrentDraw);
 
 
         TTLogger.setLoggingLevel(TTLogger.DEBUG);
