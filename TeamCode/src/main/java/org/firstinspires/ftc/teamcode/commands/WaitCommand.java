@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import androidx.annotation.CallSuper;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.concurrent.TimeUnit;
@@ -34,6 +36,7 @@ public class WaitCommand extends CommandBase {
     }
 
     @Override
+    @CallSuper
     public void initialize() {
         timer.reset();
     }

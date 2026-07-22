@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.statemachine;
 
+import androidx.annotation.CallSuper;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.ParallelCommandGroup;
@@ -36,6 +38,7 @@ public abstract class ParallelCommandGroupState<T> extends ParallelCommandGroup 
     }
 
     @Override
+    @CallSuper
     public void initialize(){
         super.initialize();
         timer.reset();
