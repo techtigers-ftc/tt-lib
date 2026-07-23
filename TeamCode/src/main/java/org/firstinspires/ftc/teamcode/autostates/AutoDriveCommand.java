@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.autostates;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PredictiveBrakingCoefficients;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
+import com.pedropathing.paths.PathConstraints;
 
 import org.firstinspires.ftc.teamcode.commands.CommandBase;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
@@ -22,9 +24,10 @@ public class AutoDriveCommand extends CommandBase {
     private PathChain pathChain;
     private PathChain previousPathChain;
 
-    // Primary PIDF Controllers
+    // Controllers/Constraints
     private PIDFCoefficients headingPIDF;
     private PredictiveBrakingCoefficients predictiveBrakingCoefficients;
+    private final PathConstraints constraints;
 
     /**
      * Constructs a new AutoDriveCommand.
@@ -37,26 +40,28 @@ public class AutoDriveCommand extends CommandBase {
         this.robotState = robotState;
         this.follower = follower;
         follower.update();
+
+        constraints = follower.getConstraints();
     }
 
     @Override
     public void initialize() {
-        // Makes sure that all primary PIDF coefficients are set
-        if (headingPIDF == null) {
-            throw new IllegalArgumentException("Heading PIDF coefficients not set");
+        // Keeps default predictive braking and heading PIDF coefficients if not set
+
+        if (headingPIDF != null) {
+            follower.setHeadingPIDFCoefficients(headingPIDF);
         }
-        if (predictiveBrakingCoefficients == null) {
-            throw new IllegalArgumentException("Predictive Braking coefficients not set");
+        if (predictiveBrakingCoefficients != null) {
+            follower.setConstants(follower.getConstants().predictiveBrakingCoefficients(predictiveBrakingCoefficients));
         }
+
+        // Sets constraints
+        follower.setConstraints(constraints);
 
         // Makes sure that a path chain is set
         if (pathChain == null) {
             throw new IllegalArgumentException("Path chain not set");
         }
-
-        // Sets the primary PIDF coefficients
-        follower.setHeadingPIDFCoefficients(headingPIDF);
-        follower.setConstants(follower.getConstants().predictiveBrakingCoefficients(predictiveBrakingCoefficients));
 
         // Finds the final waypoint in the path chain
         Path finalPath = pathChain.getPath(pathChain.size() - 1);
@@ -87,7 +92,15 @@ public class AutoDriveCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        follower.breakFollowing();
+        // Holds the robots current position and heading, and internally stops any concurrent following
+        follower.holdPoint(new BezierPoint(robotState.getRobotPose().getX(),
+                robotState.getRobotPose().getY()),
+                robotState.getRobotPose().getHeading(), true);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return follower.isBusy();
     }
 
     /**
@@ -130,5 +143,50 @@ public class AutoDriveCommand extends CommandBase {
      */
     public void setPredictiveBrakingCoefficients(double proportional, double linearBraking, double quadraticFriction) {
         predictiveBrakingCoefficients = new PredictiveBrakingCoefficients(proportional, linearBraking, quadraticFriction);
+    }
+
+    /**
+     * Sets the translational tolerance for the command.
+     *
+     * @param tolerance the translational tolerance in inches
+     */
+    public void setTolerance(double tolerance) {
+        constraints.setTranslationalConstraint(tolerance);
+    }
+
+    /**
+     * Sets the heading tolerance for the command.
+     *
+     * @param headingTolerance the heading tolerance in radians
+     */
+    public void setHeadingTolerance(double headingTolerance) {
+        constraints.setHeadingConstraint(headingTolerance);
+    }
+
+    /**
+     * Sets the timeout constraint for the command.
+     *
+     * @param timeout the amount of time in milliseconds before the command times out
+     */
+    public void setTimeoutConstraint(double timeout) {
+        constraints.setTimeoutConstraint(timeout);
+    }
+
+    /**
+     * Sets the velocity constraint for the command.
+     *
+     * @param velocity the velocity under which the command will be considered complete
+     */
+    public void setVelocityConstraint(double velocity) {
+        constraints.setVelocityConstraint(velocity);
+    }
+
+    /**
+     * Sets the t-value constraint for the command.
+     *
+     * @param tValue the t-value under which the command will be considered complete
+     */
+    public void setTValue(double tValue) {
+        constraints.setTValueConstraint(tValue);
     }
 }

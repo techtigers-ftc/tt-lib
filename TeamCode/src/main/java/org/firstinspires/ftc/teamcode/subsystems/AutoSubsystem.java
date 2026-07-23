@@ -10,6 +10,12 @@ import org.firstinspires.ftc.teamcode.utils.RobotState;
 public class AutoSubsystem extends Subsystem {
     private final StateMachine<AutoStateCondition> stateMachine;
     private final RobotState robotState;
+    public static final double SMALL_TOLERANCE = 0.75;
+    public static final double MEDIUM_TOLERANCE = 1.5;
+    public static final double LARGE_TOLERANCE = 3.0;
+    public static final double SMALL_ANGLE_TOLERANCE = 1.0;
+    public static final double MEDIUM_ANGLE_TOLERANCE = 2.0;
+    public static final double LARGE_ANGLE_TOLERANCE = 4.0;
 
     /**
      * Constructor for the AutoSubsystem

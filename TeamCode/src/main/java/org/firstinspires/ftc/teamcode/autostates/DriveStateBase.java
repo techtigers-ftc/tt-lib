@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autostates;
 
+import androidx.annotation.CallSuper;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -52,35 +54,14 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
     }
 
     /**
-     * Calculate the distance to the target
-     *
-     * @param current current waypoint
-     * @param target  target waypoint
-     * @return the distance to the target
-     */
-    protected double distToTarget(Pose current, Pose target) {
-        return Math.hypot(target.getX() - current.getX(),
-                target.getY() - current.getY());
-    }
-
-    /**
-     * Calculate the angle distance to the target
-     *
-     * @param currentHeading current heading
-     * @param targetHeading  target heading
-     * @return the angle distance to the target
-     */
-    protected double angleDistance(double currentHeading, double targetHeading) {
-        return Math.abs(currentHeading - targetHeading);
-    }
-
-    /**
      * Sets the path chain for the drive command.
      *
      * @param pathChain the path chain to run
+     * @return the current instance of DriveStateBase for method chaining
      */
-    public void setPathChain(PathChain pathChain) {
+    public DriveStateBase setPathChain(PathChain pathChain) {
         autoDriveCommand.setPathChain(pathChain);
+        return this;
     }
 
     /**
@@ -88,34 +69,83 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
      *
      * @param p the proportional coefficient
      * @param d the derivative coefficient
+     * @return the current instance of DriveStateBase for method chaining
      */
-    public void setHeadingPIDF(double p, double d) {
+    public DriveStateBase setHeadingPIDF(double p, double d) {
         autoDriveCommand.setHeadingPIDF(p, 0, d, 0);
+        return this;
     }
 
-    public void setPredictiveBreakingCoefficients(double proportional, double linearBraking, double quadraticFriction) {
+    /**
+     * Sets the predictive braking coefficients for the drive command.
+     *
+     * @param proportional      the proportional coefficient for predictive braking
+     * @param linearBraking     the linear braking coefficient for predictive braking
+     * @param quadraticFriction the quadratic friction coefficient for predictive braking
+     * @return the current instance of DriveStateBase for method chaining
+     */
+    public DriveStateBase setPredictiveBreakingCoefficients(double proportional, double linearBraking, double quadraticFriction) {
         autoDriveCommand.setPredictiveBrakingCoefficients(proportional, linearBraking, quadraticFriction);
+        return this;
     }
 
     /**
      * Sets the tolerance for the drive state
      *
      * @param tolerance the tolerance for the drive state
+     * @return the current instance of DriveStateBase for method chaining
      */
-    public void setTolerance(double tolerance) {
-        this.tolerance = tolerance;
+    public DriveStateBase setTolerance(double tolerance) {
+        autoDriveCommand.setTolerance(tolerance);
+        return this;
     }
 
     /**
      * Sets the angle tolerance for the drive state
      *
      * @param angleTolerance the angle tolerance for the drive state
+     * @return the current instance of DriveStateBase for method chaining
      */
-    public void setAngleTolerance(double angleTolerance) {
-        this.angleTolerance = angleTolerance;
+    public DriveStateBase setAngleTolerance(double angleTolerance) {
+        autoDriveCommand.setHeadingTolerance(angleTolerance);
+        return this;
+    }
+
+    /**
+     * Sets the timeout constraint for the drive command.
+     *
+     * @param timeout the amount of time in seconds before the command times out
+     * @return the current instance of DriveStateBase for method chaining
+     */
+    public DriveStateBase setTimeoutConstraint(double timeout) {
+        autoDriveCommand.setTimeoutConstraint(timeout);
+        return this;
+    }
+
+    /**
+     * Sets the t-value for the drive command.
+     *
+     * @param tValue the t-value to set
+     * @return the current instance of DriveStateBase for method chaining
+     */
+    public DriveStateBase setTValue(double tValue) {
+        autoDriveCommand.setTValue(tValue);
+        return this;
+    }
+
+    /**
+     * Sets the velocity constraint for the drive command.
+     *
+     * @param maxVelocity the velocity in inches per second
+     * @return the current instance of DriveStateBase for method chaining
+     */
+    public DriveStateBase setVelocityConstraint(double maxVelocity) {
+        autoDriveCommand.setVelocityConstraint(maxVelocity);
+        return this;
     }
 
     @Override
+    @CallSuper
     public void initialize() {
         super.initialize();
         hasRecovered = false;
@@ -123,6 +153,7 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
     }
 
     @Override
+    @CallSuper
     public void update() {
         super.update();
         // If the robot is stuck or the timeout is reached for the first time, we need to recover
@@ -147,15 +178,11 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
             throw new IllegalStateException("Tolerance and angle tolerance must be set");
         }
 
-        Pose current = robotState.getRobotPose();
-        Pose target = robotState.getRobotFinalPose();
-
 //        RobotLog.dd(LOG_TAG, "Current State: %s", robotState.getCurrentAutoState());
 //        RobotLog.dd(LOG_TAG, "Distance: %f", distToTarget(current, target));
 //        RobotLog.dd(LOG_TAG, "Angular Distance: %f", Math.toDegrees(angleDistance(current.getHeading(), target.getHeading())));
 
-        if (distToTarget(current, target) < tolerance
-                && angleDistance(current.getHeading(), target.getHeading()) < angleTolerance) {
+        if (autoDriveCommand.isFinished()) {
             return AutoStateCondition.DRIVE_END;
         }
 
