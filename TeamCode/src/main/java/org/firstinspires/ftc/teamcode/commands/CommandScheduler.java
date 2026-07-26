@@ -27,6 +27,13 @@ public class CommandScheduler {
     }
 
     /**
+     * Returns whether a command is currently scheduled.
+     */
+    public boolean isScheduled(Command command) {
+        return commands.contains(command);
+    }
+
+    /**
      * Registers a trigger so its bindings are evaluated once per scheduler loop.
      * Trigger constructors call this automatically.
      */
@@ -35,7 +42,7 @@ public class CommandScheduler {
     }
 
     public void update() {
-        for (Trigger trigger : triggers) {
+        for (Trigger trigger : new ArrayList<>(triggers)) {
             trigger.update();
         }
 

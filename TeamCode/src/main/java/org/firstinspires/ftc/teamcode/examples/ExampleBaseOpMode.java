@@ -30,19 +30,20 @@ public class ExampleBaseOpMode extends BaseOpMode {
         exampleParallelDeadlineGroup = new ExampleParallelDeadlineGroup(exampleSubsystem);
         exampleParallelRaceGroup = new ExampleParallelRaceGroup(exampleSubsystem);
         exampleServoAction = new ExampleServoAction(exampleSubsystem, () -> -1.0, 1000);
-        TTLogger.setLoggingLevel(TTLogger.DEBUG);
         timeBeforeNextCommand.reset();
 
+        driverGamepad.getGamepadButton(GamepadButtons.A).whenActive(exampleCommand);
         driverGamepad.getGamepadButton(GamepadButtons.B).whenActive(exampleSequentialCommand);
         driverGamepad.getGamepadButton(GamepadButtons.X).whenActive(exampleParallelCommandGroup);
         driverGamepad.getGamepadButton(GamepadButtons.Y).whenActive(exampleParallelDeadlineGroup);
         driverGamepad.getGamepadButton(GamepadButtons.DPAD_UP).whenActive(exampleParallelRaceGroup);
         driverGamepad.getGamepadButton(GamepadButtons.DPAD_DOWN).whenActive(exampleServoAction);
+
+        TTLogger.setLoggingLevel(TTLogger.DEBUG);
     }
 
     @Override
     public void update() {
-        driverGamepad.getGamepadButton(GamepadButtons.A).whenActive(exampleCommand);
         telemetry.addLine("Update Loop Running");
     }
 

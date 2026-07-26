@@ -3,120 +3,169 @@ package org.firstinspires.ftc.teamcode.gamepad;
 import org.firstinspires.ftc.teamcode.commands.Command;
 import org.firstinspires.ftc.teamcode.commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.commands.InstantCommand;
-import org.firstinspires.ftc.teamcode.commands.WaitCommand;
-import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
+/**
+ * Binds commands to a boolean condition, such as a gamepad button or a sensor state.
+ */
 public class Trigger {
-    private String tag = this.getClass().getSimpleName();
-    private HashMap<Command, TriggerTypes> commands;
-    private HashMap<Command, Command> toggleCommands;
     private final BooleanSupplier condition;
-    private boolean wasActive;
-    private boolean initialCommandRun;
+    private List<Runnable> bindings;
 
     public Trigger(BooleanSupplier condition) {
+        bindings = new ArrayList<>();
         this.condition = condition;
-        wasActive = false;
         CommandScheduler.getInstance().registerTrigger(this);
-        commands = new HashMap<>();
-        toggleCommands = new HashMap<>();
-        initialCommandRun = false;
     }
 
     public BooleanSupplier getCondition() {
         return condition;
     }
 
-
-    public void whenActive(Command command) {
-        TTLogger.dd(tag, "When Active was called, condition: %b ; was active: %b", condition.getAsBoolean(), wasActive);
-        commands.put(command, TriggerTypes.WHEN_ACTIVE);
+    /**
+     * Returns whether this trigger is currently active.
+     */
+    public boolean get() {
+        return condition.getAsBoolean();
     }
 
-    public void whenActive(Runnable runnable) {
-        commands.put(new InstantCommand(runnable), TriggerTypes.WHEN_ACTIVE);
+    /**
+     * Schedules a command when the trigger changes from inactive to active.
+     */
+    public Trigger whenActive(final Command command) {
+        bindings.add(new Runnable() {
+            private boolean wasActive = get();
+
+            @Override
+            public void run() {
+                boolean isActive = get();
+                if (isActive && !wasActive) {
+                    CommandScheduler.getInstance().schedule(command);
+                }
+                wasActive = isActive;
+            }
+        });
+        return this;
     }
 
-    public void whileHeld(Command command) {
-        commands.put(command, TriggerTypes.WHILE_HELD);
+    /**
+     * Runs an action once when the trigger changes from inactive to active.
+     */
+    public Trigger whenActive(Runnable runnable) {
+        return whenActive(new InstantCommand(runnable));
     }
 
-    public void toggleWhenActive(Command command) {
-        toggleCommands.put(command, new WaitCommand(0));
+    /**
+     * Schedules a command while the trigger is held and cancels it when released.
+     * If the command finishes while held, it will be scheduled again on the next loop.
+     */
+    public Trigger whileHeld(final Command command) {
+        bindings.add(new Runnable() {
+            private boolean wasActive = get();
+
+            @Override
+            public void run() {
+                boolean isActive = get();
+                if (isActive) {
+                    CommandScheduler.getInstance().schedule(command);
+                } else if (wasActive) {
+                    CommandScheduler.getInstance().cancel(command);
+                }
+                wasActive = isActive;
+            }
+        });
+        return this;
     }
 
-    public void toggleWhenActive(Command firstCommand, Command secondCommand) {
-        toggleCommands.put(firstCommand, secondCommand);
+    /**
+     * Runs an action continuously while the trigger is held.
+     */
+    public Trigger whileHeld(Runnable runnable) {
+        return whileHeld(new InstantCommand(runnable));
     }
 
-    public void toggleWhenActive(Runnable runnable) {
-        toggleCommands.put(new InstantCommand(runnable), new WaitCommand(0));
+    /**
+     * Starts a command on press and cancels it on the next press.
+     */
+    public Trigger toggleWhenActive(final Command command) {
+        bindings.add(new Runnable() {
+            private boolean wasActive = get();
+
+            @Override
+            public void run() {
+                boolean isActive = get();
+                if (isActive && !wasActive) {
+                    if (CommandScheduler.getInstance().isScheduled(command)) {
+                        CommandScheduler.getInstance().cancel(command);
+                    } else {
+                        CommandScheduler.getInstance().schedule(command);
+                    }
+                }
+                wasActive = isActive;
+            }
+        });
+        return this;
     }
 
-    public void toggleWhenActive(Runnable firstRunnable, Runnable secondRunnable) {
-        toggleCommands.put(new InstantCommand(firstRunnable), new InstantCommand(secondRunnable));
+    /**
+     * Alternates between two commands on each press, interrupting the previously selected command.
+     */
+    public Trigger toggleWhenActive(final Command firstCommand, final Command secondCommand) {
+        bindings.add(new Runnable() {
+            private boolean wasActive = get();
+            private boolean firstCommandActive;
+
+            @Override
+            public void run() {
+                boolean isActive = get();
+                if (isActive && !wasActive) {
+                    if (firstCommandActive) {
+                        CommandScheduler.getInstance().cancel(firstCommand);
+                        CommandScheduler.getInstance().schedule(secondCommand);
+                    } else {
+                        CommandScheduler.getInstance().cancel(secondCommand);
+                        CommandScheduler.getInstance().schedule(firstCommand);
+                    }
+                    firstCommandActive = !firstCommandActive;
+                }
+                wasActive = isActive;
+            }
+        });
+        return this;
+    }
+
+    public Trigger toggleWhenActive(Runnable runnable) {
+        return toggleWhenActive(new InstantCommand(runnable));
+    }
+
+    public Trigger toggleWhenActive(Runnable firstRunnable, Runnable secondRunnable) {
+        return toggleWhenActive(
+                new InstantCommand(firstRunnable),
+                new InstantCommand(secondRunnable)
+        );
     }
 
     public Trigger and(Trigger trigger) {
-        return new Trigger(() -> this.condition.getAsBoolean() && trigger.condition.getAsBoolean());
+        return new Trigger(() -> get() && trigger.get());
     }
 
     public Trigger or(Trigger trigger) {
-        return new Trigger(() -> this.condition.getAsBoolean() || trigger.condition.getAsBoolean());
+        return new Trigger(() -> get() || trigger.get());
     }
 
     public Trigger negate() {
-        return new Trigger(() -> !this.condition.getAsBoolean());
+        return new Trigger(() -> !get());
     }
 
-    public void updateWhenActive() {
-        boolean isActive = condition.getAsBoolean();
-        if (isActive && !wasActive) {
-            for (Command command : commands.keySet()) {
-                if (commands.get(command) == TriggerTypes.WHEN_ACTIVE) {
-                    TTLogger.dd(tag, "Command was Scheduled");
-                    CommandScheduler.getInstance().schedule(command);
-                }
-            }
-        }
-        wasActive = isActive;
-    }
-
-    public void updateWhileHeld() {
-        boolean isActive = condition.getAsBoolean();
-        if (isActive) {
-            for (Command command : commands.keySet()) {
-                if (commands.get(command) == TriggerTypes.WHILE_HELD) {
-                    CommandScheduler.getInstance().schedule(command);
-                }
-            }
-        }
-    }
-
-    public void updateToggleWhenActive() {
-        boolean isActive = condition.getAsBoolean();
-        if (isActive && !wasActive) {
-            for (Command command : toggleCommands.keySet()) {
-                if (!initialCommandRun) {
-                    CommandScheduler.getInstance().schedule(command);
-                    initialCommandRun = true;
-                } else {
-                    CommandScheduler.getInstance().cancel(command);
-                    CommandScheduler.getInstance().schedule(toggleCommands.get(command));
-                    initialCommandRun = false;
-                }
-            }
-        }
-        wasActive = isActive;
-    }
-
+    /**
+     * Evaluates all bindings.
+     */
     public void update() {
-        updateToggleWhenActive();
-        updateWhenActive();
-        updateWhileHeld();
+        for (Runnable binding : new ArrayList<>(bindings)) {
+            binding.run();
+        }
     }
 }
