@@ -49,7 +49,7 @@ public abstract class BaseOpMode extends LinearOpMode {
     protected void registerSubsystems(Subsystem... subsystems) {
         CommandScheduler.getInstance().reset();
         SubsystemController.reset();
-        SubsystemController.getInstance().registerSubsystem(telemetry, robotState, subsystems);
+        SubsystemController.getInstance().registerSubsystems(telemetry, robotState, subsystems);
     }
 
     /**

@@ -2,10 +2,18 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
+/**
+ * Runs child commands one at a time in the order they were provided.
+ */
 public class SequentialCommandGroup extends CommandGroup {
     private int currentCommandIndex;
     private boolean isFinished;
 
+    /**
+     * Creates a group that runs the supplied commands in sequence.
+     *
+     * @param commands the commands to run in order
+     */
     public SequentialCommandGroup(Command... commands) {
         addCommands(commands);
     }
@@ -19,16 +27,11 @@ public class SequentialCommandGroup extends CommandGroup {
 
     @Override
     public void update() {
-        if (isFinished) {
-            return;
-        }
-
         if (commands.get(currentCommandIndex).isFinished()) {
             currentCommandIndex++;
             if (currentCommandIndex == commands.size()) {
                 isFinished = true;
             } else {
-                TTLogger.dd(tag, "Scheduled next Command, Index: %d", currentCommandIndex);
                 CommandScheduler.getInstance().schedule(commands.get(currentCommandIndex));
             }
         }

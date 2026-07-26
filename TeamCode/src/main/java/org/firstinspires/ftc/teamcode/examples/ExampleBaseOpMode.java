@@ -7,6 +7,9 @@ import org.firstinspires.ftc.teamcode.gamepad.Trigger;
 import org.firstinspires.ftc.teamcode.opmodes.BaseOpMode;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
+/**
+ * Demonstrates commands and command groups in a BaseOpMode.
+ */
 @TeleOp(name = "Example Base OpMode", group = "Examples")
 public class ExampleBaseOpMode extends BaseOpMode {
     private ExampleCommand exampleCommand;

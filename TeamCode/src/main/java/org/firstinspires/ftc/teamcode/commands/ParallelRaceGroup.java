@@ -2,9 +2,17 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
+/**
+ * Runs child commands concurrently and completes when the first child command finishes.
+ */
 public class ParallelRaceGroup extends CommandGroup {
     private boolean isFinished;
 
+    /**
+     * Creates a group that races the supplied commands.
+     *
+     * @param commands the commands to run until one finishes
+     */
     public ParallelRaceGroup(Command... commands) {
         addCommands(commands);
     }
@@ -12,10 +20,7 @@ public class ParallelRaceGroup extends CommandGroup {
     @Override
     public void initialize() {
         isFinished = false;
-
-        for (Command command: commands) {
-            CommandScheduler.getInstance().schedule(command);
-        }
+       CommandScheduler.getInstance().schedule(commands.toArray(new Command[0]));
     }
 
     @Override
@@ -30,7 +35,6 @@ public class ParallelRaceGroup extends CommandGroup {
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "IsFinished %b", isFinished);
         return isFinished;
     }
 
