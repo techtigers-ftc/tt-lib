@@ -2,19 +2,22 @@ package org.firstinspires.ftc.teamcode.gamepad;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.utils.TTLogger;
-
 public class GamepadEx {
-    private Gamepad gamepad;
-    private final String tag = this.getClass().getSimpleName();
+    private final Gamepad gamepad;
+
     public GamepadEx(Gamepad gamepad) {
         this.gamepad = gamepad;
     }
 
-    public Trigger getGamepadButton(GamepadButtons button) {
+    /**
+     * Returns a command trigger for a digital gamepad button.
+     *
+     * @param button the button to monitor
+     * @return a trigger that is active while the button is pressed
+     */
+    public Trigger getGamepadButton(GamepadKeys.Button button) {
         switch(button) {
             case A:
-                TTLogger.dd(tag, "Case A ran");
                 return new Trigger(() -> gamepad.a);
             case B:
                 return new Trigger(() -> gamepad.b);
@@ -45,6 +48,52 @@ public class GamepadEx {
             default:
                 return new Trigger(() -> false);
         }
+    }
+
+    /**
+     * Returns how far an analog trigger is pressed, from {@code 0.0} to {@code 1.0}.
+     *
+     * @param trigger the analog trigger to read
+     * @return the trigger's current value
+     */
+    public double getTrigger(GamepadKeys.Trigger trigger) {
+        switch (trigger) {
+            case LEFT_TRIGGER:
+                return gamepad.left_trigger;
+            case RIGHT_TRIGGER:
+                return gamepad.right_trigger;
+            default:
+                return 0.0;
+        }
+    }
+
+    /**
+     * Returns the left stick's horizontal value, from {@code -1.0} to {@code 1.0}.
+     */
+    public double getLeftX() {
+        return gamepad.left_stick_x;
+    }
+
+    /**
+     * Returns the left stick's vertical value, from {@code -1.0} to {@code 1.0},
+     * with up reported as positive.
+     */
+    public double getLeftY() {
+        return -gamepad.left_stick_y;
+    }
+
+    /**
+     * Returns the right stick's horizontal value, from {@code -1.0} to {@code 1.0}.
+     */
+    public double getRightX() {
+        return gamepad.right_stick_x;
+    }
+
+    /**
+     * Returns the right stick's vertical value, from {@code -1.0} to {@code 1.0}.
+     */
+    public double getRightY() {
+        return gamepad.right_stick_y;
     }
 
     public void rumble(Gamepad.RumbleEffect rumbleEffect) {
