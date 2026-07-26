@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.gamepad;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+/**
+ * A wrapper for the FTC SDK's gamepad class that provides additional functionality.
+ */
 public class GamepadEx {
     private final Gamepad gamepad;
 
@@ -96,10 +99,22 @@ public class GamepadEx {
         return gamepad.right_stick_y;
     }
 
+    /**
+     * Runs a rumble effect on the gamepad.
+     *
+     * @param rumbleEffect the rumble effect to run
+     */
     public void rumble(Gamepad.RumbleEffect rumbleEffect) {
         gamepad.runRumbleEffect(rumbleEffect);
     }
 
+    /**
+     * Runs a rumble effect on the gamepad.
+     *
+     * @param leftMotorPower the power for the left rumble motor, from {@code 0.0} to {@code 1.0}
+     * @param rightMotorPower the power for the right rumble motor, from {@code 0.0} to {@code 1.0}
+     * @param duration the duration of the rumble effect in milliseconds
+     */
     public void rumble(double leftMotorPower, double rightMotorPower, int duration) {
         gamepad.rumble(leftMotorPower, rightMotorPower, duration);
     }

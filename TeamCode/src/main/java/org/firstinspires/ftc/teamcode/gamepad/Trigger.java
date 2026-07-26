@@ -137,10 +137,23 @@ public class Trigger {
         return this;
     }
 
+    /**
+     * Runs an action on press and cancels it on the next press.
+     *
+     * @param runnable The action to run.
+     * @return This trigger, for chaining.
+     */
     public Trigger toggleWhenActive(Runnable runnable) {
         return toggleWhenActive(new InstantCommand(runnable));
     }
 
+    /**
+     * Alternates between two actions on each press, interrupting the previously selected action.
+     *
+     * @param firstRunnable The first action to run.
+     * @param secondRunnable The second action to run.
+     * @return This trigger, for chaining.
+     */
     public Trigger toggleWhenActive(Runnable firstRunnable, Runnable secondRunnable) {
         return toggleWhenActive(
                 new InstantCommand(firstRunnable),
@@ -148,14 +161,31 @@ public class Trigger {
         );
     }
 
+    /**
+     * Combines this trigger with another trigger using logical AND.
+     *
+     * @param trigger The other trigger to combine with.
+     * @return A new trigger that is active when both triggers are active.
+     */
     public Trigger and(Trigger trigger) {
         return new Trigger(() -> get() && trigger.get());
     }
 
+    /**
+     * Combines this trigger with another trigger using logical OR.
+     *
+     * @param trigger The other trigger to combine with.
+     * @return A new trigger that is active when either trigger is active.
+     */
     public Trigger or(Trigger trigger) {
         return new Trigger(() -> get() || trigger.get());
     }
 
+    /**
+     * Negates this trigger, making it active when it is inactive and vice versa.
+     *
+     * @return A new trigger that is active when this trigger is inactive.
+     */
     public Trigger negate() {
         return new Trigger(() -> !get());
     }
