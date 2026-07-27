@@ -118,4 +118,16 @@ public class GamepadEx {
     public void rumble(double leftMotorPower, double rightMotorPower, int duration) {
         gamepad.rumble(leftMotorPower, rightMotorPower, duration);
     }
+
+    /**
+     * Sets the gamepad's LED color.
+     *
+     * @param red the red component of the color, from 0.0 - 1.0
+     * @param green the green component of the color, from 0.0 - 1.0
+     * @param blue the blue component of the color, from 0.0 - 1.0
+     * @param duration the duration of the LED effect in milliseconds
+     */
+    public void setLEDColor(double red, double green, double blue, int duration) {
+        gamepad.setLedColor(red, green, blue, duration);
+    }
 }

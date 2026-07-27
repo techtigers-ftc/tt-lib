@@ -59,24 +59,11 @@ public class Trigger {
     }
 
     /**
-     * Schedules a command while the trigger is held and cancels it when released.
+     * Schedules a command while the trigger is held.
      * If the command finishes while held, it will be scheduled again on the next loop.
      */
     public Trigger whileHeld(final Command command) {
-        bindings.add(new Runnable() {
-            private boolean wasActive = get();
-
-            @Override
-            public void run() {
-                boolean isActive = get();
-                if (isActive) {
-                    CommandScheduler.getInstance().schedule(command);
-                } else if (wasActive) {
-                    CommandScheduler.getInstance().cancel(command);
-                }
-                wasActive = isActive;
-            }
-        });
+        bindings.add(() -> CommandScheduler.getInstance().schedule(command));
         return this;
     }
 
