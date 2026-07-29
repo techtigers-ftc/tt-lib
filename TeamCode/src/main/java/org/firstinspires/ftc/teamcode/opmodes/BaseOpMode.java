@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.commands.CommandScheduler;
+import org.firstinspires.ftc.teamcode.gamepad.GamepadEx;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SubsystemController;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
@@ -13,9 +14,13 @@ import org.firstinspires.ftc.teamcode.utils.RobotState;
  */
 public abstract class BaseOpMode extends LinearOpMode {
     protected RobotState robotState;
+    protected GamepadEx driverGamepad;
+    protected GamepadEx manipulatorGamepad;
     @Override
     public void runOpMode() throws InterruptedException {
         robotState = new RobotState(isBlue());
+        driverGamepad = new GamepadEx(gamepad1);
+        manipulatorGamepad = new GamepadEx(gamepad2);
 
         initialize();
         while (opModeInInit()) {

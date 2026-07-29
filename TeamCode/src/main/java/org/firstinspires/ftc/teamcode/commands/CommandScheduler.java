@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import org.firstinspires.ftc.teamcode.gamepad.Trigger;
+
 import java.util.ArrayList;
 
 /**
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 public class CommandScheduler {
     private static CommandScheduler instance;
     private final ArrayList<Command> commands = new ArrayList<>();
+    private final ArrayList<Trigger> triggers = new ArrayList<>();
 
     private CommandScheduler() {
     }
@@ -37,9 +40,28 @@ public class CommandScheduler {
     }
 
     /**
+     * Returns whether a command is currently scheduled.
+     */
+    public boolean isScheduled(Command command) {
+        return commands.contains(command);
+    }
+
+    /**
+     * Registers a trigger so its bindings are evaluated once per scheduler loop.
+     * Trigger constructors call this automatically.
+     */
+    public void registerTrigger(Trigger trigger) {
+        triggers.add(trigger);
+    }
+
+    /**
      * Runs scheduled commands and ends commands that have finished.
      */
     public void update() {
+        for (Trigger trigger : new ArrayList<>(triggers)) {
+            trigger.update();
+        }
+
         for (int i = 0; i < commands.size(); i++) {
             Command command = commands.get(i);
             if (command.isFinished()) {
