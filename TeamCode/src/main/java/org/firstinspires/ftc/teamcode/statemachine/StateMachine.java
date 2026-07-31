@@ -42,6 +42,8 @@ public class StateMachine<T> {
         if (transitionMap.containsKey(state.getName())) {
             throw new IllegalArgumentException("State: " + state.getName() + " already exists");
         }
+
+        state.configureCommands();
         stateList.add(state);
         transitionMap.put(state.getName(), new ArrayList<>());
 

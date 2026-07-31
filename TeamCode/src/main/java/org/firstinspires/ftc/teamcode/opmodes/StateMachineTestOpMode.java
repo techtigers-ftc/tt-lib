@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.AutoSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.GoBodometrySubsystem;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.enums.AutoStateCondition;
 import org.jetbrains.annotations.TestOnly;
 
@@ -28,11 +29,8 @@ public class StateMachineTestOpMode extends BaseOpMode{
         drive = new DriveSubsystem(hardwareMap);
         odometry = new GoBodometrySubsystem(hardwareMap);
         stateMachine = new StateMachine<AutoStateCondition>();
-        auto = new AutoSubsystem(stateMachine, robotState);
 
         GamepadEx gamepad = new GamepadEx(gamepad1);
-
-        registerSubsystems(drive, odometry, auto);
 
         GamepadWaitState_A gamepadWaitStateA = new GamepadWaitState_A(
                 "GamepadWaitState_A", 99999, gamepad);
@@ -40,10 +38,18 @@ public class StateMachineTestOpMode extends BaseOpMode{
         GamepadWaitState_B gamepadWaitStateB = new GamepadWaitState_B(
                 "GamepadWaitState_B", 99999, gamepad);
 
-        stateMachine.addState(gamepadWaitStateA)
+        stateMachine
+                .addState(gamepadWaitStateA)
                 .addState(gamepadWaitStateB)
+
+                .addTransitions(gamepadWaitStateA, gamepadWaitStateB, AutoStateCondition.DRIVE_END)
+
                 .setCurrentState(gamepadWaitStateA);
 
+        auto = new AutoSubsystem(stateMachine, robotState);
+        registerSubsystems(drive, odometry, auto);
+
+        TTLogger.setLoggingLevel(TTLogger.DEBUG);
     }
 
     @Override

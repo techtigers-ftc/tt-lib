@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.statemachine;
 
+import org.firstinspires.ftc.teamcode.commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.commands.WaitCommand;
 import org.firstinspires.ftc.teamcode.gamepad.GamepadEx;
 import org.firstinspires.ftc.teamcode.gamepad.GamepadKeys;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.enums.AutoStateCondition;
 
 public class GamepadWaitState_A extends SequentialCommandGroupState<AutoStateCondition>{
@@ -22,6 +24,7 @@ public class GamepadWaitState_A extends SequentialCommandGroupState<AutoStateCon
     @Override
     public void configureCommands() {
         addCommands(
+                new InstantCommand(() -> TTLogger.dd(tag, "Ran Commands For GamepadWaitState_A")),
                 new WaitCommand(100)
         );
     }
