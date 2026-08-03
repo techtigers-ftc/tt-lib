@@ -19,18 +19,10 @@ public class Constants {
 
     public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
-    public static MecanumConstants driveConstants = new MecanumConstants()
-            .maxPower(1)
-            .rightFrontMotorName("right_front")
-            .rightRearMotorName("right_rear")
-            .leftRearMotorName("left_rear")
-            .leftFrontMotorName("left_front")
-            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
-            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
-            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
+    public static DriveConstants driveConstants = new DriveConstants()
+            .maxPower(1);
 
     public static Follower createFollower(HardwareMap hardwareMap, DriveSubsystem drive, RobotState robotState) {
-        return new Follower(followerConstants, new RobotStateLocalizer(robotState), new Mecanum(hardwareMap, driveConstants, drive, robotState));
+        return new Follower(followerConstants, new RobotStateLocalizer(robotState), new Mecanum(driveConstants, drive, robotState));
     }
 }

@@ -29,7 +29,7 @@ import java.util.List;
 public class Mecanum extends Drivetrain {
     private final RobotState robotState;
     private final DriveSubsystem drive;
-    public MecanumConstants constants;
+    public DriveConstants driveConstants;
     private boolean useBrakeModeInTeleOp;
     private double staticFrictionCoefficient;
 
@@ -38,21 +38,20 @@ public class Mecanum extends Drivetrain {
      * the wheel drive powers necessary to move in the intended direction, given the true movement
      * vector for the front left mecanum wheel.
      *
-     * @param hardwareMap      this is the HardwareMap object that contains the motors and other hardware
-     * @param mecanumConstants this is the MecanumConstants object that contains the names of the motors and directions etc.
+     * @param driveConstants this is the DriveConstants object that contains the names of the motors and directions etc.
      */
-    public Mecanum(HardwareMap hardwareMap, MecanumConstants mecanumConstants, DriveSubsystem drive, RobotState robotState) {
-        constants = mecanumConstants;
+    public Mecanum(DriveConstants driveConstants, DriveSubsystem drive, RobotState robotState) {
+        driveConstants = driveConstants;
         this.robotState = robotState;
         this.drive = drive;
 
-        this.maxPowerScaling = mecanumConstants.maxPower;
-        this.useBrakeModeInTeleOp = mecanumConstants.useBrakeModeInTeleOp;
+        this.maxPowerScaling = driveConstants.maxPower;
+        this.useBrakeModeInTeleOp = driveConstants.useBrakeModeInTeleOp;
 
         setMotorsToFloat();
         breakFollowing();
 
-        Vector copiedFrontLeftVector = mecanumConstants.frontLeftVector.normalize();
+        Vector copiedFrontLeftVector = driveConstants.frontLeftVector.normalize();
         vectors = new Vector[]{
                 new Vector(copiedFrontLeftVector.getMagnitude(), copiedFrontLeftVector.getTheta()),
                 new Vector(copiedFrontLeftVector.getMagnitude(), 2 * Math.PI - copiedFrontLeftVector.getTheta()),
@@ -62,10 +61,10 @@ public class Mecanum extends Drivetrain {
 
     @Override
     public void updateConstants() {
-        this.useBrakeModeInTeleOp = constants.useBrakeModeInTeleOp;
-        this.voltageCompensation = constants.useVoltageCompensation;
-        this.nominalVoltage = constants.nominalVoltage;
-        this.staticFrictionCoefficient = constants.staticFrictionCoefficient;
+        this.useBrakeModeInTeleOp = driveConstants.useBrakeModeInTeleOp;
+        this.voltageCompensation = driveConstants.useVoltageCompensation;
+        this.nominalVoltage = driveConstants.nominalVoltage;
+        this.staticFrictionCoefficient = driveConstants.staticFrictionCoefficient;
     }
 
     /**
@@ -218,18 +217,18 @@ public class Mecanum extends Drivetrain {
 
     @Override
     public double xVelocity() {
-        return constants.xVelocity;
+        return driveConstants.xVelocity;
     }
 
     @Override
     public double yVelocity() {
-        return constants.yVelocity;
+        return driveConstants.yVelocity;
     }
 
     @Override
-    public void setXVelocity(double xMovement) { constants.setXVelocity(xMovement); }
+    public void setXVelocity(double xMovement) { driveConstants.setXVelocity(xMovement); }
     @Override
-    public void setYVelocity(double yMovement) { constants.setYVelocity(yMovement); }
+    public void setYVelocity(double yMovement) { driveConstants.setYVelocity(yMovement); }
 
     public double getStaticFrictionCoefficient() {
         return staticFrictionCoefficient;
