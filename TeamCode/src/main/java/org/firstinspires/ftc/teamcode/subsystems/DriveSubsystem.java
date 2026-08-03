@@ -20,6 +20,10 @@ public class DriveSubsystem extends Subsystem {
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
+    private static final double TICKS_PER_REVOLUTION = 28.0;
+    private static final double RPM = 454.0;
+    private static final double GEAR_RATIO = RPM / 6000.0;
+    private static final double TICKS_PER_WHEEL_REVOLUTION = TICKS_PER_REVOLUTION / GEAR_RATIO;
 
     /**
      * Constructs a new DriveSubsystem.
@@ -33,10 +37,10 @@ public class DriveSubsystem extends Subsystem {
         backLeft = new CachedMotor(hardwareMap, "left_back");
         backRight = new CachedMotor(hardwareMap, "right_back");
 
-        frontRightSlideCurrentAverage = new SlidingAverageCalculator(10);
-        frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
-        backRightSlideCurrentAverage = new SlidingAverageCalculator(10);
-        backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
+        frontRightSlideCurrentAverage = new SlidingAverageCalculator(3);
+        frontLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
+        backRightSlideCurrentAverage = new SlidingAverageCalculator(3);
+        backLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
 
         CachedMotor[] motors = {frontLeft, backLeft, frontRight, backRight};
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -145,6 +149,15 @@ public class DriveSubsystem extends Subsystem {
         backRight.setPower(br * currentMultiplier);
     }
 
+    public double[] getRRM() {
+        return new double[]{
+                frontLeft.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
+                frontRight.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
+                backLeft.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
+                backRight.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0
+        };
+    }
+
     @Override
     public void periodic() {
         frontLeftSlideCurrentAverage.add(frontLeft.getCurrent());
@@ -159,7 +172,5 @@ public class DriveSubsystem extends Subsystem {
         } else {
             currentMultiplier = 1.0;
         }
-
-        TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500/6000 * 60);
     }
 }
