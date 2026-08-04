@@ -20,8 +20,8 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
     private double distanceTraveled = 0;
     private boolean manualOverride = false;
     private boolean automaticRPMTesting = false;
-    private boolean automaticVelocityTesting = false;
     private boolean automaticFullFieldTesting = false;
+    private boolean zeroToSixtyReached = false;
     private double[] averageWheelRPM = new double[4];
     private double[] rpmSum = new double[4];
     private double elapsed = 0;
@@ -30,6 +30,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
     private int count = 0;
     private DriveSubsystem drive;
     private GoBodometrySubsystem odometry;
+    private double accelerationTime = 0;
     JoinedTelemetry joinedTelemetry = new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), telemetry);
     private static double VELOCITY_THRESHOLD = 60; // in/s
 
@@ -46,13 +47,12 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
         boolean driving = gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x != 0;
         manualOverride = gamepad1.dpadLeftWasPressed() != manualOverride;
         automaticRPMTesting = gamepad1.dpadRightWasPressed() != automaticRPMTesting;
-        automaticVelocityTesting = gamepad1.dpadUpWasPressed() != automaticVelocityTesting;
         automaticFullFieldTesting = gamepad1.dpadDownWasPressed() != automaticFullFieldTesting;
 
         double velocity = robotState.getRobotVelocity().getPoint().magnitude();
         double currentDraw = robotState.getDriveCurrent();
 
-        if (!driving && !manualOverride && !automaticRPMTesting && !automaticVelocityTesting && !automaticFullFieldTesting) {
+        if (!driving && !manualOverride && !automaticRPMTesting && !automaticFullFieldTesting) {
             // reset count and total if you stop driving
             totalCurrentDraw = 0;
             count = 0;
@@ -60,6 +60,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
             timer.reset();
             legStartPose = robotState.getRobotPose().getPoint();
             drive.driveRobotCentric(0,0,0);
+            zeroToSixtyReached = false;
         } else {
             count++;
             distanceTraveled = robotState.getRobotPose().getPoint().dist(legStartPose);
@@ -73,27 +74,25 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
         if (manualOverride || driving) {
             drive.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             automaticRPMTesting = false;
-            automaticVelocityTesting = false;
             automaticFullFieldTesting = false;
+            distanceTraveled = 0;
         } else if (automaticRPMTesting) {
             drive.setMotorPowers(1, 1, 1, 1);
             if (timer.seconds() > 10) {
                 automaticRPMTesting = false;
                 drive.setMotorPowers(0, 0, 0, 0);
             }
-        } else if (automaticVelocityTesting) {
-            drive.driveRobotCentric(1, 0, 0);
-            if (velocity > VELOCITY_THRESHOLD) {
-                automaticVelocityTesting = false;
-                drive.driveRobotCentric(0, 0, 0);
-            }
         } else if (automaticFullFieldTesting) {
-            distanceTraveled = 0;
             drive.driveRobotCentric(1, 0, 0);
 
             if (distanceTraveled > 144) {
                 automaticFullFieldTesting = false;
                 drive.driveRobotCentric(0, 0, 0);
+            }
+
+            if (velocity > VELOCITY_THRESHOLD && !zeroToSixtyReached) {
+                accelerationTime = timer.seconds();
+                zeroToSixtyReached = true;
             }
         }
 
@@ -106,10 +105,10 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
 
         joinedTelemetry.addData("Manual override (DPAD LEFT)", manualOverride);
         joinedTelemetry.addData("Automatic RPM Testing (DPAD RIGHT)", automaticRPMTesting);
-        joinedTelemetry.addData("Automatic Velocity Testing (DPAD UP)", automaticVelocityTesting);
         joinedTelemetry.addData("Automatic Full Field Testing (DPAD DOWN)", automaticFullFieldTesting);
         joinedTelemetry.addLine();
         joinedTelemetry.addData("Time Elapsed", elapsed);
+        joinedTelemetry.addData("Acceleration Time", accelerationTime);
         joinedTelemetry.addLine();
         joinedTelemetry.addData("Current Velocity", velocity);
         joinedTelemetry.addData("Max Velocity", maxVelocity);

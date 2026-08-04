@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
 @Configurable
 public class DriveSubsystem extends Subsystem {
-    public static double MAX_CURRENT_DRAW = 10;
+    public static double MAX_CURRENT_DRAW = 100;
     private double currentMultiplier = 1;
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
@@ -21,7 +21,7 @@ public class DriveSubsystem extends Subsystem {
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
     private static final double TICKS_PER_REVOLUTION = 28.0;
-    private static final double RPM = 454.0;
+    private static final double RPM = 444.44444444444444444444444;
     private static final double GEAR_RATIO = RPM / 6000.0;
     private static final double TICKS_PER_WHEEL_REVOLUTION = TICKS_PER_REVOLUTION / GEAR_RATIO;
 
