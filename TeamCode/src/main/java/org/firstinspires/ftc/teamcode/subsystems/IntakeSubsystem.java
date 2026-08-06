@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
  * A subsystem to control the Intake functions
@@ -18,6 +20,7 @@ public class IntakeSubsystem extends Subsystem {
     public IntakeSubsystem(HardwareMap hardwareMap) {
         super("Intake Subsystem");
         intakeMotor = new CachedMotor(hardwareMap, "intake_motor");
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     /**
@@ -28,8 +31,16 @@ public class IntakeSubsystem extends Subsystem {
         intakeMotor.setPower(power);
     }
 
+    /**
+     * A method to stop the intake
+     */
+    public void stop() {
+        intakeMotor.setPower(0);
+    }
+
     @Override
     public void periodic() {
         robotState.setIntakeCurrent(intakeMotor.getCurrent());
+        TTLogger.dd(tag, "Intake Power: %f", intakeMotor.getPower());
     }
 }
