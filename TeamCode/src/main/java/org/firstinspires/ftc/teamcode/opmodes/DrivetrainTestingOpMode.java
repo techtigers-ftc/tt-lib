@@ -18,10 +18,12 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
     private double totalCurrentDraw = 0;
     private double averageCurrentDraw = 0;
     private double distanceTraveled = 0;
+    private double sixFeetTime;
     private boolean manualOverride = false;
     private boolean automaticRPMTesting = false;
     private boolean automaticFullFieldTesting = false;
     private boolean zeroToSixtyReached = false;
+    private boolean sixFeetReached = false;
     private double[] averageWheelRPM = new double[4];
     private double[] rpmSum = new double[4];
     private double elapsed = 0;
@@ -61,6 +63,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
             legStartPose = robotState.getRobotPose().getPoint();
             drive.driveRobotCentric(0,0,0);
             zeroToSixtyReached = false;
+            sixFeetReached = false;
         } else {
             count++;
             distanceTraveled = robotState.getRobotPose().getPoint().dist(legStartPose);
@@ -94,6 +97,11 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
                 accelerationTime = timer.seconds();
                 zeroToSixtyReached = true;
             }
+
+            if (distanceTraveled > 72 && !sixFeetReached) {
+                sixFeetTime = timer.seconds();
+                sixFeetReached = true;
+            }
         }
 
         if (velocity > maxVelocity) {
@@ -109,6 +117,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
         joinedTelemetry.addLine();
         joinedTelemetry.addData("Time Elapsed", elapsed);
         joinedTelemetry.addData("Acceleration Time", accelerationTime);
+        joinedTelemetry.addData("Six Feet Time", sixFeetTime);
         joinedTelemetry.addLine();
         joinedTelemetry.addData("Current Velocity", velocity);
         joinedTelemetry.addData("Max Velocity", maxVelocity);
