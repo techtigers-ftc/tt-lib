@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.robotcore.internal.ui.FilledPolygonDrawable;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 import org.firstinspires.ftc.teamcode.utils.Waypoint;
 
@@ -28,7 +29,6 @@ public class GoBodometrySubsystem extends Subsystem {
     public GoBodometrySubsystem(HardwareMap hardwareMap,
                                 Waypoint startPose) {
         super("Gobodometry Subsystem");
-        this.robotState = robotState;
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -74,7 +74,6 @@ public class GoBodometrySubsystem extends Subsystem {
 
         this.startPose = new Pose2D(DistanceUnit.INCH, startPose.getX(),
                 startPose.getY(), AngleUnit.RADIANS, startPose.getHeading());
-        robotState.setRobotPose(startPose);
     }
 
     @Override

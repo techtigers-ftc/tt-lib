@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -8,16 +8,22 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
-
-public class DriveSubsystem extends Subsystem{
+@Configurable
+public class DriveSubsystem extends Subsystem {
+    public static double MAX_CURRENT_DRAW = 100;
+    private double currentMultiplier = 1;
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
     private final SlidingAverageCalculator frontLeftSlideCurrentAverage;
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
-    private BNO055IMU imu;
+    private static final double TICKS_PER_REVOLUTION = 28.0;
+    private static final double RPM = 392;
+    private static final double GEAR_RATIO = RPM / 6000.0;
+    private static final double TICKS_PER_WHEEL_REVOLUTION = TICKS_PER_REVOLUTION / GEAR_RATIO;
 
     /**
      * Constructs a new DriveSubsystem.
@@ -30,12 +36,11 @@ public class DriveSubsystem extends Subsystem{
         frontRight = new CachedMotor(hardwareMap, "right_front");
         backLeft = new CachedMotor(hardwareMap, "left_back");
         backRight = new CachedMotor(hardwareMap, "right_back");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
 
-        frontRightSlideCurrentAverage = new SlidingAverageCalculator(10);
-        frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
-        backRightSlideCurrentAverage = new SlidingAverageCalculator(10);
-        backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
+        frontRightSlideCurrentAverage = new SlidingAverageCalculator(3);
+        frontLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
+        backRightSlideCurrentAverage = new SlidingAverageCalculator(3);
+        backLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
 
         CachedMotor[] motors = {frontLeft, backLeft, frontRight, backRight};
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -137,11 +142,20 @@ public class DriveSubsystem extends Subsystem{
      * @param bl The back left motor power
      * @param br The back right motor power
      */
-    private void setMotorPowers(double fl, double bl, double fr, double br) {
-        frontLeft.setPower(fl);
-        frontRight.setPower(fr);
-        backLeft.setPower(bl);
-        backRight.setPower(br);
+    public void setMotorPowers(double fl, double bl, double fr, double br) {
+        frontLeft.setPower(fl * currentMultiplier);
+        frontRight.setPower(fr * currentMultiplier);
+        backLeft.setPower(bl * currentMultiplier);
+        backRight.setPower(br * currentMultiplier);
+    }
+
+    public double[] getRRM() {
+        return new double[]{
+                frontLeft.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
+                frontRight.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
+                backLeft.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
+                backRight.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0
+        };
     }
 
     @Override
@@ -153,6 +167,10 @@ public class DriveSubsystem extends Subsystem{
 
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
-        robotState.setRobotAcceleration(imu.getLinearAcceleration());
+        if (robotState.getDriveCurrent() > MAX_CURRENT_DRAW) {
+            currentMultiplier = currentMultiplier * 0.95;
+        } else {
+            currentMultiplier = 1.0;
+        }
     }
 }
