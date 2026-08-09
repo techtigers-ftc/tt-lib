@@ -23,7 +23,7 @@ public class DriveConstants {
     public  double maxPower = 1;
     public  double motorCachingThreshold = 0.01;
     public  boolean useBrakeModeInTeleOp = false;
-    public  boolean useVoltageCompensation = false;
+    public  boolean useVoltageCompensation = true;
     public  double nominalVoltage = 12.0;
     public  double staticFrictionCoefficient = 0.1;
 

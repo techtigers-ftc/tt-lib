@@ -8,6 +8,7 @@ import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.statemachine.ParallelCommandGroupState;
+import org.firstinspires.ftc.teamcode.subsystems.AutoSubsystem;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 import org.firstinspires.ftc.teamcode.utils.enums.AutoStateCondition;
 
@@ -36,8 +37,10 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
         super(name, timeout);
         this.robotState = robotState;
         autoDriveCommand = new AutoDriveCommand(follower, robotState);
-        tolerance = -1;
-        angleTolerance = -1;
+        tolerance = AutoSubsystem.MEDIUM_TOLERANCE;
+        setTolerance(tolerance);
+        angleTolerance = AutoSubsystem.MEDIUM_ANGLE_TOLERANCE;
+        setAngleTolerance(angleTolerance);
         hasRecovered = false;
         recoveryTimer = new ElapsedTime();
     }

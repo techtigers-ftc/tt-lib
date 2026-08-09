@@ -8,9 +8,11 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.commands.CommandBase;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
  * A class for autonomous drive commands that use PedroPathing.
@@ -74,6 +76,8 @@ public class AutoDriveCommand extends CommandBase {
         // Sets the robot's final pose to the final waypoint found
         robotState.setRobotFinalPose(target);
         follower.followPath(pathChain, true);
+
+        TTLogger.dd(tag, "follower intiailizeing");
     }
 
     @Override
@@ -87,11 +91,14 @@ public class AutoDriveCommand extends CommandBase {
 //            follower.followPath(pathChain, true);
 //            previousPathChain = pathChain;
 //        }
+
         follower.update();
+        TTLogger.dd(tag, "follwering updating, roboto pose: %s", robotState.getRobotPose().toString());
     }
 
     @Override
     public void end(boolean interrupted) {
+        TTLogger.dd(tag, "follower done followuing");
         // Holds the robots current position and heading, and internally stops any concurrent following
         follower.holdPoint(new BezierPoint(robotState.getRobotPose().getX(),
                 robotState.getRobotPose().getY()),
@@ -100,7 +107,8 @@ public class AutoDriveCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return follower.isBusy();
+        TTLogger.dd(tag, "Folllower busy: %b", follower.isBusy());
+        return !follower.isBusy();
     }
 
     /**

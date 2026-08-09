@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.opmodes;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.gamepad.GamepadEx;
-import org.firstinspires.ftc.teamcode.statemachine.GamepadWaitState_A;
-import org.firstinspires.ftc.teamcode.statemachine.GamepadWaitState_B;
+import org.firstinspires.ftc.teamcode.states.GamepadWaitState_A;
+import org.firstinspires.ftc.teamcode.states.GamepadWaitState_B;
 import org.firstinspires.ftc.teamcode.statemachine.StateMachine;
 import org.firstinspires.ftc.teamcode.subsystems.AutoSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.DriveSubsystem;
@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.subsystems.GoBodometrySubsystem;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.enums.AutoStateCondition;
-import org.jetbrains.annotations.TestOnly;
 
 @TeleOp
 public class StateMachineTestOpMode extends BaseOpMode{

@@ -39,10 +39,10 @@ public class DriveSubsystem extends Subsystem {
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
 
         motors = new CachedMotor[]{frontLeft, backLeft, frontRight, backRight};
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
 
         for (CachedMotor motor : motors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

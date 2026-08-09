@@ -41,7 +41,7 @@ public class Mecanum extends Drivetrain {
      * @param driveConstants this is the DriveConstants object that contains the names of the motors and directions etc.
      */
     public Mecanum(DriveConstants driveConstants, DriveSubsystem drive, RobotState robotState) {
-        driveConstants = driveConstants;
+        this.driveConstants = driveConstants;
         this.robotState = robotState;
         this.drive = drive;
 
@@ -197,9 +197,7 @@ public class Mecanum extends Drivetrain {
 
     @Override
     public void startTeleopDrive() {
-        if (useBrakeModeInTeleOp) {
             setMotorsToBrake();
-        }
     }
 
     @Override
