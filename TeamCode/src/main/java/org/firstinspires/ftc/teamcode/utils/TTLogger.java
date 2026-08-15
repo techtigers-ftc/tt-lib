@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import java.util.Arrays;
@@ -20,6 +21,8 @@ public class TTLogger {
     // default level
     private static int currentLevel = DISABLED;
     private static final Set<String> exceptionTags = new HashSet<>();
+    private static final ElapsedTime timer = new ElapsedTime();
+    private static double debounce = -1;
 
     /**
      * Sets the logging level for the logger should use the static constants defined in this class.
@@ -33,6 +36,16 @@ public class TTLogger {
      */
     public static void setLoggingLevel(int level) {
         currentLevel = level;
+    }
+
+    /**
+     * Sets the debounce time for the logger.
+     *
+     * @param debounceTime the time in milliseconds to debounce
+     */
+    public static void setDebounce(double debounceTime) {
+        debounce = debounceTime;
+        timer.reset();
     }
 
     /**
@@ -50,8 +63,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void vv(String tag, String message, Object... args) {
-        if (currentLevel <= VERBOSE || exceptionTags.contains(tag)) {
+        if ((currentLevel <= VERBOSE || exceptionTags.contains(tag)) && timer.milliseconds() > debounce) {
             RobotLog.vv(tag, message, args);
+            timer.reset();
         }
     }
 
@@ -62,8 +76,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void dd(String tag, String message, Object... args) {
-        if (currentLevel <= DEBUG || exceptionTags.contains(tag)) {
+        if ((currentLevel <= DEBUG || exceptionTags.contains(tag)) && timer.milliseconds() > debounce) {
             RobotLog.dd(tag, message, args);
+            timer.reset();
         }
     }
 
@@ -74,8 +89,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void ii(String tag, String message, Object... args) {
-        if (currentLevel <= INFO || exceptionTags.contains(tag)) {
+        if (currentLevel <= INFO || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.ii(tag, message, args);
+            timer.reset();
         }
     }
 
@@ -86,8 +102,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void ww(String tag, String message, Object... args) {
-        if (currentLevel <= WARN || exceptionTags.contains(tag)) {
+        if (currentLevel <= WARN || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.ww(tag, message, args);
+            timer.reset();
         }
     }
 
@@ -98,8 +115,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void ee(String tag, String message, Object... args) {
-        if (currentLevel <= ERROR || exceptionTags.contains(tag)) {
+        if (currentLevel <= ERROR || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.ee(tag, message, args);
+            timer.reset();
         }
     }
 
@@ -110,8 +128,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void vv(String tag, String message) {
-        if (currentLevel <= VERBOSE || exceptionTags.contains(tag)) {
+        if (currentLevel <= VERBOSE || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.vv(tag, message);
+            timer.reset();
         }
     }
 
@@ -122,8 +141,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void dd(String tag, String message) {
-        if (currentLevel <= DEBUG || exceptionTags.contains(tag)) {
+        if (currentLevel <= DEBUG || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.dd(tag, message);
+            timer.reset();
         }
     }
 
@@ -134,8 +154,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void ii(String tag, String message) {
-        if (currentLevel <= INFO || exceptionTags.contains(tag)) {
+        if (currentLevel <= INFO || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.ii(tag, message);
+            timer.reset();
         }
     }
 
@@ -146,8 +167,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void ww(String tag, String message) {
-        if (currentLevel <= WARN || exceptionTags.contains(tag)) {
+        if (currentLevel <= WARN || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.ww(tag, message);
+            timer.reset();
         }
     }
 
@@ -158,8 +180,9 @@ public class TTLogger {
      * @param message the message to log
      */
     public static void ee(String tag, String message) {
-        if (currentLevel <= ERROR || exceptionTags.contains(tag)) {
+        if (currentLevel <= ERROR || exceptionTags.contains(tag) && timer.milliseconds() > debounce) {
             RobotLog.ee(tag, message);
+            timer.reset();
         }
     }
 
