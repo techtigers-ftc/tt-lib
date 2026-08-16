@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynch;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchDevice;
 import com.qualcomm.robotcore.hardware.configuration.annotations.DeviceProperties;
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * Driver for the Adafruit NeoPixel driver. This driver can be used to control individually
@@ -225,18 +226,23 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
      * changed since the last update.
      */
     public void show() {
+//        ElapsedTime timer = new ElapsedTime();
+//        timer.reset();
         int startIndex = -1;
         int length = 0;
         boolean showLeds = false;
         for (int index = 0; index < currentLedBuffer.length; index++) {
             boolean hasChanged = !currentLedBuffer[index].equals(lastLedBuffer[index]);
-            if (hasChanged) {
+            boolean isOff = currentLedBuffer[index].equals(Color.BLACK);
+//            if (hasChanged) {
+            if (!isOff /*&& timer.milliseconds() > 100*/) {
                 if (startIndex == -1) {
                     startIndex = index;
                 }
                 length++;
                 lastLedBuffer[index] = currentLedBuffer[index];
                 showLeds = true;
+//                timer.reset();
             }
 
             // 1. Buffer has not changed and tracking a sequence
@@ -255,7 +261,9 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         }
 
         if (showLeds) {
-            writeDeviceShow();
+//            for (int i = 0; i < 1; i++) {
+                writeDeviceShow();
+//            }
         }
     }
 }
