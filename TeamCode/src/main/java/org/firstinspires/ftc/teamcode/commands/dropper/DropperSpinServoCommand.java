@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.subsystems.DropperSubsystem;
 /**
  * A command to spin the dropper servos at a set power
  */
-public class DropperSpinServoAction extends CommandBase {
+public class DropperSpinServoCommand extends CommandBase {
     private DropperSubsystem dropper;
     private double power;
 
@@ -16,7 +16,7 @@ public class DropperSpinServoAction extends CommandBase {
      * @param dropper The dropper subsystem
      * @param power The power for the dropper servos to run at
      */
-    public DropperSpinServoAction(DropperSubsystem dropper, double power) {
+    public DropperSpinServoCommand(DropperSubsystem dropper, double power) {
         this.dropper = dropper;
         this.power = power;
     }
