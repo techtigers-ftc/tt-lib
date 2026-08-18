@@ -1,0 +1,87 @@
+package org.firstinspires.ftc.teamcode.subsystems;
+
+import com.pedropathing.control.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.utils.CachedCRServo;
+import org.firstinspires.ftc.teamcode.utils.CachedMotor;
+import org.firstinspires.ftc.teamcode.utils.SlideController;
+
+public class DropperSubsystem extends Subsystem {
+    private CachedMotor leftDropperMotor;
+    private CachedMotor rightDropperMotor;
+    private Servo leftPitchServo;
+    private Servo rightPitchServo;
+    private CachedCRServo rightDropperServo;
+    private CachedCRServo leftDropperServo;
+    private static double DROPPER_P = 0.01;
+    private static double DROPPER_D = 0.0;
+    private final SlideController slideController;
+    private static final double TICKS_PER_INCH = 145.1/112.0;
+    private final CachedMotor encoderMotor;
+    private static double SLIDES_MAX_INCHES;
+
+    public DropperSubsystem(HardwareMap hardwareMap) {
+        super("Dropper Subsystem");
+
+        leftDropperMotor = new CachedMotor(hardwareMap, "left_slide");
+        rightDropperMotor = new CachedMotor(hardwareMap, "right_slide");
+        leftPitchServo = hardwareMap.get(Servo.class, "left_pitch");
+        rightPitchServo = hardwareMap.get(Servo.class, "right_pitch");
+        leftDropperServo = new CachedCRServo(hardwareMap, "left_dropper");
+        rightDropperServo = new CachedCRServo(hardwareMap, "right_dropper");
+
+        encoderMotor = rightDropperMotor;
+
+        leftDropperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightDropperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        slideController = new SlideController(TICKS_PER_INCH, new PIDFCoefficients(DROPPER_P, 0, DROPPER_D, 0));
+    }
+
+    public void setDropperServoPowers(double power) {
+        leftDropperServo.setPower(power);
+        rightDropperServo.setPower(power);
+    }
+
+    public void stopDropperServos() {
+        leftDropperServo.stop();
+        rightDropperServo.stop();
+    }
+
+    public void setDropperPosition(double position) {
+        rightPitchServo.setPosition(position);
+        leftPitchServo.setPosition(position);
+    }
+
+    public double getCurrentSlidePositionInches() {
+        return getCurrentSlidePositionTicks() * 1 / TICKS_PER_INCH;
+    }
+
+    /**
+     * Moves the slides to a position
+     *
+     * @param targetPosition the target position in inches
+     */
+    public void moveSlides(double targetPosition) {
+        slideController.moveToInches(Range.clip(targetPosition, 0, SLIDES_MAX_INCHES));
+    }
+
+    public double getDropperPitchPosition() {
+        return rightPitchServo.getPosition();
+    }
+
+    private double getCurrentSlidePositionTicks() {
+        return encoderMotor.getPosition();
+    }
+
+    @Override
+    public void periodic() {
+        double power = slideController.calculateMotorPowers(getCurrentSlidePositionTicks());
+        rightDropperMotor.setPower(power);
+        leftDropperMotor.setPower(power);
+    }
+}
