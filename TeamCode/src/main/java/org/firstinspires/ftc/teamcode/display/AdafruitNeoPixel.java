@@ -31,6 +31,8 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     protected Color[] currentLedBuffer;
     protected Color[] lastLedBuffer;
     protected Color[] emptyLedBuffer;
+    public double lowerBound;
+    public double higherBound;
     private int bytesPerLed;
 
     /**
@@ -43,6 +45,8 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         super(i2cDeviceSynch, deviceClientIsOwned);
         this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
         this.deviceClient.engage();
+        lowerBound = 0;
+        higherBound = 16;
 
         bytesPerLed = 3;
         currentLedBuffer = new Color[]{};
@@ -222,27 +226,36 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     }
 
     /**
+     * A method to increase the LED write bounds by 16
+     */
+    public void incrementBounds() {
+        if (higherBound > MAX_LEDS) {
+            lowerBound = 0;
+            higherBound = 16;
+        } else {
+            lowerBound += 16;
+            higherBound += 16;
+        }
+    }
+
+    /**
      * Shows the LEDs in the buffer on the actual LEDs. This will only do this with LEDs that have
      * changed since the last update.
      */
     public void show() {
-//        ElapsedTime timer = new ElapsedTime();
-//        timer.reset();
         int startIndex = -1;
         int length = 0;
         boolean showLeds = false;
         for (int index = 0; index < currentLedBuffer.length; index++) {
-            boolean hasChanged = !currentLedBuffer[index].equals(lastLedBuffer[index]);
-            boolean isOff = currentLedBuffer[index].equals(Color.BLACK);
-//            if (hasChanged) {
-            if (!isOff /*&& timer.milliseconds() > 100*/) {
+            boolean hasChanged = !currentLedBuffer[index].equals(lastLedBuffer[index]) || (index > lowerBound && index < higherBound);
+//            boolean isOff = currentLedBuffer[index].equals(Color.BLACK);
+            if (hasChanged) {
                 if (startIndex == -1) {
                     startIndex = index;
                 }
                 length++;
                 lastLedBuffer[index] = currentLedBuffer[index];
                 showLeds = true;
-//                timer.reset();
             }
 
             // 1. Buffer has not changed and tracking a sequence
@@ -261,9 +274,7 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         }
 
         if (showLeds) {
-//            for (int i = 0; i < 1; i++) {
-                writeDeviceShow();
-//            }
+            writeDeviceShow();
         }
     }
 }

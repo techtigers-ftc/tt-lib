@@ -82,5 +82,6 @@ public class VisualDisplay {
             }
         }
         visualDisplay.show();
+        visualDisplay.incrementBounds();
     }
 }
