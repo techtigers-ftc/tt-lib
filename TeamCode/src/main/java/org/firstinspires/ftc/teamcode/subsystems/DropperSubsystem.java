@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.control.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
@@ -11,8 +12,11 @@ import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlideController;
 
 public class DropperSubsystem extends Subsystem {
-    private CachedMotor leftDropperMotor;
-    private CachedMotor rightDropperMotor;
+    public static final double PITCH_INTAKE_POSITION = 0.4;
+    public static final double PITCH_DROP_POSITION = 0.8;
+    public static final double SLIDES_DROP_HEIGHT = 10.0;
+    private CachedMotor leftSlideMotor;
+    private CachedMotor righSlideMotor;
     private Servo leftPitchServo;
     private Servo rightPitchServo;
     private CachedCRServo rightDropperServo;
@@ -20,24 +24,28 @@ public class DropperSubsystem extends Subsystem {
     private static double DROPPER_P = 0.01;
     private static double DROPPER_D = 0.0;
     private final SlideController slideController;
-    private static final double TICKS_PER_INCH = 145.1/112.0;
+    private static final double TICKS_PER_INCH = 145.1/ (112.0 / 25.4);
     private final CachedMotor encoderMotor;
-    private static double SLIDES_MAX_INCHES;
+    private static double SLIDES_MAX_INCHES = 14.0;
 
     public DropperSubsystem(HardwareMap hardwareMap) {
         super("Dropper Subsystem");
 
-        leftDropperMotor = new CachedMotor(hardwareMap, "left_slide");
-        rightDropperMotor = new CachedMotor(hardwareMap, "right_slide");
-        leftPitchServo = hardwareMap.get(Servo.class, "left_pitch");
-        rightPitchServo = hardwareMap.get(Servo.class, "right_pitch");
-        leftDropperServo = new CachedCRServo(hardwareMap, "left_dropper");
-        rightDropperServo = new CachedCRServo(hardwareMap, "right_dropper");
+        leftSlideMotor = new CachedMotor(hardwareMap, "left_slide");
+        righSlideMotor = new CachedMotor(hardwareMap, "right_slide");
+//        leftPitchServo = hardwareMap.get(Servo.class, "left_pitch");
+//        rightPitchServo = hardwareMap.get(Servo.class, "right_pitch");
+//        leftDropperServo = new CachedCRServo(hardwareMap, "left_dropper");
+//        rightDropperServo = new CachedCRServo(hardwareMap, "right_dropper");
 
-        encoderMotor = rightDropperMotor;
 
-        leftDropperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightDropperMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        righSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        rightDropperMotor.setDirection();
+
+        encoderMotor = righSlideMotor;
 
         slideController = new SlideController(TICKS_PER_INCH, new PIDFCoefficients(DROPPER_P, 0, DROPPER_D, 0));
     }
@@ -58,7 +66,11 @@ public class DropperSubsystem extends Subsystem {
     }
 
     public double getCurrentSlidePositionInches() {
-        return getCurrentSlidePositionTicks() * 1 / TICKS_PER_INCH;
+        return getCurrentSlidePositionTicks() / TICKS_PER_INCH;
+    }
+
+    public double getSlideTargetPositionInches() {
+        return slideController.getTargetTicks() / TICKS_PER_INCH;
     }
 
     /**
@@ -66,8 +78,12 @@ public class DropperSubsystem extends Subsystem {
      *
      * @param targetPosition the target position in inches
      */
-    public void moveSlides(double targetPosition) {
+    public void moveSlidesAbsolute(double targetPosition) {
         slideController.moveToInches(Range.clip(targetPosition, 0, SLIDES_MAX_INCHES));
+    }
+
+    public void moveSlidesRelative(double delta) {
+        moveSlidesAbsolute(getCurrentSlidePositionInches() + delta);
     }
 
     public double getDropperPitchPosition() {
@@ -81,7 +97,7 @@ public class DropperSubsystem extends Subsystem {
     @Override
     public void periodic() {
         double power = slideController.calculateMotorPowers(getCurrentSlidePositionTicks());
-        rightDropperMotor.setPower(power);
-        leftDropperMotor.setPower(power);
+        righSlideMotor.setPower(power);
+        leftSlideMotor.setPower(power);
     }
 }

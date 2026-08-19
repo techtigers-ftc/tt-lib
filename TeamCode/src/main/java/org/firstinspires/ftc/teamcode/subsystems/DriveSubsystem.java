@@ -28,10 +28,10 @@ public class DriveSubsystem extends Subsystem {
      */
     public DriveSubsystem(HardwareMap hardwareMap) {
         super("Drive Subsystem");
-        frontLeft = new CachedMotor(hardwareMap, "left_front");
-        frontRight = new CachedMotor(hardwareMap, "right_front");
-        backLeft = new CachedMotor(hardwareMap, "left_back");
-        backRight = new CachedMotor(hardwareMap, "right_back");
+        frontLeft = new CachedMotor(hardwareMap, "front_left");
+        frontRight = new CachedMotor(hardwareMap, "front_right");
+        backLeft = new CachedMotor(hardwareMap, "back_left");
+        backRight = new CachedMotor(hardwareMap, "back_right");
 
         frontRightSlideCurrentAverage = new SlidingAverageCalculator(10);
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
