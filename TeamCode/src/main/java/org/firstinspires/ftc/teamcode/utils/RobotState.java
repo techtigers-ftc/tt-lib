@@ -19,6 +19,7 @@ public class RobotState extends GlobalState{
     private String currentAutoState;
     private String previousAutoState;
     private double autoRemainingTime;
+    private double intakeCurrent;
 
     /**
      * Creates a new RobotState with the specified alliance color.
@@ -31,6 +32,7 @@ public class RobotState extends GlobalState{
         robotVelocity = new Pose(0, 0, 0);
         driveCurrent = 0;
         voltage = 0;
+        intakeCurrent = 0;
     }
 
     /**
@@ -164,5 +166,21 @@ public class RobotState extends GlobalState{
      */
     public void setAutoRemainingTime(double autoRemainingTime) {
         this.autoRemainingTime = autoRemainingTime;
+    }
+
+    /**
+     * @return the current drawn by the intake
+     */
+    public double getIntakeCurrent() {
+        return intakeCurrent;
+    }
+
+    /**
+     * Sets the current drawn by the intake
+     *
+     * @param intakeCurrent the current drawn by the intake
+     */
+    public void setIntakeCurrent(double intakeCurrent) {
+        this.intakeCurrent = intakeCurrent;
     }
 }
