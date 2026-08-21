@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
+import org.firstinspires.ftc.teamcode.utils.HardwareReader;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
 
@@ -21,6 +22,7 @@ public class DriveSubsystem extends Subsystem {
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
+    private final HardwareReader hardwareReader;
     private static final double TICKS_PER_REVOLUTION = 28.0;
     private static final double RPM = 392;
     private static final double GEAR_RATIO = RPM / 6000.0;
@@ -43,6 +45,7 @@ public class DriveSubsystem extends Subsystem {
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
         backRightSlideCurrentAverage = new SlidingAverageCalculator(3);
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
+        hardwareReader = new HardwareReader(100);
 
         CachedMotor[] motors = {frontLeft, backLeft, frontRight, backRight};
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -163,13 +166,18 @@ public class DriveSubsystem extends Subsystem {
         };
     }
 
+    public void readCurrent() {
+        hardwareReader.read(() -> {
+            frontLeftSlideCurrentAverage.add(frontLeft.getCurrent());
+            frontRightSlideCurrentAverage.add(frontRight.getCurrent());
+            backLeftSlideCurrentAverage.add(backLeft.getCurrent());
+            backRightSlideCurrentAverage.add(backRight.getCurrent());
+        });
+    }
+
     @Override
     public void periodic() {
-        frontLeftSlideCurrentAverage.add(frontLeft.getCurrent());
-        frontRightSlideCurrentAverage.add(frontRight.getCurrent());
-        backLeftSlideCurrentAverage.add(backLeft.getCurrent());
-        backRightSlideCurrentAverage.add(backRight.getCurrent());
-
+        readCurrent();
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
         if ((robotState.getDriveCurrent() > MAX_CURRENT_DRAW) && timer.milliseconds() > 500) {
