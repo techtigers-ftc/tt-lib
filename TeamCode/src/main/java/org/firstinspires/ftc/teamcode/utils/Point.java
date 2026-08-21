@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utils;
 /**
  * A two dimensional point
  */
-public class Point {
+public class Point { // TODO Integrate core and remove this point class
     /**
      * The x and y coordinates
      */

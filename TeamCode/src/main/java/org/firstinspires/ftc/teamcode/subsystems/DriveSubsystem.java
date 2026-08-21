@@ -4,12 +4,13 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
-import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
+
 @Configurable
 public class DriveSubsystem extends Subsystem {
     public static double MAX_CURRENT_DRAW = 100;
@@ -24,6 +25,7 @@ public class DriveSubsystem extends Subsystem {
     private static final double RPM = 392;
     private static final double GEAR_RATIO = RPM / 6000.0;
     private static final double TICKS_PER_WHEEL_REVOLUTION = TICKS_PER_REVOLUTION / GEAR_RATIO;
+    private final ElapsedTime timer;
 
     /**
      * Constructs a new DriveSubsystem.
@@ -51,6 +53,9 @@ public class DriveSubsystem extends Subsystem {
         for (CachedMotor motor : motors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+
+        timer = new ElapsedTime();
+        timer.reset();
     }
 
     //From FTC Lib RobotDrive
@@ -167,8 +172,9 @@ public class DriveSubsystem extends Subsystem {
 
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
-        if (robotState.getDriveCurrent() > MAX_CURRENT_DRAW) {
+        if ((robotState.getDriveCurrent() > MAX_CURRENT_DRAW) && timer.milliseconds() > 500) {
             currentMultiplier = currentMultiplier * 0.95;
+            timer.reset();
         } else {
             currentMultiplier = 1.0;
         }

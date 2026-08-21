@@ -7,7 +7,7 @@ package org.firstinspires.ftc.teamcode.utils;
  * or magnitude, with a set direction. You can also put a vector in polar form:
  * (r, theta), where r is the magnitude and theta is the directional angle.
  */
-public class Vector2d {
+public class Vector2d { // TODO Integrate core and remove this vector class
 
     private final double m_x;
     private final double m_y;

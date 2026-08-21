@@ -14,7 +14,7 @@ public class SlidingAverageCalculator {
     /**
      * Creates a new SlidingAverageCalculator with the given capacity.
      *
-     * @param capacity the total sample size before resting old values
+     * @param capacity the total sample size before resetting old values
      */
     public SlidingAverageCalculator(int capacity) {
         this.capacity = capacity;

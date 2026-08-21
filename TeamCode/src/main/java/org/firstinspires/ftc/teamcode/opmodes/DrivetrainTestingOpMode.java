@@ -46,7 +46,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
 
     @Override
     protected void update() {
-        boolean driving = gamepad1.left_stick_y + gamepad1.left_stick_x + gamepad1.right_stick_x != 0;
+        boolean driving = gamepad1.left_stick_y != 0 ||  gamepad1.left_stick_x != 0 || gamepad1.right_stick_x != 0;
         manualOverride = gamepad1.dpadLeftWasPressed() != manualOverride;
         automaticRPMTesting = gamepad1.dpadRightWasPressed() != automaticRPMTesting;
         automaticFullFieldTesting = gamepad1.dpadDownWasPressed() != automaticFullFieldTesting;

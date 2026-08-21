@@ -4,7 +4,7 @@ package org.firstinspires.ftc.teamcode.utils;
  * Represents a waypoint in a trajectory. A waypoint is a point in a trajectory that the robot must
  * pass through.
  */
-public class Waypoint {
+public class Waypoint { // TODO Integrate core and remove this waypoint class
     private final Point point;
     private final double heading;
 
