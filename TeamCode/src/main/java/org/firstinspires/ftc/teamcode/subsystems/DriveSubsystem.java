@@ -26,6 +26,7 @@ public class DriveSubsystem extends Subsystem {
     private static final double TICKS_PER_REVOLUTION = 28.0;
     private static final double RPM = 392;
     private static final double GEAR_RATIO = RPM / 6000.0;
+    public static final double DRIVETRAIN_CURRENT_READ_INTERVAL = 100;
     private static final double TICKS_PER_WHEEL_REVOLUTION = TICKS_PER_REVOLUTION / GEAR_RATIO;
     private final ElapsedTime timer;
 
@@ -45,7 +46,7 @@ public class DriveSubsystem extends Subsystem {
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
         backRightSlideCurrentAverage = new SlidingAverageCalculator(3);
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
-        hardwareReader = new HardwareReader(100);
+        hardwareReader = new HardwareReader(DRIVETRAIN_CURRENT_READ_INTERVAL);
 
         CachedMotor[] motors = {frontLeft, backLeft, frontRight, backRight};
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
