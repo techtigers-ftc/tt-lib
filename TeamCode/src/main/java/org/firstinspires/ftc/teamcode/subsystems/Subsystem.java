@@ -20,6 +20,7 @@ public abstract class Subsystem {
     public Subsystem(String tag){
         this.tag = tag;
     }
+
     /**
      * Initializes the subsystem. This method is called once when the subsystem is registered.
      */
@@ -47,5 +48,5 @@ public abstract class Subsystem {
     public void setParameters(Telemetry telemetry, RobotState robotState){
         this.telemetry = telemetry;
         this.robotState = robotState;
-    };
+    }
 }
