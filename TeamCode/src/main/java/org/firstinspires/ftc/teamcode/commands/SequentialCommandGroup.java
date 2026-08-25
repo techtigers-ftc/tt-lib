@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import androidx.annotation.CallSuper;
+
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
@@ -19,6 +21,7 @@ public class SequentialCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void initialize() {
         currentCommandIndex = 0;
         isFinished = false;
@@ -26,6 +29,7 @@ public class SequentialCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void update() {
         if (commands.get(currentCommandIndex).isFinished()) {
             currentCommandIndex++;
@@ -43,6 +47,7 @@ public class SequentialCommandGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void end(boolean interrupted) {
         if (interrupted && !isFinished) {
             CommandScheduler.getInstance().cancel(commands.get(currentCommandIndex));

@@ -59,8 +59,45 @@ public class Trigger {
     }
 
     /**
-     * Schedules a command while the trigger is held.
-     * If the command finishes while held, it will be scheduled again on the next loop.
+     * Runs a command once when the trigger first becomes active, then cancels it once the trigger becomes inactive
+     *
+     * @param command the command to run
+     * @return this Trigger object for method chaining
+     */
+    public Trigger whileActiveOnce(final Command command) {
+        bindings.add(new Runnable() {
+            private boolean wasActive = get();
+
+                @Override
+                public void run() {
+                    boolean isActive = get();
+                    if (isActive && !wasActive) {
+                        CommandScheduler.getInstance().schedule(command);
+                    } else if (!isActive && wasActive) {
+                        CommandScheduler.getInstance().cancel(command);
+                    }
+                    wasActive = isActive;
+                }
+            });
+
+        return this;
+    }
+
+    /**
+     * Overload method for whileActiveOnce that takes a Runnable instead of a Command
+     *
+     * @param runnable the action to run
+     * @return this Trigger object for method chaining
+     */
+    public Trigger whileActiveOnce(Runnable runnable) {
+        return whileActiveOnce(new InstantCommand(runnable));
+    }
+
+    /**
+     * Continuously schedules a command while the trigger is active
+     *
+     * @param command the command to run
+     * @return this Trigger object for method chaining
      */
     public Trigger whileHeld(final Command command) {
         bindings.add(() -> CommandScheduler.getInstance().schedule(command));
@@ -68,7 +105,10 @@ public class Trigger {
     }
 
     /**
-     * Runs an action continuously while the trigger is held.
+     * Overload method for whileHeld that takes a Runnable instead of a Command
+     *
+     * @param runnable the action to run
+     * @return this Trigger object for method chaining
      */
     public Trigger whileHeld(Runnable runnable) {
         return whileHeld(new InstantCommand(runnable));

@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * Base class for command group which coordinate a collection of commands.
  */
-public abstract class CommandGroup extends Command {
+public abstract class CommandGroup extends CommandBase {
 
     protected ArrayList<Command> commands;
 

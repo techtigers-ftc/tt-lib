@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -8,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.teamcode.utils.Waypoint;
 
 /**
  * The odometry subsystem, using Gobilda Pinpoint.
@@ -25,7 +25,7 @@ public class GoBodometrySubsystem extends Subsystem {
      * @param startPose   The starting pose of the robot.
      */
     public GoBodometrySubsystem(HardwareMap hardwareMap,
-                                Waypoint startPose) {
+                                Pose startPose) {
         super("Gobodometry Subsystem");
 
         // Initialize the hardware variables. Note that the strings used here must correspond
@@ -51,14 +51,13 @@ public class GoBodometrySubsystem extends Subsystem {
          */
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
 
-
         /*
         Set the direction that each of the two odometry pods count. The X (forward) pod should
         increase when you move the robot forward. And the Y (strafe) pod should increase when
         you move the robot to the left.
          */
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
-                GoBildaPinpointDriver.EncoderDirection.REVERSED);
+                GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
         /*
         Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary
@@ -90,7 +89,7 @@ public class GoBodometrySubsystem extends Subsystem {
      * @param hardwareMap The hardware map, used to get hardware references
      */
     public GoBodometrySubsystem(HardwareMap hardwareMap) {
-        this(hardwareMap, new Waypoint(0, 0));
+        this(hardwareMap, new Pose(0, 0));
     }
 
     @Override
@@ -105,7 +104,7 @@ public class GoBodometrySubsystem extends Subsystem {
         double heading = odo.getHeading(AngleUnit.RADIANS);
         double headingVelocity = odo.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
 
-        Waypoint robotPose = new Waypoint(odo.getPosX(DistanceUnit.INCH),
+        Pose robotPose = new Pose(odo.getPosX(DistanceUnit.INCH),
                 odo.getPosY(DistanceUnit.INCH), heading);
 
         if (Double.isNaN(robotPose.getX()) || Double.isNaN(robotPose.getY()) || Double.isNaN(robotPose.getHeading())) {
@@ -114,7 +113,7 @@ public class GoBodometrySubsystem extends Subsystem {
 
         robotState.setRobotPose(robotPose);
 
-        Waypoint robotVelocity = new Waypoint(odo.getVelX(DistanceUnit.INCH),
+        Pose robotVelocity = new Pose(odo.getVelX(DistanceUnit.INCH),
                 odo.getVelY(DistanceUnit.INCH), headingVelocity);
 
         if (Double.isNaN(robotVelocity.getX()) || Double.isNaN(robotVelocity.getY()) || Double.isNaN(robotVelocity.getHeading())) {

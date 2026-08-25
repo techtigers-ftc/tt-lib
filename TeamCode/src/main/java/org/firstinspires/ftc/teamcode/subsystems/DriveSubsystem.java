@@ -14,14 +14,13 @@ import org.firstinspires.ftc.teamcode.utils.Vector2d;
 
 @Configurable
 public class DriveSubsystem extends Subsystem {
-    public static double MAX_CURRENT_DRAW = 100;
-    private double currentMultiplier = 1;
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
     private final SlidingAverageCalculator frontLeftSlideCurrentAverage;
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
+    private final CachedMotor[] motors;
     private final HardwareReader hardwareReader;
     private static final double TICKS_PER_REVOLUTION = 28.0;
     private static final double RPM = 392;
@@ -37,18 +36,22 @@ public class DriveSubsystem extends Subsystem {
      */
     public DriveSubsystem(HardwareMap hardwareMap) {
         super("Drive Subsystem");
-        frontLeft = new CachedMotor(hardwareMap, "left_front");
-        frontRight = new CachedMotor(hardwareMap, "right_front");
-        backLeft = new CachedMotor(hardwareMap, "left_back");
-        backRight = new CachedMotor(hardwareMap, "right_back");
+        frontLeft = new CachedMotor(hardwareMap, "front_left");
+        frontRight = new CachedMotor(hardwareMap, "front_right");
+        backLeft = new CachedMotor(hardwareMap, "back_left");
+        backRight = new CachedMotor(hardwareMap, "back_right");
 
+        frontRightSlideCurrentAverage = new SlidingAverageCalculator(10);
+        frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
+        backRightSlideCurrentAverage = new SlidingAverageCalculator(10);
+        backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
         frontRightSlideCurrentAverage = new SlidingAverageCalculator(3);
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
         backRightSlideCurrentAverage = new SlidingAverageCalculator(3);
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
         hardwareReader = new HardwareReader(DRIVETRAIN_CURRENT_READ_INTERVAL);
 
-        CachedMotor[] motors = {frontLeft, backLeft, frontRight, backRight};
+        motors = new CachedMotor[]{frontLeft, backLeft, frontRight, backRight};
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -144,7 +147,7 @@ public class DriveSubsystem extends Subsystem {
     }
 
     /**
-     * Private method to set the motor powers.
+     * Method to set the motor powers.
      *
      * @param fl The front left motor power
      * @param fr The front right motor power
@@ -152,19 +155,43 @@ public class DriveSubsystem extends Subsystem {
      * @param br The back right motor power
      */
     public void setMotorPowers(double fl, double bl, double fr, double br) {
-        frontLeft.setPower(fl * currentMultiplier);
-        frontRight.setPower(fr * currentMultiplier);
-        backLeft.setPower(bl * currentMultiplier);
-        backRight.setPower(br * currentMultiplier);
+        frontLeft.setPower(fl);
+        frontRight.setPower(fr);
+        backLeft.setPower(bl);
+        backRight.setPower(br);
     }
 
-    public double[] getRRM() {
-        return new double[]{
-                frontLeft.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
-                frontRight.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
-                backLeft.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0,
-                backRight.getVelocity() / TICKS_PER_WHEEL_REVOLUTION * 60.0
-        };
+    /**
+     * Overload method to set the motor powers.
+     *
+     * @param motorPowers the array of motor powers to take in
+     */
+    public void setMotorPowers(double[] motorPowers) {
+        setMotorPowers(motorPowers[0], motorPowers[1], motorPowers[2], motorPowers[3]);
+    }
+
+    /**
+     * Sets all drive motors to the brake zero power behavior
+     */
+    public void setMotorsToBrake() {
+        for (CachedMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
+
+    /**
+     * Sets all drive motors to the float zero power behavior
+     */
+    public void setMotorsToFloat() {
+        for (CachedMotor motor : motors) {
+            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }
+    }
+
+    public void stop() {
+        for (CachedMotor motor : motors) {
+            motor.stop();
+        }
     }
 
     public void readCurrent() {
@@ -181,6 +208,7 @@ public class DriveSubsystem extends Subsystem {
         readCurrent();
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
+        TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500/6000 * 60);
         if ((robotState.getDriveCurrent() > MAX_CURRENT_DRAW) && timer.milliseconds() > 500) {
             currentMultiplier = currentMultiplier * 0.95;
             timer.reset();

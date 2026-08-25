@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import androidx.annotation.CallSuper;
+
 /**
  * Runs child commands concurrently until the deadline command finishes.
  */
@@ -19,6 +21,7 @@ public class ParallelDeadlineGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void initialize() {
         isFinished = false;
         CommandScheduler scheduler = CommandScheduler.getInstance();
@@ -27,6 +30,7 @@ public class ParallelDeadlineGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void update() {
        isFinished = deadline.isFinished();
     }
@@ -37,6 +41,7 @@ public class ParallelDeadlineGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void end(boolean interrupted) {
         for (Command command: commands) {
             if (!command.isFinished()) {

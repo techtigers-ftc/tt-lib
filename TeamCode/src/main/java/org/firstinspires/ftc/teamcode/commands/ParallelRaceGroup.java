@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands;
 
+import androidx.annotation.CallSuper;
+
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
@@ -18,12 +20,14 @@ public class ParallelRaceGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void initialize() {
         isFinished = false;
        CommandScheduler.getInstance().schedule(commands.toArray(new Command[0]));
     }
 
     @Override
+    @CallSuper
     public void update() {
         for (Command command : commands) {
             if (command.isFinished()) {
@@ -39,6 +43,7 @@ public class ParallelRaceGroup extends CommandGroup {
     }
 
     @Override
+    @CallSuper
     public void end(boolean interrupted) {
        for (Command command: commands) {
            if (!command.isFinished()) {

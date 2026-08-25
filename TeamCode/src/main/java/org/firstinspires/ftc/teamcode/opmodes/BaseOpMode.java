@@ -77,6 +77,9 @@ public abstract class BaseOpMode extends LinearOpMode {
      */
     protected abstract void initialize();
 
+    protected void initLoop() {
+    }
+
     /**
      * Called after the start of the opmode. This method is called once after the start of the opmode.
      */

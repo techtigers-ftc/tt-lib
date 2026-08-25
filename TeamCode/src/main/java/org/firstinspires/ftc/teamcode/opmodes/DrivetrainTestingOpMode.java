@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.bylazar.telemetry.JoinedTelemetry;
 import com.bylazar.telemetry.PanelsTelemetry;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -27,7 +28,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
     private double[] averageWheelRPM = new double[4];
     private double[] rpmSum = new double[4];
     private double elapsed = 0;
-    private Point legStartPose = new Point(0, 0);
+    private Pose legStartPose = new Pose(0, 0);
     private ElapsedTime timer = new ElapsedTime();
     private int count = 0;
     private DriveSubsystem drive;
@@ -39,7 +40,7 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
     @Override
     protected void initialize() {
         drive = new DriveSubsystem(hardwareMap);
-        odometry = new GoBodometrySubsystem(hardwareMap, new Waypoint(0, 0, Math.toRadians(0)));
+        odometry = new GoBodometrySubsystem(hardwareMap, new Pose(0, 0, Math.toRadians(0)));
 
         registerSubsystems(drive, odometry);
     }
@@ -51,7 +52,8 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
         automaticRPMTesting = gamepad1.dpadRightWasPressed() != automaticRPMTesting;
         automaticFullFieldTesting = gamepad1.dpadDownWasPressed() != automaticFullFieldTesting;
 
-        double velocity = robotState.getRobotVelocity().getPoint().magnitude();
+        robotState.getRobotVelocity().getAsVector().getMagnitude();
+        double velocity = robotState.getRobotVelocity().getAsVector().getMagnitude();
         double currentDraw = robotState.getDriveCurrent();
 
         if (!driving && !manualOverride && !automaticRPMTesting && !automaticFullFieldTesting) {
@@ -60,16 +62,16 @@ public class DrivetrainTestingOpMode extends BaseOpMode {
             count = 0;
             rpmSum = new double[4];
             timer.reset();
-            legStartPose = robotState.getRobotPose().getPoint();
+            legStartPose = robotState.getRobotPose();
             drive.driveRobotCentric(0,0,0);
             zeroToSixtyReached = false;
             sixFeetReached = false;
         } else {
             count++;
-            distanceTraveled = robotState.getRobotPose().getPoint().dist(legStartPose);
+            distanceTraveled = robotState.getRobotPose().distanceFrom(legStartPose);
             totalCurrentDraw += currentDraw;
             averageCurrentDraw = totalCurrentDraw / count;
-            rpmSum = addArrays(rpmSum, drive.getRRM());
+//            rpmSum = addArrays(rpmSum, drive.getRRM());
             averageWheelRPM = divideArray(rpmSum, count);
             elapsed = timer.seconds();
         }

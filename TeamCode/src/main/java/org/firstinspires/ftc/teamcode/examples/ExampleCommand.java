@@ -3,12 +3,13 @@ package org.firstinspires.ftc.teamcode.examples;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.Command;
+import org.firstinspires.ftc.teamcode.commands.CommandBase;
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
  * Runs the example motor at a fixed power for two seconds.
  */
-public class ExampleCommand extends Command {
+public class ExampleCommand extends CommandBase {
 
     private ExampleSubsystem exampleSubsystem;
     private ElapsedTime timer;

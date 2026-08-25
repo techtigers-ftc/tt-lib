@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.commands;
 
 import android.annotation.SuppressLint;
 
+import androidx.annotation.CallSuper;
+
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.TTLogger;
@@ -14,7 +16,7 @@ import java.util.function.DoubleSupplier;
  * specified time. Note that this doesn't have to be used for just a single
  * servo, and can represent a motion that is controlled by multiple servos.
  */
-public abstract class ServoActionCommand extends Command {
+public abstract class ServoActionCommand extends CommandBase {
     private final long duration;
     private final ElapsedTime time;
     private final DoubleSupplier expectedPosSupplier;
@@ -57,6 +59,7 @@ public abstract class ServoActionCommand extends Command {
 
     @Override
     @SuppressLint({"NewApi", "LocalSuppress"})
+    @CallSuper
     public void initialize() {
         expectedPos = expectedPosSupplier.getAsDouble();
         time.reset();
@@ -67,6 +70,7 @@ public abstract class ServoActionCommand extends Command {
     }
 
     @Override
+    @CallSuper
     public void update() {
         currentLink = (int) (time.milliseconds() / INTERVAL);
 
@@ -77,13 +81,7 @@ public abstract class ServoActionCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "IsFinished: %b", isFinished);
         return isFinished;
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        TTLogger.dd(tag, "End Running");
     }
 
     /**

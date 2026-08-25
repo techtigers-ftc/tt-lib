@@ -64,13 +64,15 @@ public class CommandScheduler {
 
         for (int i = 0; i < commands.size(); i++) {
             Command command = commands.get(i);
+            command.update();
             if (command.isFinished()) {
                 command.end(false);
                 commands.remove(i);
                 i--;
-            } else {
-                command.update();
             }
+//            else {
+//                command.update();
+//            }
         }
     }
 
