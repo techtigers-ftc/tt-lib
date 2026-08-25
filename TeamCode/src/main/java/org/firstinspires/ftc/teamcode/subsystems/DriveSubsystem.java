@@ -10,12 +10,15 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.HardwareReader;
 import org.firstinspires.ftc.teamcode.utils.SlidingAverageCalculator;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 import org.firstinspires.ftc.teamcode.utils.Vector2d;
 
 @Configurable
 public class DriveSubsystem extends Subsystem {
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
+    public static final double MAX_CURRENT_DRAW = 10.0;
+    private double currentMultiplier = 1.0;
     private final SlidingAverageCalculator frontLeftSlideCurrentAverage;
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
@@ -45,10 +48,6 @@ public class DriveSubsystem extends Subsystem {
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
         backRightSlideCurrentAverage = new SlidingAverageCalculator(10);
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
-        frontRightSlideCurrentAverage = new SlidingAverageCalculator(3);
-        frontLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
-        backRightSlideCurrentAverage = new SlidingAverageCalculator(3);
-        backLeftSlideCurrentAverage = new SlidingAverageCalculator(3);
         hardwareReader = new HardwareReader(DRIVETRAIN_CURRENT_READ_INTERVAL);
 
         motors = new CachedMotor[]{frontLeft, backLeft, frontRight, backRight};
@@ -209,7 +208,7 @@ public class DriveSubsystem extends Subsystem {
         robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
         TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500/6000 * 60);
-        if ((robotState.getDriveCurrent() > MAX_CURRENT_DRAW) && timer.milliseconds() > 500) {
+        if ((robotState.getDriveCurrent() > MAX_CURRENT_DRAW) && timer.milliseconds() > 300) {
             currentMultiplier = currentMultiplier * 0.95;
             timer.reset();
         } else {
