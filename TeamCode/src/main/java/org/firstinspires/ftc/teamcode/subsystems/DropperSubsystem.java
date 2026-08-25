@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlideController;
 
 public class DropperSubsystem extends Subsystem {
-    public static final double PITCH_INTAKE_POSITION = 0.4;
-    public static final double PITCH_DROP_POSITION = 0.8;
+    public static final double PITCH_INTAKE_POSITION = 0.2;
+    public static final double PITCH_DROP_POSITION = 0.4;
     public static final double SLIDES_DROP_HEIGHT = 10.0;
     private CachedMotor leftSlideMotor;
     private CachedMotor righSlideMotor;
@@ -33,17 +33,17 @@ public class DropperSubsystem extends Subsystem {
 
         leftSlideMotor = new CachedMotor(hardwareMap, "left_slide");
         righSlideMotor = new CachedMotor(hardwareMap, "right_slide");
-//        leftPitchServo = hardwareMap.get(Servo.class, "left_pitch");
-//        rightPitchServo = hardwareMap.get(Servo.class, "right_pitch");
-//        leftDropperServo = new CachedCRServo(hardwareMap, "left_dropper");
-//        rightDropperServo = new CachedCRServo(hardwareMap, "right_dropper");
+        leftPitchServo = hardwareMap.get(Servo.class, "left_pitch");
+        rightPitchServo = hardwareMap.get(Servo.class, "right_pitch");
+        leftDropperServo = new CachedCRServo(hardwareMap, "left_dropper");
+        rightDropperServo = new CachedCRServo(hardwareMap, "right_dropper");
 
 
         leftSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         righSlideMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         leftSlideMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-//        rightDropperMotor.setDirection();
+        righSlideMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         encoderMotor = righSlideMotor;
 

@@ -29,6 +29,9 @@ public class FullRobotTestOpMode extends BaseOpMode {
         UnsafeDropperSlidesCommand unsafeDropperSlidesCommand = new UnsafeDropperSlidesCommand(dropper, manipulatorGamepad);
         runSlides.whileActiveOnce(unsafeDropperSlidesCommand);
 
+        manipulatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenActive(() -> dropper.setDropperPosition(DropperSubsystem.PITCH_DROP_POSITION));
+        manipulatorGamepad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenActive(() -> dropper.setDropperPosition(DropperSubsystem.PITCH_INTAKE_POSITION));
+
         Trigger manualIntake = new Trigger(() -> manipulatorGamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) != 0 || manipulatorGamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) != 0);
         ManualIntakeCommand manualIntakeCommand = new ManualIntakeCommand(manipulatorGamepad, intake);
         manualIntake.whenActive(manualIntakeCommand);
