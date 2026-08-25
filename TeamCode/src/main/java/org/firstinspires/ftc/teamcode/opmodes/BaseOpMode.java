@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.CommandScheduler;
 import org.firstinspires.ftc.teamcode.gamepad.GamepadEx;
 import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SubsystemController;
 import org.firstinspires.ftc.teamcode.utils.RobotState;
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
 
 /**
  * BaseOpMode is an abstract class that extends LinearOpMode and provides a framework for creating
@@ -16,6 +18,9 @@ public abstract class BaseOpMode extends LinearOpMode {
     protected RobotState robotState;
     protected GamepadEx driverGamepad;
     protected GamepadEx manipulatorGamepad;
+    private ElapsedTime debounceTimer;
+    protected boolean isDebounceOn;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robotState = new RobotState(isBlue());
@@ -23,19 +28,33 @@ public abstract class BaseOpMode extends LinearOpMode {
         manipulatorGamepad = new GamepadEx(gamepad2);
 
         initialize();
+        TTLogger.dd("Base Op Mode", "Is debounce on: %b", isDebounceOn);
         while (opModeInInit()) {
             SubsystemController.getInstance().initLoop();
+            if (isDebounceOn) {
+                debounceTimer = new ElapsedTime();
+                debounceTimer.reset();
+            }
         }
         waitForStart();
 
         SubsystemController.getInstance().justAfterStart();
         justAfterStart();
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
             SubsystemController.getInstance().periodic();
             CommandScheduler.getInstance().update();
-            update();
-            telemetry.update();
+
+            if (isDebounceOn) {
+                if (debounceTimer.milliseconds() > 200) {
+                    update();
+                    telemetry.update();
+                    debounceTimer.reset();
+                }
+            } else {
+                update();
+                telemetry.update();
+            }
         }
         SubsystemController.getInstance().close();
         close();
