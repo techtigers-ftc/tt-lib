@@ -39,10 +39,10 @@ public class DriveSubsystem extends Subsystem {
      */
     public DriveSubsystem(HardwareMap hardwareMap) {
         super("Drive Subsystem");
-        frontLeft = new CachedMotor(hardwareMap, "front_left");
-        frontRight = new CachedMotor(hardwareMap, "front_right");
-        backLeft = new CachedMotor(hardwareMap, "back_left");
-        backRight = new CachedMotor(hardwareMap, "back_right");
+        frontLeft = new CachedMotor(hardwareMap, "left_front");
+        frontRight = new CachedMotor(hardwareMap, "right_front");
+        backLeft = new CachedMotor(hardwareMap, "left_back");
+        backRight = new CachedMotor(hardwareMap, "right_back");
 
         frontRightSlideCurrentAverage = new SlidingAverageCalculator(10);
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
@@ -51,10 +51,10 @@ public class DriveSubsystem extends Subsystem {
         hardwareReader = new HardwareReader(DRIVETRAIN_CURRENT_READ_INTERVAL);
 
         motors = new CachedMotor[]{frontLeft, backLeft, frontRight, backRight};
-        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-        frontRight.setDirection(DcMotorSimple.Direction.FORWARD);
-        backRight.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         for (CachedMotor motor : motors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

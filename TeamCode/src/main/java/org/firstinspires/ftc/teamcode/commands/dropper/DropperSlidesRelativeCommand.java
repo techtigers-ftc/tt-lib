@@ -21,7 +21,7 @@ public class DropperSlidesRelativeCommand extends CommandBase {
     }
 
     public DropperSlidesRelativeCommand(DropperSubsystem dropper, DoubleSupplier targetPosition) {
-        this(dropper, targetPosition, 1);
+        this(dropper, targetPosition, 0.25);
     }
 
     public DropperSlidesRelativeCommand(DropperSubsystem dropper, double targetPosition) {

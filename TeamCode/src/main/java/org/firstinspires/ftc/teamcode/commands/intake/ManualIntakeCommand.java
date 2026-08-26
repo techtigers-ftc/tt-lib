@@ -24,6 +24,11 @@ public class ManualIntakeCommand extends CommandBase {
     @Override
     public boolean isFinished() {
         return gamepad.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) == 0
-                || gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 0;
+                && gamepad.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) == 0;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        intake.setIntakePower(0);
     }
 }
