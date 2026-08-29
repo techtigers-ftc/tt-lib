@@ -8,7 +8,7 @@ public class DropperOuttakeAction extends ParallelCommandGroup {
     public DropperOuttakeAction(DropperSubsystem dropper) {
         addCommands(
                 new DropperSlidesAbsoluteCommand(dropper, DropperSubsystem.SLIDES_DROP_HEIGHT),
-                new DropperPitchAction(dropper, () -> DropperSubsystem.PITCH_DROP_POSITION, 700)
+                new DropperPitchAction(dropper, () -> DropperSubsystem.PITCH_DROP_POSITION, 1000)
         );
     }
 }

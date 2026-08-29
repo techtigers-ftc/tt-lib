@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.utils.CachedMotor;
 import org.firstinspires.ftc.teamcode.utils.SlideController;
 
 public class DropperSubsystem extends Subsystem {
-    public static final double PITCH_INTAKE_POSITION = 0.195;
+    public static final double PITCH_INTAKE_POSITION = 0.135;
     public static final double PITCH_DROP_POSITION = 0.75;
     public static final double SLIDES_DROP_HEIGHT = 12.5;
-    public static final double SLIDES_INTAKE_HEIGHT = 0.5;
+    public static final double SLIDES_INTAKE_HEIGHT = 0.25;
     private CachedMotor leftSlideMotor;
     private CachedMotor righSlideMotor;
     private Servo leftPitchServo;
