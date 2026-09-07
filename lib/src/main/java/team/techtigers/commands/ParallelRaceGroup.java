@@ -1,0 +1,52 @@
+package team.techtigers.commands;
+
+import androidx.annotation.CallSuper;
+
+/**
+ * Runs child team.techtigers.commands concurrently and completes when the first child command finishes.
+ */
+public class ParallelRaceGroup extends CommandGroup {
+    private boolean isFinished;
+
+    /**
+     * Creates a group that races the supplied team.techtigers.commands.
+     *
+     * @param commands the team.techtigers.commands to run until one finishes
+     */
+    public ParallelRaceGroup(Command... commands) {
+        addCommands(commands);
+    }
+
+    @Override
+    @CallSuper
+    public void initialize() {
+        isFinished = false;
+       CommandScheduler.getInstance().schedule(commands.toArray(new Command[0]));
+    }
+
+    @Override
+    @CallSuper
+    public void update() {
+        for (Command command : commands) {
+            if (command.isFinished()) {
+                isFinished = true;
+                return;
+            }
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return isFinished;
+    }
+
+    @Override
+    @CallSuper
+    public void end(boolean interrupted) {
+       for (Command command: commands) {
+           if (!command.isFinished()) {
+               CommandScheduler.getInstance().cancel(command);
+           }
+       }
+    }
+}
