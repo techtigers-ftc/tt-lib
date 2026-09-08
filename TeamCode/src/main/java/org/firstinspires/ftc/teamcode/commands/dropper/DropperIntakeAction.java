@@ -9,7 +9,7 @@ public class DropperIntakeAction extends ParallelCommandGroup {
     public DropperIntakeAction(DropperSubsystem dropper) {
         addCommands(
                 new SequentialCommandGroup(
-                        new WaitCommand(200),
+                        new WaitCommand(1000),
                         new DropperSlidesAbsoluteCommand(dropper, DropperSubsystem.SLIDES_INTAKE_HEIGHT)
                 ),
                 new DropperPitchAction(dropper, () -> DropperSubsystem.PITCH_INTAKE_POSITION, 700)
