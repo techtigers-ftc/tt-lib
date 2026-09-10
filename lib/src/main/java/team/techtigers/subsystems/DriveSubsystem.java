@@ -1,5 +1,6 @@
 package team.techtigers.subsystems;
 
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -169,6 +170,18 @@ public class DriveSubsystem extends Subsystem {
         normalize(wheelSpeeds);
 
         setMotorPowers(wheelSpeeds[0], wheelSpeeds[1], wheelSpeeds[2], wheelSpeeds[3]);
+    }
+
+    /**
+     * Drives the robot in field centric mode, with movement inputs relative to the field's orientation.
+     *
+     * @param forward  The forward power
+     * @param strafe   The strafe power
+     * @param rotation The rotation power
+     * @param pose  The robot's pose
+     */
+    public void driveFieldCentric(double forward, double strafe, double rotation, Pose pose) {
+        driveFieldCentric(forward, strafe, rotation, pose.heading());
     }
 
     /**
