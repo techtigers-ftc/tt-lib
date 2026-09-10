@@ -12,15 +12,6 @@ import java.util.HashMap;
 public class RobotState extends GlobalState {
     private HashMap<String, Object> stateMap = new HashMap<>();
     private final boolean isBlue;
-    private Pose robotPose;
-    private Pose robotVelocity;
-    private double driveCurrent;
-    private double voltage;
-    private Pose robotFinalPose;
-    private String currentAutoState;
-    private String previousAutoState;
-    private double autoRemainingTime;
-    private double intakeCurrent;
 
     /**
      * Creates a new RobotState with the specified alliance color.
@@ -29,13 +20,15 @@ public class RobotState extends GlobalState {
      */
     public RobotState(boolean isBlue){
         this.isBlue = isBlue;
-        robotPose = new Pose(0, 0, 0);
-        robotVelocity = new Pose(0, 0, 0);
-        driveCurrent = 0;
-        voltage = 0;
-        intakeCurrent = 0;
     }
 
+    /**
+     * Returns the value associated with the specified key in the stateMap.
+     *
+     * @param key the key to look up in the stateMap
+     * @return the value associated with the key, or null if the key is not found
+     * @param <T> the type of the value associated with the key
+     */
     public <T> T get(String key) {
         if (stateMap.containsKey(key)) {
             return (T) stateMap.get(key);
@@ -56,53 +49,5 @@ public class RobotState extends GlobalState {
      */
     public boolean isBlue() {
         return isBlue;
-    }
-
-    /**
-     * @return the current pose of the robot (Inches and Radians)
-     */
-    public Pose getRobotPose() {
-        return robotPose;
-    }
-
-    /**
-     * @return the current velocity of the robot as a waypoint (x, y, heading) in Inches and Radians
-     */
-    public Pose getRobotVelocity() {
-        return robotVelocity;
-    }
-
-    /**
-     * Sets the current velocity of the robot as a waypoint (x, y, heading) in Inches and Radians
-     *
-     * @param robotVelocity the current velocity of the robot
-     */
-    public void setRobotVelocity(Pose robotVelocity) {
-        this.robotVelocity = robotVelocity;
-    }
-
-    /**
-     * Sets the current pose of the robot (Inches and Radians)
-     *
-     * @param robotPose the current pose of the robot
-     */
-    public void setRobotPose(Pose robotPose) {
-        this.robotPose = robotPose;
-    }
-
-    /**
-     * @return the total current drawn by the drive motors
-     */
-    public double getDriveCurrent() {
-        return driveCurrent;
-    }
-
-    /**
-     * Sets the total current drawn by the drive motors
-     *
-     * @param driveCurrent the total current drawn by the drive motors
-     */
-    public void setDriveCurrent(double driveCurrent) {
-        this.driveCurrent = driveCurrent;
     }
 }

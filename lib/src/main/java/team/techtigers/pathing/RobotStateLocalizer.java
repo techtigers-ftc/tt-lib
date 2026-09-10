@@ -1,9 +1,8 @@
 package team.techtigers.pathing;
 
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.localization.Localizer;
-import com.pedropathing.math.MathFunctions;
-import com.pedropathing.math.Vector;
+import com.pedropathing.localization.MotionState;
+import com.pedropathing.math.Pose;
 
 import team.techtigers.utils.RobotState;
 
@@ -12,10 +11,7 @@ import team.techtigers.utils.RobotState;
  */
 public class RobotStateLocalizer implements Localizer {
     private RobotState robotState;
-    private Pose currentPose;
-    private double previousHeading;
-    private double totalHeading;
-    private Pose currentVelocity;
+    private MotionState motionState;
 
     /**
      * Constructs a new RobotStateLocalizer.
@@ -25,30 +21,11 @@ public class RobotStateLocalizer implements Localizer {
     public RobotStateLocalizer(RobotState robotState) {
         super();
         this.robotState = robotState;
-        previousHeading = 0;
-        totalHeading = 0;
-        currentVelocity = new Pose(0, 0);
     }
 
     @Override
-    public Pose getPose() {
-        return currentPose;
-    }
-
-    @Override
-    public Pose getVelocity() {
-        return currentVelocity;
-    }
-
-    @Override
-    public Vector getVelocityVector() {
-        return currentVelocity.getAsVector();
-    }
-
-    @Override
-    public void setStartPose(Pose setStart) {
-        // Intentionally not doing this, setStartPose should be in odometry
-        // subsystem
+    public void update() {
+        motionState = MotionState.ofVelocity(robotState.get("robotPose"), robotState.get("robotVelocity"));
     }
 
     @Override
@@ -56,57 +33,12 @@ public class RobotStateLocalizer implements Localizer {
         // Intentionally not doing this, pose shouldn't be overridden
     }
 
-    /**
-     * This updates the total heading of the robot. The Pinpoint handles all other updates itself.
-     */
     @Override
-    public void update() {
-        currentPose =
-                robotState.getRobotPose();
-        totalHeading += MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), previousHeading);
-        previousHeading = currentPose.getHeading();
-        currentVelocity = robotState.getRobotVelocity();
+    public MotionState state() {
+        return motionState;
     }
 
-    /**
-     * This updates the total heading of the robot. The Pinpoint handles all other updates itself.
-     */
-    @Override
-    public double getTotalHeading() {
-        return totalHeading;
-    }
-
-    @Override
-    public double getForwardMultiplier() {
-        // Intentionally not doing this, forward multiplier isn't used
-        return 0;
-    }
-
-    @Override
-    public double getLateralMultiplier() {
-        // Intentionally not doing this, forward multiplier isn't used
-        return 0;
-    }
-
-    @Override
-    public double getTurningMultiplier() {
-        // Intentionally not doing this, forward multiplier isn't used
-        return 0;
-    }
-
-    @Override
-    public void resetIMU() throws InterruptedException {
-        // Intentionally not doing this, IMU should be reset in odometry subsystem
-    }
-
-    @Override
-    public double getIMUHeading() {
-        return currentPose.getHeading();
-    }
-
-    @Override
-    public boolean isNAN() {
-        Pose robotPose = robotState.getRobotPose();
-        return Double.isNaN(robotPose.getX()) || Double.isNaN(robotPose.getY()) || Double.isNaN(robotPose.getHeading());
+    public void reset() {
+        // intentionally not doing this, reset should be through odometry subsystem
     }
 }
