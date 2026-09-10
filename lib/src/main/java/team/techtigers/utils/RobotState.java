@@ -1,13 +1,16 @@
 package team.techtigers.utils;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
+
+import java.util.HashMap;
 
 /**
  * A class to store information that is global to the entire robot. This is
  * intended to be extended from, and child classes can add in additional
  * attributes that are desired in the state.
  */
-public class RobotState extends GlobalState{
+public class RobotState extends GlobalState {
+    private HashMap<String, Object> stateMap = new HashMap<>();
     private final boolean isBlue;
     private Pose robotPose;
     private Pose robotVelocity;
@@ -31,6 +34,19 @@ public class RobotState extends GlobalState{
         driveCurrent = 0;
         voltage = 0;
         intakeCurrent = 0;
+    }
+
+    public <T> T get(String key) {
+        if (stateMap.containsKey(key)) {
+            return (T) stateMap.get(key);
+        } else {
+            TTLogger.ee("RobotState", "Key not found in stateMap: " + key);
+            return null;
+        }
+    }
+
+    public void set(String key, Object value) {
+        stateMap.put(key, value);
     }
 
     /**
@@ -88,97 +104,5 @@ public class RobotState extends GlobalState{
      */
     public void setDriveCurrent(double driveCurrent) {
         this.driveCurrent = driveCurrent;
-    }
-
-    /**
-     * @return the final pose of the robot in a trajectory
-     */
-    public Pose getRobotFinalPose() {
-        return robotFinalPose;
-    }
-
-    /**
-     * Sets the final pose of the robot in a trajectory
-     *
-     * @param robotFinalPose the final pose of the robot
-     */
-    public void setRobotFinalPose(Pose robotFinalPose) {
-        this.robotFinalPose = robotFinalPose;
-    }
-
-    /**
-     * @return the current voltage of the robot
-     */
-    public double getVoltage() {
-        return voltage;
-    }
-
-    /**
-     * Sets the current voltage of the robot
-     *
-     * @param voltage the current voltage of the robot
-     */
-    public void setVoltage(double voltage) {
-        this.voltage = voltage;
-    }
-
-    /**
-     * @return the current state of the autonomous command
-     */
-    public String getCurrentAutoState() {
-        return currentAutoState;
-    }
-
-    /**
-     * Sets the current state of the autonomous command
-     */
-    public void setCurrentAutoState(String currentAutoState) {
-        this.currentAutoState = currentAutoState;
-    }
-
-    /**
-     * @return the previous state of the autonomous command
-     */
-    public String getPreviousAutoState() {
-        return previousAutoState;
-    }
-
-    /**
-     * Sets the previous state of the autonomous command
-     */
-    public void setPreviousAutoState(String previousAutoState) {
-        this.previousAutoState = previousAutoState;
-    }
-
-    /**
-     * @return the amount of time remaining in the autonomous
-     */
-    public double getAutoRemainingTime() {
-        return (double) autoRemainingTime;
-    }
-
-    /**
-     * Sets the amount of time remaining in the autonomous
-     *
-     * @param autoRemainingTime the amount of time remaining in the autonomous
-     */
-    public void setAutoRemainingTime(double autoRemainingTime) {
-        this.autoRemainingTime = autoRemainingTime;
-    }
-
-    /**
-     * @return the current drawn by the intake
-     */
-    public double getIntakeCurrent() {
-        return intakeCurrent;
-    }
-
-    /**
-     * Sets the current drawn by the intake
-     *
-     * @param intakeCurrent the current drawn by the intake
-     */
-    public void setIntakeCurrent(double intakeCurrent) {
-        this.intakeCurrent = intakeCurrent;
     }
 }

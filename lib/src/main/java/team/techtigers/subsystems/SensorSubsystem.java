@@ -48,6 +48,6 @@ public class SensorSubsystem extends Subsystem {
     @Override
     public void periodic() {
         read();
-        robotState.setVoltage(currentVoltage);
+        robotState.set("robotVoltage", currentVoltage);
     }
 }

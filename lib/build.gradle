@@ -31,8 +31,8 @@ dependencies {
     testImplementation libs.mockito.core
     implementation libs.ftclib
     implementation libs.ftcrobotcore
-    implementation 'com.pedropathing:ftc:2.1.2'
-    implementation 'com.pedropathing:telemetry:1.0.0'
+    implementation 'com.pedropathing:revhub:3.0.0'
+    implementation 'com.pedropathing:tuning:1.0.0'
     implementation 'org.firstinspires.ftc:Hardware:11.1.0'
 }
 

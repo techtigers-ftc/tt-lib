@@ -1,7 +1,6 @@
 package team.techtigers.utils;
 
-import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.control.PIDFController;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /**
  * This class encapsulates the logic for setting slides to a given position into one class so that
@@ -22,8 +21,8 @@ public class SlideController {
      */
     public SlideController(double ticksPerInch, PIDFCoefficients pidf) {
         this.ticksPerInch = ticksPerInch;
-        this.pidfController = new PIDFController(new PIDFCoefficients(pidf.P, pidf.I, pidf.D, 0));
-        kF = pidf.F;
+        this.pidfController = new PIDFController(pidf.p, pidf.i, pidf.d, pidf.f);
+        kF = pidf.f;
 
         tolerance = 0;
     }
@@ -34,8 +33,8 @@ public class SlideController {
      * @param coefficients the new PIDF coefficients
      */
     public void setPIDFCoefficients(PIDFCoefficients coefficients) {
-        pidfController.setCoefficients(new PIDFCoefficients(coefficients.P, coefficients.I, coefficients.D, 0));
-        kF = coefficients.F;
+        pidfController.setPIDF(coefficients.p, coefficients.i, coefficients.d, coefficients.f);
+        kF = coefficients.f;
     }
 
     /**
@@ -53,7 +52,7 @@ public class SlideController {
      * @param targetDistance the target distance in inches to move the slides to
      */
     public void moveToInches(double targetDistance) {
-        pidfController.setTargetPosition(targetDistance * ticksPerInch);
+        pidfController.setSetPoint(targetDistance * ticksPerInch);
     }
 
     /**
@@ -63,13 +62,11 @@ public class SlideController {
      * @return the motor power needed to move the slides to the target position
      */
     public double calculateMotorPowers(double currentTicks) {
-        pidfController.updatePosition(currentTicks);
-
-        if (tolerance > 0 && Math.abs(pidfController.getError()) < tolerance) {
+        if (tolerance > 0 && Math.abs(pidfController.getPositionError()) < tolerance) {
             return 0;
         }
 
-        double currentPower = pidfController.run();
+        double currentPower = pidfController.calculate(currentTicks);
         int sign = (int) Math.signum(currentPower);
         return (Math.abs(currentPower) + Math.abs(kF)) * sign;
     }
@@ -79,6 +76,6 @@ public class SlideController {
      * @return the target ticks for the slides
      */
     public double getTargetTicks() {
-        return pidfController.getTargetPosition();
+        return pidfController.getSetPoint();
     }
 }

@@ -233,10 +233,10 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public void periodic() {
         readCurrent();
-        robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
+        robotState.set("driveCurrent", frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
         TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500 / 6000 * 60);
-        if ((robotState.getDriveCurrent() > MAX_CURRENT_DRAW) && timer.milliseconds() > 300) {
+        if (((double) robotState.get("driveCurrent") > MAX_CURRENT_DRAW) && timer.milliseconds() > 300) {
             currentMultiplier = currentMultiplier * 0.95;
             timer.reset();
         } else {
