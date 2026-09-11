@@ -15,14 +15,11 @@ import team.techtigers.utils.enums.AutoStateCondition;
  * A base class for autonomous drive team.techtigers.states, using a parallel command group.
  */
 public abstract class DriveStateBase extends ParallelCommandGroupState<AutoStateCondition> {
-    private static final String LOG_TAG = DriveStateBase.class.getSimpleName();
-    private static final double RECOVERY_TIMEOUT = 4000;
+    private static final String tag = DriveStateBase.class.getSimpleName();
     protected final AutoDriveCommand autoDriveCommand;
     protected final RobotState robotState;
     private double tolerance;
     private double angleTolerance;
-    private boolean hasRecovered;
-    private ElapsedTime recoveryTimer;
 
     /**
      * Constructor for the SequentialCommandGroupState
@@ -40,8 +37,6 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
         setTolerance(tolerance);
         angleTolerance = AutoSubsystem.MEDIUM_ANGLE_TOLERANCE;
         setAngleTolerance(angleTolerance);
-        hasRecovered = false;
-        recoveryTimer = new ElapsedTime();
     }
 
     /**
@@ -147,50 +142,15 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
     }
 
     @Override
-    @CallSuper
-    public void initialize() {
-        super.initialize();
-        hasRecovered = false;
-        recoveryTimer.reset();
-    }
-
-    @Override
-    @CallSuper
-    public void update() {
-        super.update();
-        // If the robot is stuck or the timeout is reached for the first time, we need to recover
-//        if (isTimeoutReached() && !hasRecovered) {
-//            // Generate a new path chain using the robot's current and final poses
-//            PathChain pathChain = new PathBuilder().addBezierLine(
-//                    new Point(robotState.getRobotCurrentPose().getX(), robotState.getRobotCurrentPose().getY()),
-//                    new Point(robotState.getRobotFinalPose().getX(), robotState.getRobotFinalPose().getY())
-//            ).setLinearHeadingInterpolation(
-//                    robotState.getRobotCurrentPose().getHeading(),
-//                    robotState.getRobotFinalPose().getHeading()
-//            ).build();
-//            autoDriveCommand.setPathChain(pathChain);
-//            hasRecovered = true;
-//            recoveryTimer.reset();
-//        }
-    }
-
-    @Override
     public AutoStateCondition getCurrentCondition() {
         if (tolerance < 0 || angleTolerance < 0) {
             throw new IllegalStateException("Tolerance and angle tolerance must be set");
         }
 
-//        RobotLog.dd(LOG_TAG, "Current State: %s", robotState.getCurrentAutoState());
-//        RobotLog.dd(LOG_TAG, "Distance: %f", distToTarget(current, target));
-//        RobotLog.dd(LOG_TAG, "Angular Distance: %f", Math.toDegrees(angleDistance(current.getHeading(), target.getHeading())));
-
         if (autoDriveCommand.isFinished()) {
             return AutoStateCondition.DRIVE_END;
         }
 
-//        if (recoveryTimer.milliseconds() > RECOVERY_TIMEOUT && hasRecovered) {
-//            return AutoState.TIMEOUT;
-//        }
         if (isTimeoutReached()) {
             return AutoStateCondition.TIMEOUT;
         }

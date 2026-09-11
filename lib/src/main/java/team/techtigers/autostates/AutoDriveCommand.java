@@ -17,13 +17,9 @@ import team.techtigers.utils.TTLogger;
  * A class for autonomous drive commands that use PedroPathing.
  */
 public class AutoDriveCommand extends CommandBase {
-    private static final String LOG_TAG =
-            AutoDriveCommand.class.getSimpleName();
-
     private final RobotState robotState;
     public Follower follower;
     private PathChain pathChain;
-    private PathChain previousPathChain;
 
     // Controllers/Constraints
     private PIDFCoefficients headingPIDF;
@@ -69,35 +65,27 @@ public class AutoDriveCommand extends CommandBase {
         Pose target =
                 finalPath.endPose();
 
-        // Sets the previous path chain to the one set initially
-        previousPathChain = pathChain;
-
         // Sets the robot's final pose to the final waypoint found
         robotState.set("robotFinalPose", target);
+        TTLogger.dd(tag, "Initial Target is: %s", pathChain.getPath(0).endPose().toString());
+        TTLogger.dd(tag, "Final pose set to: %s", target.toString());
         follower.followPath(pathChain, true);
 
-        TTLogger.dd(tag, "follower intiailizeing");
+        TTLogger.dd(tag, "Follower initializing");
     }
 
     @Override
     public void update() {
-//        if (pathChain != previousPathChain) {
-//            follower = new Follower(localizer);
-//            follower.setTranslationalPIDF(translationalPIDF.getCoefficients());
-//            follower.setHeadingPIDF(headingPIDF.getCoefficients());
-//            follower.setDrivePIDF(drivePIDF.getCoefficients());
-//            follower.disableSecondaryPIDS();
-//            follower.followPath(pathChain, true);
-//            previousPathChain = pathChain;
-//        }
-
         follower.update();
-        TTLogger.dd(tag, "follwering updating, roboto pose: %s", robotState.get("robotPose").toString());
+        TTLogger.dd(tag, "Follower driving towards point: %s", follower.getCurrentPath().endPose().toString());
+        TTLogger.dd(tag, "Follower updating, robot pose: %s", robotState.get("robotPose").toString());
+        TTLogger.dd(tag, "Follower running, T Value: %d", follower.getCurrentTValue());
+        TTLogger.dd(tag, "Follower running, Distance Remaining: %d", follower.getDistanceRemaining());
     }
 
     @Override
     public void end(boolean interrupted) {
-        TTLogger.dd(tag, "follower done followuing");
+        TTLogger.dd(tag, "Follower done following");
         // Holds the robots current position and heading, and internally stops any concurrent following
         Pose robotPose = robotState.get("robotPose");
         follower.holdPoint(new BezierPoint(robotPose.getX(),
@@ -107,7 +95,7 @@ public class AutoDriveCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "Folllower busy: %b", follower.isBusy());
+        TTLogger.dd(tag, "Follower busy: %b", follower.isBusy());
         return !follower.isBusy();
     }
 
