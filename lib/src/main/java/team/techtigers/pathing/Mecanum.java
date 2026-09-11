@@ -78,6 +78,7 @@ public class Mecanum extends Drivetrain {
      */
     @Override
     public double[] calculateDrive(Vector correctivePower, Vector headingPower, Vector pathingPower, double robotHeading) {
+        headingPower = headingPower.times(-1);
         // clamps down the magnitudes of the input vectors
         if (correctivePower.getMagnitude() > maxPowerScaling)
             correctivePower.setMagnitude(maxPowerScaling);
