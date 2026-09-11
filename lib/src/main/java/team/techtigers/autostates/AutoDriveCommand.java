@@ -14,7 +14,7 @@ import team.techtigers.utils.RobotState;
 import team.techtigers.utils.TTLogger;
 
 /**
- * A class for autonomous drive team.techtigers.commands that use PedroPathing.
+ * A class for autonomous drive commands that use PedroPathing.
  */
 public class AutoDriveCommand extends CommandBase {
     private static final String LOG_TAG =

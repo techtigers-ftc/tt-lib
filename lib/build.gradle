@@ -29,11 +29,11 @@ dependencies {
     testImplementation libs.junit.jupiter
     testImplementation libs.junit.jupiter.params
     testImplementation libs.mockito.core
-    implementation libs.ftclib
     implementation libs.ftcrobotcore
     api 'com.pedropathing:ftc:2.1.2'
     api 'com.pedropathing:telemetry:1.0.0'
-    implementation 'org.firstinspires.ftc:Hardware:11.1.0'
+    api 'org.firstinspires.ftc:Hardware:11.1.0'
+    api 'androidx.annotation:annotation:1.10.0'
 }
 
 tasks.withType(Test).configureEach {

@@ -5,6 +5,9 @@ import team.techtigers.gamepad.GamepadEx;
 import team.techtigers.subsystems.DriveSubsystem;
 import team.techtigers.utils.RobotState;
 
+/**
+ * Command for manual driving of the robot in field-centric mode.
+ */
 public class ManualDriveCommandFieldCentric extends CommandBase {
     private final DriveSubsystem drive;
     private final RobotState robotState;
@@ -15,7 +18,7 @@ public class ManualDriveCommandFieldCentric extends CommandBase {
      *
      * @param drive         the drive subsystem
      * @param robotState    the robot state
-     * @param driverGamepad the driver team.techtigers.gamepad
+     * @param driverGamepad the driver gamepad
      */
     public ManualDriveCommandFieldCentric(DriveSubsystem drive,
                                           RobotState robotState, GamepadEx driverGamepad) {

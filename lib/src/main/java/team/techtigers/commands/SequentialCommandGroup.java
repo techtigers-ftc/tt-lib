@@ -3,16 +3,16 @@ package team.techtigers.commands;
 import androidx.annotation.CallSuper;
 
 /**
- * Runs child team.techtigers.commands one at a time in the order they were provided.
+ * Runs child commands one at a time in the order they were provided.
  */
 public class SequentialCommandGroup extends CommandGroup {
     private int currentCommandIndex;
     private boolean isFinished;
 
     /**
-     * Creates a group that runs the supplied team.techtigers.commands in sequence.
+     * Creates a group that runs the supplied commands in sequence.
      *
-     * @param commands the team.techtigers.commands to run in order
+     * @param commands the commands to run in order
      */
     public SequentialCommandGroup(Command... commands) {
         addCommands(commands);

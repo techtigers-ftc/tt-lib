@@ -1,7 +1,7 @@
 package team.techtigers.gamepad;
 
 /**
- * The digital buttons and analog triggers available on an FTC team.techtigers.gamepad.
+ * The digital buttons and analog triggers available on an FTC gamepads.
  */
 public class GamepadKeys {
 

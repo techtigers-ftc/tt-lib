@@ -21,7 +21,7 @@ public class EndState extends ParallelCommandGroupState<AutoStateCondition> {
 
     @Override
     public void configureCommands() {
-        // No team.techtigers.commands to add, this state is just a placeholder to end the autonomous
+        // No commands to add, this state is just a placeholder to end the autonomous
     }
 
     @Override

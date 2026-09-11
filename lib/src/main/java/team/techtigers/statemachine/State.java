@@ -19,7 +19,7 @@ public interface State<T> extends Command {
     String getName();
 
     /**
-     * Configures all the team.techtigers.commands for the state
+     * Configures all the commands for the state
      */
     void configureCommands();
 }

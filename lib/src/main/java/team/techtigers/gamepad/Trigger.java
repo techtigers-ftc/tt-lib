@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.BooleanSupplier;
 
 /**
- * Binds team.techtigers.commands to a boolean condition, such as a team.techtigers.gamepad button or a sensor state.
+ * Binds commands to a boolean condition, such as a gamepad button or a sensor state.
  */
 public class Trigger {
     private final BooleanSupplier condition;
@@ -138,7 +138,7 @@ public class Trigger {
     }
 
     /**
-     * Alternates between two team.techtigers.commands on each press, interrupting the previously selected command.
+     * Alternates between two commands on each press, interrupting the previously selected command.
      */
     public Trigger toggleWhenActive(final Command firstCommand, final Command secondCommand) {
         bindings.add(new Runnable() {

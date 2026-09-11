@@ -12,7 +12,7 @@ import team.techtigers.utils.TTLogger;
 
 /**
  * BaseOpMode is an abstract class that extends LinearOpMode and provides a framework for creating
- * custom team.techtigers.opmodes. It manages the team.techtigers.subsystems controller and runs their appropriate methods.
+ * custom opmodes. It manages the subsystem controller and runs their appropriate methods.
  */
 public abstract class BaseOpMode extends LinearOpMode {
     protected RobotState robotState;
@@ -61,9 +61,9 @@ public abstract class BaseOpMode extends LinearOpMode {
     }
 
     /**
-     * Registers the provided team.techtigers.subsystems with the SubsystemController.
+     * Registers the provided subsystems with the SubsystemController.
      *
-     * @param subsystems the team.techtigers.subsystems to be registered
+     * @param subsystems the subsystems to be registered
      */
     protected void registerSubsystems(Subsystem... subsystems) {
         CommandScheduler.getInstance().reset();

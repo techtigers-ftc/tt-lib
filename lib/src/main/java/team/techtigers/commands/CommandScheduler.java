@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import team.techtigers.gamepad.Trigger;
 
 /**
- * Schedules team.techtigers.commands and runs their lifecycle methods each control loop.
+ * Schedules commands and runs their lifecycle methods each control loop.
  */
 public class CommandScheduler {
     private static CommandScheduler instance;
@@ -28,9 +28,9 @@ public class CommandScheduler {
     }
 
     /**
-     * Adds team.techtigers.commands to the scheduler and initializes them.
+     * Adds commands to the scheduler and initializes them.
      *
-     * @param commands the team.techtigers.commands to schedule
+     * @param commands the commands to schedule
      */
     public void schedule(Command... commands) {
         for (Command command : commands) {
@@ -55,7 +55,7 @@ public class CommandScheduler {
     }
 
     /**
-     * Runs scheduled team.techtigers.commands and ends team.techtigers.commands that have finished.
+     * Runs scheduled commands and ends commands that have finished.
      */
     public void update() {
         for (Trigger trigger : new ArrayList<>(triggers)) {
@@ -70,16 +70,13 @@ public class CommandScheduler {
                 commands.remove(i);
                 i--;
             }
-//            else {
-//                command.update();
-//            }
         }
     }
 
     /**
-     * Interrupts and removes the specified scheduled team.techtigers.commands.
+     * Interrupts and removes the specified scheduled commands.
      *
-     * @param commands the team.techtigers.commands to cancel
+     * @param commands the commands to cancel
      */
     public void cancel(Command... commands) {
         for (Command command : commands) {

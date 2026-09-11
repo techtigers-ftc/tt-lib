@@ -3,7 +3,7 @@ package team.techtigers.gamepad;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 /**
- * A wrapper for the FTC SDK's team.techtigers.gamepad class that provides additional functionality.
+ * A wrapper for the FTC SDK's gamepad class that provides additional functionality.
  */
 public class GamepadEx {
     private final Gamepad gamepad;
@@ -13,7 +13,7 @@ public class GamepadEx {
     }
 
     /**
-     * Returns a command trigger for a digital team.techtigers.gamepad button.
+     * Returns a command trigger for a digital gamepad button.
      *
      * @param button the button to monitor
      * @return a trigger that is active while the button is pressed
@@ -100,7 +100,7 @@ public class GamepadEx {
     }
 
     /**
-     * Runs a rumble effect on the team.techtigers.gamepad.
+     * Runs a rumble effect on the gamepad.
      *
      * @param rumbleEffect the rumble effect to run
      */
@@ -109,7 +109,7 @@ public class GamepadEx {
     }
 
     /**
-     * Runs a rumble effect on the team.techtigers.gamepad.
+     * Runs a rumble effect on the gamepad.
      *
      * @param leftMotorPower the power for the left rumble motor, from {@code 0.0} to {@code 1.0}
      * @param rightMotorPower the power for the right rumble motor, from {@code 0.0} to {@code 1.0}
@@ -120,7 +120,7 @@ public class GamepadEx {
     }
 
     /**
-     * Sets the team.techtigers.gamepad's LED color.
+     * Sets the gamepad's LED color.
      *
      * @param red the red component of the color, from 0.0 - 1.0
      * @param green the green component of the color, from 0.0 - 1.0

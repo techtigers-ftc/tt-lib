@@ -5,7 +5,7 @@ import team.techtigers.utils.RobotState;
 import team.techtigers.utils.enums.AutoStateCondition;
 
 /**
- * A subsystem for autonomous team.techtigers.commands
+ * A subsystem for autonomous commands
  */
 public class AutoSubsystem extends Subsystem {
     private final StateMachine<AutoStateCondition> stateMachine;

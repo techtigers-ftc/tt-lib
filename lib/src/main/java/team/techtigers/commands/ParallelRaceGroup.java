@@ -3,15 +3,15 @@ package team.techtigers.commands;
 import androidx.annotation.CallSuper;
 
 /**
- * Runs child team.techtigers.commands concurrently and completes when the first child command finishes.
+ * Runs child commands concurrently and completes when the first child command finishes.
  */
 public class ParallelRaceGroup extends CommandGroup {
     private boolean isFinished;
 
     /**
-     * Creates a group that races the supplied team.techtigers.commands.
+     * Creates a group that races the supplied commands.
      *
-     * @param commands the team.techtigers.commands to run until one finishes
+     * @param commands the commands to run until one finishes
      */
     public ParallelRaceGroup(Command... commands) {
         addCommands(commands);

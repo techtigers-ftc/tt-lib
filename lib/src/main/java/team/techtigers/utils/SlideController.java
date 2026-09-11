@@ -5,7 +5,7 @@ import com.pedropathing.control.PIDFController;
 
 /**
  * This class encapsulates the logic for setting slides to a given position into one class so that
- * it can be used by other team.techtigers.subsystems (namely the intake and dropper team.techtigers.subsystems) without
+ * it can be used by other subsystems (namely the intake and dropper subsystems) without
  * duplicating code.
  */
 public class SlideController {
