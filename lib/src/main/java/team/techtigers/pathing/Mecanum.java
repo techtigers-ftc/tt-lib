@@ -135,6 +135,10 @@ public class Mecanum extends Drivetrain {
             // this copies the vectors from mecanumVectors but creates new references for them
             mecanumVectorsCopy[i] = vectors[i].copy();
 
+            mecanumVectorsCopy[i].setOrthogonalComponents(mecanumVectorsCopy[i].getXComponent(),
+                    -mecanumVectorsCopy[i].getYComponent()
+            );
+
             mecanumVectorsCopy[i].rotateVector(robotHeading);
         }
 
