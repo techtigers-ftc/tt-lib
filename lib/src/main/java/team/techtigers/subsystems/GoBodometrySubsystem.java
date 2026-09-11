@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
+import team.techtigers.subsystems.utils.OdomConfig;
 import team.techtigers.utils.AngleUtilities;
 
 /**
@@ -25,75 +26,22 @@ public class GoBodometrySubsystem extends Subsystem {
      *
      * @param hardwareMap The hardware map, used to get hardware references
      * @param startPose   The starting pose of the robot.
-     * @param odoName     The name of the GoBilda Pinpoint in the hardware map.
-     * @param xOffset     X pod offset refers to how far sideways from the tracking point the X (forward) odometry pod is
-     * @param yOffset     Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is
-     * @param xDirection  The direction of the X (forward) odometry pod encoder
-     * @param yDirection  The direction of the Y (strafe) odometry pod encoder
+     * @param odomConfig  The odometry configuration, including offsets and encoder directions.
      */
     public GoBodometrySubsystem(HardwareMap hardwareMap,
-                                Pose startPose, String odoName, double xOffset, double yOffset,
-                                GoBildaPinpointDriver.EncoderDirection xDirection, GoBildaPinpointDriver.EncoderDirection yDirection) {
+                                Pose startPose, OdomConfig odomConfig) {
         super("Gobodometry Subsystem");
 
-        // Initialize the hardware variables. Note that the strings used here must correspond
-        // to the names assigned during the robot team.techtigers.configuration step on the DS or RC devices.
-
-        odo = hardwareMap.get(GoBildaPinpointDriver.class, odoName);
-
-        /*
-        Set the odometry pod positions relative to the point that the odometry computer tracks around.
-        The X pod offset refers to how far sideways from the tracking point the
-        X (forward) odometry pod is. Left of the center is a positive number,
-        right of center is a negative number. the Y pod offset refers to how far forwards from
-        the tracking point the Y (strafe) odometry pod is. forward of center is a positive number,
-        backwards is a negative number.
-         */
-        odo.setOffsets(xOffset, yOffset, DistanceUnit.INCH);
-
-        /*
-        Set the kind of pods used by your robot. If you're using goBILDA odometry pods, select either
-        the goBILDA_SWINGARM_POD, or the goBILDA_4_BAR_POD.
-        If you're using another kind of odometry pod, uncomment setEncoderResolution and input the
-        number of ticks per mm of your odometry pod.
-         */
+        odo = hardwareMap.get(GoBildaPinpointDriver.class, odomConfig.name);
+        odo.setOffsets(odomConfig.xOffset, odomConfig.yOffset, DistanceUnit.INCH);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        odo.setEncoderDirections(odomConfig.xDirection,
+                odomConfig.yDirection);
 
-        /*
-        Set the direction that each of the two odometry pods count. The X (forward) pod should
-        increase when you move the robot forward. And the Y (strafe) pod should increase when
-        you move the robot to the left.
-         */
-        odo.setEncoderDirections(xDirection,
-                yDirection);
-
-        /*
-        Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary
-        The IMU will automatically calibrate when first powered on, but recalibrating before running
-        the robot is a good idea to ensure that the calibration is "good".
-        resetPosAndIMU will reset the position to 0,0,0 and also recalibrate the IMU.
-        This is recommended before you run your autonomous, as a bad initial calibration can cause
-        an incorrect starting value for x, y, and heading.
-         */
         odo.resetPosAndIMU();
 
         this.startPose = new Pose2D(DistanceUnit.INCH, startPose.getX(),
                 startPose.getY(), AngleUnit.RADIANS, startPose.getHeading());
-    }
-
-    /**
-     * Overload constructor for a GoBodometrySubsystem with a default odometry name of "odo".
-     *
-     * @param hardwareMap the hardware map, used to get hardware references
-     * @param startPose   the starting pose of the robot
-     * @param xOffset     X pod offset refers to how far sideways from the tracking point the X (forward) odometry pod is
-     * @param yOffset     Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is
-     * @param xDirection  the direction of the X (forward) odometry pod encoder
-     * @param yDirection  the direction of the Y (strafe) odometry pod
-     */
-    public GoBodometrySubsystem(HardwareMap hardwareMap, Pose startPose, double xOffset, double yOffset,
-                                GoBildaPinpointDriver.EncoderDirection xDirection, GoBildaPinpointDriver.EncoderDirection yDirection) {
-        this(hardwareMap, startPose, "odo", xOffset, yOffset, xDirection, yDirection);
     }
 
     @Override
@@ -104,15 +52,6 @@ public class GoBodometrySubsystem extends Subsystem {
             telemetry.addLine("Odometry Reset Complete");
             resetComplete = true;
         }
-    }
-
-    /**
-     * Initializes a new GoBodometrySubsystem with the start pose at (0, 0, 0).
-     *
-     * @param hardwareMap The hardware map, used to get hardware references
-     */
-    public GoBodometrySubsystem(HardwareMap hardwareMap) {
-        this(hardwareMap, new Pose(0, 0), 0, 0, GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
     }
 
     @Override
