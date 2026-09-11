@@ -20,7 +20,7 @@ Then add TT Lib to the `dependencies` section of the same file:
 
 ```groovy
 dependencies {
-    implementation 'com.github.techtigers-ftc:tt-lib:v1.0.2-rc13'
+    implementation 'com.github.techtigers-ftc:tt-lib:v1.1.0'
 }
 ```
 
@@ -39,14 +39,14 @@ The command-based architecture separates *what the robot does* from *how its har
 
 ### Subsystems
 
-Extend `Subsystem` for each major robot mechanism. Construct the hardware in the subsystem, put continuously repeated work in `periodic()`, and leave hardware behavior in methods that commands can call.
+Extend `Subsystem` for each major robot mechanism. Construct the hardware in the subsystem, put continuously repeated work in `periodic()`, and leave hardware behavior in methods that commands can call. Use TT Lib's `CachedMotor` wrapper for motors so repeated power values are not unnecessarily sent to the hardware controller.
 
 ```java
 public class IntakeSubsystem extends Subsystem {
-    private final DcMotor intakeMotor;
+    private final CachedMotor intakeMotor;
 
     public IntakeSubsystem(HardwareMap hardwareMap) {
-        intakeMotor = hardwareMap.get(DcMotor.class, "intake");
+        intakeMotor = new CachedMotor(hardwareMap, "intake");
     }
 
     public void setPower(double power) {
@@ -55,7 +55,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override
     public void close() {
-        intakeMotor.setPower(0.0);
+        intakeMotor.stop();
     }
 }
 ```
