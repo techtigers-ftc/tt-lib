@@ -126,7 +126,7 @@ public class GoBodometrySubsystem extends Subsystem {
             return;
         }
 
-        robotState.setRobotPose(robotPose);
+        robotState.set("robotPose", robotPose);
 
         Pose robotVelocity = new Pose(odo.getVelX(DistanceUnit.INCH),
                 odo.getVelY(DistanceUnit.INCH), headingVelocity);
@@ -135,7 +135,7 @@ public class GoBodometrySubsystem extends Subsystem {
             return;
         }
 
-        robotState.setRobotVelocity(robotVelocity);
+        robotState.set("robotVelocity", robotVelocity);
     }
 
     /**

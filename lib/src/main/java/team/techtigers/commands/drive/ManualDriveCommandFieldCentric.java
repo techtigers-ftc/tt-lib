@@ -27,7 +27,7 @@ public class ManualDriveCommandFieldCentric extends CommandBase {
     @Override
     public void update() {
         drive.driveFieldCentric(driverGamepad.getLeftY(),
-                -driverGamepad.getLeftX(), -driverGamepad.getRightX(), robotState.getRobotPose().getHeading());
+                -driverGamepad.getLeftX(), -driverGamepad.getRightX(), robotState.get("robotPose"));
     }
 
     @Override
