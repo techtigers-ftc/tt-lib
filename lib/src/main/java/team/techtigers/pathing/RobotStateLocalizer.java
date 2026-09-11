@@ -61,11 +61,13 @@ public class RobotStateLocalizer implements Localizer {
      */
     @Override
     public void update() {
-        currentPose =
-                robotState.get("robotPose");
-        totalHeading += MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), previousHeading);
-        previousHeading = currentPose.getHeading();
-        currentVelocity = robotState.get("robotVelocity");
+        if (robotState.get("robotPose") != null) {
+            currentPose =
+                    robotState.get("robotPose");
+            totalHeading += MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), previousHeading);
+            previousHeading = currentPose.getHeading();
+            currentVelocity = robotState.get("robotVelocity");
+        }
     }
 
     /**
