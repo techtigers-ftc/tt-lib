@@ -11,17 +11,17 @@ public class Constants {
 
     public static DriveConstants driveConstants = new DriveConstants();
 
-    public static Follower createFollower(DriveSubsystem drive, RobotState robotState, PedroConstants pedroConstants) {
+    public static Follower createFollower(DriveSubsystem drive, RobotState robotState, PedroConfig pedroConfig) {
         followerConstants
-                .centripetalScaling(pedroConstants.centripetalScaling)
-                .mass(pedroConstants.mass)
-                .headingPIDFCoefficients(pedroConstants.headingPIDFCoefficients)
-                .predictiveBrakingCoefficients(pedroConstants.predictiveBrakingCoefficients);
+                .centripetalScaling(pedroConfig.centripetalScaling)
+                .mass(pedroConfig.mass)
+                .headingPIDFCoefficients(pedroConfig.headingPIDFCoefficients)
+                .predictiveBrakingCoefficients(pedroConfig.predictiveBrakingCoefficients);
 
         driveConstants
-                .maxPower(pedroConstants.maxPower)
-                .xVelocity(pedroConstants.xVelocity)
-                .yVelocity(pedroConstants.yVelocity);
+                .maxPower(pedroConfig.maxPower)
+                .xVelocity(pedroConfig.xVelocity)
+                .yVelocity(pedroConfig.yVelocity);
 
         return new Follower(followerConstants, new RobotStateLocalizer(robotState), new Mecanum(driveConstants, drive, robotState));
     }
