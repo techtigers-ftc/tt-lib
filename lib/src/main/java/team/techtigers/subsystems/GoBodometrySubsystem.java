@@ -23,12 +23,15 @@ public class GoBodometrySubsystem extends Subsystem {
      *
      * @param hardwareMap The hardware map, used to get hardware references
      * @param startPose   The starting pose of the robot.
-     * @param odoName    The name of the GoBilda Pinpoint in the hardware map.
-     * @param xOffset    X pod offset refers to how far sideways from the tracking point the X (forward) odometry pod is
-     * @param yOffset    Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is
+     * @param odoName     The name of the GoBilda Pinpoint in the hardware map.
+     * @param xOffset     X pod offset refers to how far sideways from the tracking point the X (forward) odometry pod is
+     * @param yOffset     Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is
+     * @param xDirection  The direction of the X (forward) odometry pod encoder
+     * @param yDirection  The direction of the Y (strafe) odometry pod encoder
      */
     public GoBodometrySubsystem(HardwareMap hardwareMap,
-                                Pose startPose, String odoName, double xOffset, double yOffset) {
+                                Pose startPose, String odoName, double xOffset, double yOffset,
+                                GoBildaPinpointDriver.EncoderDirection xDirection, GoBildaPinpointDriver.EncoderDirection yDirection) {
         super("Gobodometry Subsystem");
 
         // Initialize the hardware variables. Note that the strings used here must correspond
@@ -59,8 +62,8 @@ public class GoBodometrySubsystem extends Subsystem {
         increase when you move the robot forward. And the Y (strafe) pod should increase when
         you move the robot to the left.
          */
-        odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.REVERSED,
-                GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        odo.setEncoderDirections(xDirection,
+                yDirection);
 
         /*
         Before running the robot, recalibrate the IMU. This needs to happen when the robot is stationary
@@ -80,12 +83,15 @@ public class GoBodometrySubsystem extends Subsystem {
      * Overload constructor for a GoBodometrySubsystem with a default odometry name of "odo".
      *
      * @param hardwareMap the hardware map, used to get hardware references
-     * @param startPose the starting pose of the robot
-     * @param xOffset    X pod offset refers to how far sideways from the tracking point the X (forward) odometry pod is
-     * @param yOffset    Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is
+     * @param startPose   the starting pose of the robot
+     * @param xOffset     X pod offset refers to how far sideways from the tracking point the X (forward) odometry pod is
+     * @param yOffset     Y pod offset refers to how far forwards from the tracking point the Y (strafe) odometry pod is
+     * @param xDirection  the direction of the X (forward) odometry pod encoder
+     * @param yDirection  the direction of the Y (strafe) odometry pod
      */
-    public GoBodometrySubsystem(HardwareMap hardwareMap, Pose startPose, double xOffset, double yOffset) {
-        this(hardwareMap, startPose, "odo", xOffset, yOffset);
+    public GoBodometrySubsystem(HardwareMap hardwareMap, Pose startPose, double xOffset, double yOffset,
+                                GoBildaPinpointDriver.EncoderDirection xDirection, GoBildaPinpointDriver.EncoderDirection yDirection) {
+        this(hardwareMap, startPose, "odo", xOffset, yOffset, xDirection, yDirection);
     }
 
     @Override
@@ -104,7 +110,7 @@ public class GoBodometrySubsystem extends Subsystem {
      * @param hardwareMap The hardware map, used to get hardware references
      */
     public GoBodometrySubsystem(HardwareMap hardwareMap) {
-        this(hardwareMap, new Pose(0, 0), 0, 0);
+        this(hardwareMap, new Pose(0, 0), 0, 0, GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);
     }
 
     @Override
