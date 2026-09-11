@@ -10,6 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 
+import team.techtigers.utils.AngleUtilities;
+
 /**
  * The odometry subsystem, using Gobilda Pinpoint.
  */
@@ -123,7 +125,7 @@ public class GoBodometrySubsystem extends Subsystem {
     public void periodic() {
         odo.update();
 
-        double heading = odo.getHeading(AngleUnit.RADIANS);
+        double heading = AngleUtilities.norm(odo.getHeading(AngleUnit.RADIANS));
         double headingVelocity = odo.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
 
         Pose robotPose = new Pose(odo.getPosX(DistanceUnit.INCH),
