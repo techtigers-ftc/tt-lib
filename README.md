@@ -318,7 +318,7 @@ The values below are examples only. Measure and tune them for your robot with th
 
 ### 1. Configure odometry
 
-`OdomConfig` describes the goBILDA Pinpoint device. The offsets are in inches. The X encoder count should increase when the robot moves forward, and the Y encoder count should increase when it moves left.
+`OdomConfig` describes the Pinpoint odometry computer. The offsets are in inches. The X encoder count should increase when the robot moves forward, and the Y encoder count should increase when it moves left.
 
 ```java
 OdomConfig odomConfig = new OdomConfig()
@@ -339,7 +339,7 @@ The `Pose` passed to `GoBodometrySubsystem` is the robot's starting pose.
 
 ### 2. Configure the drivetrain
 
-`DriveConfig` maps the four mecanum motors and sets their directions. The names must match the Robot Controller configuration.
+`DriveConfig` maps the four drivetrain motors and sets their directions. The names must match the Robot Controller configuration.
 
 ```java
 DriveConfig driveConfig = new DriveConfig()
@@ -383,7 +383,7 @@ PedroConfig pedroConfig = new PedroConfig()
 Follower follower = Constants.createFollower(drive, robotState, pedroConfig);
 ```
 
-`Constants.createFollower(...)` copies these settings into Pedro's follower and drive constants, connects the follower to TT Lib's mecanum drive, and uses `RobotStateLocalizer` so Pedro reads the pose maintained in the shared `RobotState`.
+`Constants.createFollower(...)` copies these settings into Pedro's follower and drive constants, connects the follower to TT Lib's drivetrain adapter, and uses `RobotStateLocalizer` so Pedro reads the pose maintained in the shared `RobotState`.
 
 ### 4. Build paths and drive states
 
