@@ -62,10 +62,10 @@ public class RobotStateLocalizer implements Localizer {
     @Override
     public void update() {
         currentPose =
-                robotState.getRobotPose();
+                robotState.get("robotPose");
         totalHeading += MathFunctions.getSmallestAngleDifference(currentPose.getHeading(), previousHeading);
         previousHeading = currentPose.getHeading();
-        currentVelocity = robotState.getRobotVelocity();
+        currentVelocity = robotState.get("robotVelocity");
     }
 
     /**
@@ -106,7 +106,7 @@ public class RobotStateLocalizer implements Localizer {
 
     @Override
     public boolean isNAN() {
-        Pose robotPose = robotState.getRobotPose();
+        Pose robotPose = robotState.get("robotPose");
         return Double.isNaN(robotPose.getX()) || Double.isNaN(robotPose.getY()) || Double.isNaN(robotPose.getHeading());
     }
 }

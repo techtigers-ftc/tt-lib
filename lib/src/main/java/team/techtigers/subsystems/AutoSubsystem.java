@@ -37,8 +37,8 @@ public class AutoSubsystem extends Subsystem {
     @Override
     public void periodic() {
         stateMachine.update();
-        robotState.setPreviousAutoState(stateMachine.getPreviousState());
-        robotState.setCurrentAutoState(stateMachine.getCurrentState());
-        robotState.setAutoRemainingTime(30 - robotState.getRunTime() / 1000.0);
+        robotState.set("previousAutoState", stateMachine.getPreviousState());
+        robotState.set("currentAutoState", stateMachine.getCurrentState());
+        robotState.set("autoRemainingTime", 30 - robotState.getRunTime() / 1000.0);
     }
 }

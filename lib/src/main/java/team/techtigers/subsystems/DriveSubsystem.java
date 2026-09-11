@@ -1,5 +1,6 @@
 package team.techtigers.subsystems;
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -172,6 +173,18 @@ public class DriveSubsystem extends Subsystem {
     }
 
     /**
+     * Drives the robot in field centric mode, with movement inputs relative to the field's orientation.
+     *
+     * @param forward  The forward power
+     * @param strafe   The strafe power
+     * @param rotation The rotation power
+     * @param pose  The robot's pose
+     */
+    public void driveFieldCentric(double forward, double strafe, double rotation, Pose pose) {
+        driveFieldCentric(forward, strafe, rotation, pose.getHeading());
+    }
+
+    /**
      * Method to set the motor powers.
      *
      * @param fl The front left motor power
@@ -233,10 +246,10 @@ public class DriveSubsystem extends Subsystem {
     @Override
     public void periodic() {
         readCurrent();
-        robotState.setDriveCurrent(frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
+        robotState.set("driveCurrent", frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
 
         TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500 / 6000 * 60);
-        if ((robotState.getDriveCurrent() > MAX_CURRENT_DRAW) && timer.milliseconds() > 300) {
+        if (((double) robotState.get("driveCurrent") > MAX_CURRENT_DRAW) && timer.milliseconds() > 300) {
             currentMultiplier = currentMultiplier * 0.95;
             timer.reset();
         } else {

@@ -225,7 +225,7 @@ public class Mecanum extends Drivetrain {
 
     @Override
     public double getVoltage() {
-        return robotState.getVoltage();
+        return robotState.get("robotVoltage");
     }
 
     @Override

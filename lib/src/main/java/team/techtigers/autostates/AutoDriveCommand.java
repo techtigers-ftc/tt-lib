@@ -73,7 +73,7 @@ public class AutoDriveCommand extends CommandBase {
         previousPathChain = pathChain;
 
         // Sets the robot's final pose to the final waypoint found
-        robotState.setRobotFinalPose(target);
+        robotState.set("robotFinalPose", target);
         follower.followPath(pathChain, true);
 
         TTLogger.dd(tag, "follower intiailizeing");
@@ -92,16 +92,17 @@ public class AutoDriveCommand extends CommandBase {
 //        }
 
         follower.update();
-        TTLogger.dd(tag, "follwering updating, roboto pose: %s", robotState.getRobotPose().toString());
+        TTLogger.dd(tag, "follwering updating, roboto pose: %s", robotState.get("robotPose").toString());
     }
 
     @Override
     public void end(boolean interrupted) {
         TTLogger.dd(tag, "follower done followuing");
         // Holds the robots current position and heading, and internally stops any concurrent following
-        follower.holdPoint(new BezierPoint(robotState.getRobotPose().getX(),
-                robotState.getRobotPose().getY()),
-                robotState.getRobotPose().getHeading(), true);
+        Pose robotPose = robotState.get("robotPose");
+        follower.holdPoint(new BezierPoint(robotPose.getX(),
+                robotPose.getY()),
+                robotPose.getHeading(), true);
     }
 
     @Override
