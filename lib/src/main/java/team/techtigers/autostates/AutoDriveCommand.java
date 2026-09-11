@@ -49,18 +49,18 @@ public class AutoDriveCommand extends CommandBase {
         robotState.set("robotFinalPose", target);
         follower.follow(path);
 
-        TTLogger.dd(tag, "follower intiailizeing");
+        TTLogger.dd(tag, "follower initializing");
     }
 
     @Override
     public void update() {
         follower.update();
-        TTLogger.dd(tag, "follwering updating, roboto pose: %s", robotState.getRobotPose().toString());
+        TTLogger.dd(tag, "follower updating, robot pose: %s", robotState.get("robotPose").toString());
     }
 
     @Override
     public void end(boolean interrupted) {
-        TTLogger.dd(tag, "follower done followuing");
+        TTLogger.dd(tag, "follower done following path");
 
         // Holds the robots current position and heading, and internally stops any concurrent following
         follower.hold((Pose) robotState.get("robotPose"));
@@ -68,7 +68,7 @@ public class AutoDriveCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        TTLogger.dd(tag, "Folllower busy: %b", follower.isBusy());
+        TTLogger.dd(tag, "Follower busy: %b", follower.isBusy());
         return !follower.isBusy();
     }
 
