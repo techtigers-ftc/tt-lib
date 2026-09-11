@@ -79,8 +79,8 @@ public class AutoDriveCommand extends CommandBase {
         follower.update();
         TTLogger.dd(tag, "Follower driving towards point: %s", follower.getCurrentPath().endPose().toString());
         TTLogger.dd(tag, "Follower updating, robot pose: %s", robotState.get("robotPose").toString());
-        TTLogger.dd(tag, "Follower running, T Value: %d", follower.getCurrentTValue());
-        TTLogger.dd(tag, "Follower running, Distance Remaining: %d", follower.getDistanceRemaining());
+        TTLogger.dd(tag, "Follower running, T Value: %f", follower.getCurrentTValue());
+        TTLogger.dd(tag, "Follower running, Distance Remaining: %f", follower.getDistanceRemaining());
     }
 
     @Override
