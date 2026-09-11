@@ -2,93 +2,58 @@ package team.techtigers.subsystems;
 
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import team.techtigers.subsystems.utils.DriveConfig;
 import team.techtigers.utils.CachedMotor;
 import team.techtigers.utils.HardwareReader;
 import team.techtigers.utils.SlidingAverageCalculator;
-import team.techtigers.utils.TTLogger;
 import team.techtigers.utils.Vector2d;
 
+/**
+ * The drive subsystem, which contains all the motors and methods for driving the robot for both autonomous and teleop.
+ */
 public class DriveSubsystem extends Subsystem {
     public final CachedMotor frontLeft, frontRight;
     public final CachedMotor backLeft, backRight;
-    public static final double MAX_CURRENT_DRAW = 10.0;
-    private double currentMultiplier = 1.0;
     private final SlidingAverageCalculator frontLeftSlideCurrentAverage;
     private final SlidingAverageCalculator frontRightSlideCurrentAverage;
     private final SlidingAverageCalculator backLeftSlideCurrentAverage;
     private final SlidingAverageCalculator backRightSlideCurrentAverage;
     private final CachedMotor[] motors;
     private final HardwareReader hardwareReader;
-    private static final double TICKS_PER_REVOLUTION = 28.0;
-    private static final double RPM = 392;
-    private static final double GEAR_RATIO = RPM / 6000.0;
-    public static final double DRIVETRAIN_CURRENT_READ_INTERVAL = 100;
-    private static final double TICKS_PER_WHEEL_REVOLUTION = TICKS_PER_REVOLUTION / GEAR_RATIO;
-    private final ElapsedTime timer;
     private boolean readCurrent = false;
 
     /**
      * Constructs a new DriveSubsystem.
      *
      * @param hardwareMap The hardware map, used to get hardware references
-     * @param fl          The name of the front left motor in the hardware map
-     * @param fr          The name of the front right motor in the hardware map
-     * @param bl          The name of the back left motor in the hardware map
-     * @param br          The name of the back right motor in the hardware map
+     * @param driveConfig The configuration for the drive subsystem
      */
-    public DriveSubsystem(HardwareMap hardwareMap, String fl, String fr, String bl, String br, boolean readCurrent) {
+    public DriveSubsystem(HardwareMap hardwareMap, DriveConfig driveConfig) {
         super("Drive Subsystem");
-        frontLeft = new CachedMotor(hardwareMap, fl);
-        frontRight = new CachedMotor(hardwareMap, fr);
-        backLeft = new CachedMotor(hardwareMap, bl);
-        backRight = new CachedMotor(hardwareMap, br);
-        this.readCurrent = readCurrent;
+        frontLeft = new CachedMotor(hardwareMap, driveConfig.fl);
+        frontRight = new CachedMotor(hardwareMap, driveConfig.fr);
+        backLeft = new CachedMotor(hardwareMap, driveConfig.bl);
+        backRight = new CachedMotor(hardwareMap, driveConfig.br);
+        this.readCurrent = driveConfig.readCurrent;
 
         frontRightSlideCurrentAverage = new SlidingAverageCalculator(10);
         frontLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
         backRightSlideCurrentAverage = new SlidingAverageCalculator(10);
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
-        hardwareReader = new HardwareReader(DRIVETRAIN_CURRENT_READ_INTERVAL);
+        hardwareReader = new HardwareReader(driveConfig.drivetrainCurrentReadInterval);
 
         motors = new CachedMotor[]{frontLeft, backLeft, frontRight, backRight};
-        frontLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        backLeft.setDirection(DcMotorSimple.Direction.FORWARD);
-        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(driveConfig.flDirection);
+        backLeft.setDirection(driveConfig.blDirection);
+        frontRight.setDirection(driveConfig.frDirection);
+        backRight.setDirection(driveConfig.brDirection);
 
         for (CachedMotor motor : motors) {
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-
-        timer = new ElapsedTime();
-        timer.reset();
-    }
-
-    /**
-     * Constructs a new DriveSubsystem with default read current as true
-     *
-     * @param hardwareMap The hardware map, used to get hardware references
-     * @param fl          The name of the front left motor in the hardware map
-     * @param fr          The name of the front right motor in the hardware map
-     * @param bl          The name of the back left motor in the hardware map
-     * @param br          The name of the back right motor in the hardware map
-     */
-    public DriveSubsystem(HardwareMap hardwareMap, String fl, String fr, String bl, String br) {
-        this(hardwareMap, fl, fr, bl, br, true);
-    }
-
-    /**
-     * Constructs a new DriveSubsystem with default motor names and read current as true
-     *
-     * @param hardwareMap The hardware map, used to get hardware references
-     */
-    public DriveSubsystem(HardwareMap hardwareMap) {
-        this(hardwareMap, "frontLeft", "frontRight", "backLeft", "backRight");
     }
 
     //From FTC Lib RobotDrive
@@ -178,7 +143,7 @@ public class DriveSubsystem extends Subsystem {
      * @param forward  The forward power
      * @param strafe   The strafe power
      * @param rotation The rotation power
-     * @param pose  The robot's pose
+     * @param pose     The robot's pose
      */
     public void driveFieldCentric(double forward, double strafe, double rotation, Pose pose) {
         driveFieldCentric(forward, strafe, rotation, pose.getHeading());
@@ -233,27 +198,19 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void readCurrent() {
-        if (readCurrent) {
-            hardwareReader.read(() -> {
-                frontLeftSlideCurrentAverage.add(frontLeft.getCurrent());
-                frontRightSlideCurrentAverage.add(frontRight.getCurrent());
-                backLeftSlideCurrentAverage.add(backLeft.getCurrent());
-                backRightSlideCurrentAverage.add(backRight.getCurrent());
-            });
-        }
+        hardwareReader.read(() -> {
+            frontLeftSlideCurrentAverage.add(frontLeft.getCurrent());
+            frontRightSlideCurrentAverage.add(frontRight.getCurrent());
+            backLeftSlideCurrentAverage.add(backLeft.getCurrent());
+            backRightSlideCurrentAverage.add(backRight.getCurrent());
+        });
     }
 
     @Override
     public void periodic() {
-        readCurrent();
-        robotState.set("driveCurrent", frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
-
-        TTLogger.dd(tag, "RPM: %f", (frontLeft.getVelocity() / 28) * 500 / 6000 * 60);
-        if (((double) robotState.get("driveCurrent") > MAX_CURRENT_DRAW) && timer.milliseconds() > 300) {
-            currentMultiplier = currentMultiplier * 0.95;
-            timer.reset();
-        } else {
-            currentMultiplier = 1.0;
+        if (readCurrent) {
+            readCurrent();
+            robotState.set("driveCurrent", frontLeftSlideCurrentAverage.getAverage() + frontRightSlideCurrentAverage.getAverage() + backLeftSlideCurrentAverage.getAverage() + backRightSlideCurrentAverage.getAverage());
         }
     }
 }
