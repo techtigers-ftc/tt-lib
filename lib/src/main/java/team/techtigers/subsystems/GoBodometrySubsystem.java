@@ -116,6 +116,7 @@ public class GoBodometrySubsystem extends Subsystem {
     @Override
     public void justAfterStart() {
         odo.setPosition(startPose);
+        robotState.set("robotPose", startPose);
     }
 
     @Override
