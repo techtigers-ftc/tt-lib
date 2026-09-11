@@ -16,7 +16,7 @@ public class RobotState extends GlobalState {
      *
      * @param isBlue true if the robot is on the blue alliance, false if on the red alliance
      */
-    public RobotState(boolean isBlue){
+    public RobotState(boolean isBlue) {
         this.isBlue = isBlue;
     }
 
