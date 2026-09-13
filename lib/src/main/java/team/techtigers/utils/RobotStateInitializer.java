@@ -1,6 +1,6 @@
 package team.techtigers.utils;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 
 /**
  * Class to set the default values of RobotState

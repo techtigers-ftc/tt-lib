@@ -1,6 +1,6 @@
 package team.techtigers.subsystems;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -146,7 +146,7 @@ public class DriveSubsystem extends Subsystem {
      * @param pose     The robot's pose
      */
     public void driveFieldCentric(double forward, double strafe, double rotation, Pose pose) {
-        driveFieldCentric(forward, strafe, rotation, pose.getHeading());
+        driveFieldCentric(forward, strafe, rotation, pose.heading());
     }
 
     /**
