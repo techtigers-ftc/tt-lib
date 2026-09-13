@@ -40,8 +40,8 @@ public class GoBodometrySubsystem extends Subsystem {
 
         odo.resetPosAndIMU();
 
-        this.startPose = new Pose2D(DistanceUnit.INCH, startPose.getX(),
-                startPose.getY(), AngleUnit.RADIANS, startPose.getHeading());
+        this.startPose = new Pose2D(DistanceUnit.INCH, startPose.x(),
+                startPose.y(), AngleUnit.RADIANS, startPose.heading());
     }
 
     @Override
@@ -70,7 +70,7 @@ public class GoBodometrySubsystem extends Subsystem {
         Pose robotPose = new Pose(odo.getPosX(DistanceUnit.INCH),
                 odo.getPosY(DistanceUnit.INCH), heading);
 
-        if (Double.isNaN(robotPose.getX()) || Double.isNaN(robotPose.getY()) || Double.isNaN(robotPose.getHeading())) {
+        if (Double.isNaN(robotPose.x()) || Double.isNaN(robotPose.y()) || Double.isNaN(robotPose.heading())) {
             return;
         }
 
@@ -79,7 +79,7 @@ public class GoBodometrySubsystem extends Subsystem {
         Pose robotVelocity = new Pose(odo.getVelX(DistanceUnit.INCH),
                 odo.getVelY(DistanceUnit.INCH), headingVelocity);
 
-        if (Double.isNaN(robotVelocity.getX()) || Double.isNaN(robotVelocity.getY()) || Double.isNaN(robotVelocity.getHeading())) {
+        if (Double.isNaN(robotVelocity.x()) || Double.isNaN(robotVelocity.y()) || Double.isNaN(robotVelocity.heading())) {
             return;
         }
 

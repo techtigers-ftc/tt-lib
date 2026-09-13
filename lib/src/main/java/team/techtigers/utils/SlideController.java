@@ -1,7 +1,6 @@
 package team.techtigers.utils;
 
-import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.control.PIDFController;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /**
  * This class encapsulates the logic for setting slides to a given position into one class so that
@@ -22,10 +21,23 @@ public class SlideController {
      */
     public SlideController(double ticksPerInch, PIDFCoefficients pidf) {
         this.ticksPerInch = ticksPerInch;
-        this.pidfController = new PIDFController(new PIDFCoefficients(pidf.P, pidf.I, pidf.D, 0));
-        kF = pidf.F;
+        this.pidfController = new PIDFController(pidf.p, pidf.i, pidf.d, 0);
+        kF = pidf.f;
 
         tolerance = 0;
+    }
+
+    /**
+     * Overload constructor for SlideController that takes in individual PIDF coefficients instead of a PIDFCoefficients object
+     *
+     * @param ticksPerInch the number of encoder ticks per inch of slide travel
+     * @param p the proportional coefficient for the PID controller
+     * @param i the integral coefficient for the PID controller
+     * @param d the derivative coefficient for the PID controller
+     * @param f the feedforward coefficient for the PID controller
+     */
+    public SlideController(double ticksPerInch, double p, double i, double d, double f) {
+        this(ticksPerInch, new PIDFCoefficients(p, i, d, f));
     }
 
     /**
@@ -34,8 +46,8 @@ public class SlideController {
      * @param coefficients the new PIDF coefficients
      */
     public void setPIDFCoefficients(PIDFCoefficients coefficients) {
-        pidfController.setCoefficients(new PIDFCoefficients(coefficients.P, coefficients.I, coefficients.D, 0));
-        kF = coefficients.F;
+        pidfController.setPIDF(coefficients.p, coefficients.i, coefficients.d, 0);
+        kF = coefficients.f;
     }
 
     /**
@@ -53,7 +65,7 @@ public class SlideController {
      * @param targetDistance the target distance in inches to move the slides to
      */
     public void moveToInches(double targetDistance) {
-        pidfController.setTargetPosition(targetDistance * ticksPerInch);
+        pidfController.setSetPoint(targetDistance * ticksPerInch);
     }
 
     /**
@@ -63,13 +75,12 @@ public class SlideController {
      * @return the motor power needed to move the slides to the target position
      */
     public double calculateMotorPowers(double currentTicks) {
-        pidfController.updatePosition(currentTicks);
+        double currentPower = pidfController.calculate(currentTicks);
 
-        if (tolerance > 0 && Math.abs(pidfController.getError()) < tolerance) {
+        if (tolerance > 0 && Math.abs(pidfController.getPositionError()) < tolerance) {
             return 0;
         }
 
-        double currentPower = pidfController.run();
         int sign = (int) Math.signum(currentPower);
         return (Math.abs(currentPower) + Math.abs(kF)) * sign;
     }
@@ -79,6 +90,6 @@ public class SlideController {
      * @return the target ticks for the slides
      */
     public double getTargetTicks() {
-        return pidfController.getTargetPosition();
+        return pidfController.getSetPoint();
     }
 }
