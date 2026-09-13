@@ -1,13 +1,10 @@
 package team.techtigers.autostates;
 
-import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.control.PredictiveBrakingCoefficients;
+import com.pedropathing.algorithm.Foresight;
+import com.pedropathing.algorithm.ForesightConfig;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierPoint;
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.paths.PathConstraints;
 
 import team.techtigers.commands.CommandBase;
 import team.techtigers.utils.RobotState;
@@ -19,12 +16,10 @@ import team.techtigers.utils.TTLogger;
 public class AutoDriveCommand extends CommandBase {
     private final RobotState robotState;
     public Follower follower;
-    private PathChain pathChain;
+    private Path path;
 
     // Controllers/Constraints
-    private PIDFCoefficients headingPIDF;
-    private PredictiveBrakingCoefficients predictiveBrakingCoefficients;
-    private final PathConstraints constraints;
+    private final ForesightConfig config;
 
     /**
      * Constructs a new AutoDriveCommand.
@@ -38,59 +33,44 @@ public class AutoDriveCommand extends CommandBase {
         this.follower = follower;
         follower.update();
 
-        constraints = follower.getConstraints();
+        Foresight algorithm = (Foresight) follower.algorithm();
+        config = algorithm.config;
     }
 
     @Override
     public void initialize() {
-        // Keeps default predictive braking and heading PIDF coefficients if not set
-
-        if (headingPIDF != null) {
-            follower.setHeadingPIDFCoefficients(headingPIDF);
-        }
-        if (predictiveBrakingCoefficients != null) {
-            follower.setConstants(follower.getConstants().predictiveBrakingCoefficients(predictiveBrakingCoefficients));
-        }
-
         // Sets constraints
-        follower.setConstraints(constraints);
+        follower.setAlgorithm(new Foresight(config));
 
         // Makes sure that a path chain is set
-        if (pathChain == null) {
+        if (path == null) {
             throw new IllegalArgumentException("Path chain not set");
         }
 
         // Finds the final waypoint in the path chain
-        Path finalPath = pathChain.getPath(pathChain.size() - 1);
         Pose target =
-                finalPath.endPose();
+                path.endPose();
 
         // Sets the robot's final pose to the final waypoint found
         robotState.set("robotFinalPose", target);
-        TTLogger.dd(tag, "Initial Target is: %s", pathChain.getPath(0).endPose().toString());
-        TTLogger.dd(tag, "Final pose set to: %s", target.toString());
-        follower.followPath(pathChain, true);
+        TTLogger.dd(tag, "Initial Target: %s", path.endPose().toString());
+        TTLogger.dd(tag, "Final Pose: %s", target.toString());
+        follower.follow(path);
 
-        TTLogger.dd(tag, "Follower initializing");
+        TTLogger.dd(tag, "Follower Initializing");
     }
 
     @Override
     public void update() {
         follower.update();
-        TTLogger.dd(tag, "Follower driving towards point: %s", follower.getCurrentPath().endPose().toString());
         TTLogger.dd(tag, "Follower updating, robot pose: %s", robotState.get("robotPose").toString());
-        TTLogger.dd(tag, "Follower running, T Value: %f", follower.getCurrentTValue());
-        TTLogger.dd(tag, "Follower running, Distance Remaining: %f", follower.getDistanceRemaining());
+        TTLogger.dd(tag, "Follower running, T Value: %f", follower.parametricCompletion());
+        TTLogger.dd(tag, "Follower running, Distance Remaining: %f", follower.remainingDistance());
     }
 
     @Override
     public void end(boolean interrupted) {
-        TTLogger.dd(tag, "Follower done following");
-        // Holds the robots current position and heading, and internally stops any concurrent following
-        Pose robotPose = robotState.get("robotPose");
-        follower.holdPoint(new BezierPoint(robotPose.getX(),
-                robotPose.getY()),
-                robotPose.getHeading(), true);
+        TTLogger.dd(tag, "Path Following Completed");
     }
 
     @Override
@@ -100,45 +80,102 @@ public class AutoDriveCommand extends CommandBase {
     }
 
     /**
-     * Returns whether the robot is stuck. This is calculated by when the
-     * robot isn't moving for a period of time
+     * Sets the path for the command.
      *
-     * @return whether the robot is stuck
+     * @param path the path to run
      */
-    public boolean isRobotStuck() {
-        return follower.isRobotStuck();
+    public void setPath(Path path) {
+        this.path = path;
     }
 
     /**
-     * Sets the path chain for the command.
+     * Sets whether the robot should hold its position at the end of the path.
      *
-     * @param pathChain the path chain to run
+     * @param holdEnd true to hold position, false to not hold
      */
-    public void setPathChain(PathChain pathChain) {
-        this.pathChain = pathChain;
+    public void setHoldEnd(boolean holdEnd) {
+        follower.holdEnd.set(holdEnd);
     }
 
     /**
-     * Sets the heading PIDF coefficients for the command.
+     * Sets the maximum path speed for the command.
      *
-     * @param p the proportional coefficient
-     * @param i the integral coefficient
-     * @param d the derivative coefficient
-     * @param f the feedforward coefficient
+     * @param maxPathSpeed the maximum path speed in inches per second
      */
-    public void setHeadingPIDF(double p, double i, double d, double f) {
-        headingPIDF = new PIDFCoefficients(p, i, d, f);
+    public void setMaxPathSpeed(double maxPathSpeed) {
+        config.maxPathSpeed.set(maxPathSpeed);
     }
 
     /**
-     * Sets the predictive braking coefficients for the command.
+     * Sets the maximum velocity constraint for the command.
      *
-     * @param proportional      the proportional coefficient for predictive braking
-     * @param linearBraking     the linear braking coefficient for predictive braking
-     * @param quadraticFriction the quadratic friction coefficient for predictive braking
+     * @param maxVelocityConstraint the maximum velocity constraint in inches per second
      */
-    public void setPredictiveBrakingCoefficients(double proportional, double linearBraking, double quadraticFriction) {
-        predictiveBrakingCoefficients = new PredictiveBrakingCoefficients(proportional, linearBraking, quadraticFriction);
+    public void setMaxVelocityConstraint(double maxVelocityConstraint) {
+        config.maxVelocityConstraint.set(maxVelocityConstraint);
+    }
+
+    /**
+     * Sets the maximum acceleration constraint for the command.
+     *
+     * @param maxAccelerationConstraint the maximum acceleration constraint in inches per second squared
+     */
+    public void setMaxAccelerationConstraint(double maxAccelerationConstraint) {
+        config.maxAccelerationConstraint.set(maxAccelerationConstraint);
+    }
+
+    /**
+     * Sets the maximum deceleration constraint for the command.
+     *
+     * @param maxDecelerationConstraint the maximum deceleration constraint in inches per second squared
+     */
+    public void setMaxDecelerationConstraint(double maxDecelerationConstraint) {
+        config.maxDecelerationConstraint.set(maxDecelerationConstraint);
+    }
+
+    /**
+     * Sets the coast down to velocity for the command.
+     *
+     * @param coastDownToVelocity the velocity to coast down to
+     */
+    public void setCoastDownToVelocity(double coastDownToVelocity) {
+        config.coastDownToVelocity.set(coastDownToVelocity);
+    }
+
+    /**
+     * Sets the brake aggression for the command.
+     *
+     * @param brakeAggression the brake aggression value
+     */
+    public void setBrakeAggression(double brakeAggression) {
+        config.brakeAggression.set(brakeAggression);
+    }
+
+    /**
+     * Sets whether the robot should brake at the end of the path.
+     *
+     * @param brakeAtEnd true to brake at the end, false to coast
+     */
+    public void setBrakeAtEnd(boolean brakeAtEnd) {
+        config.brakeAtEnd.set(brakeAtEnd);
+    }
+
+    /**
+     * Sets whether the robot should stop fully before going to the next path in the chain.
+     *
+     * @param pathSkip true to skip the stop
+     */
+    public void setPathSkip(boolean pathSkip) {
+        config.pathSkip.set(pathSkip);
+    }
+
+    /**
+     * Sets the heading drive ratio for the command.
+     *
+     * @param headingDriveRatio the heading drive ratio
+     */
+    public void setHeadingDriveRatio(double headingDriveRatio) {
+        config.headingDriveRatio.set(headingDriveRatio);
     }
 
     /**
@@ -147,7 +184,7 @@ public class AutoDriveCommand extends CommandBase {
      * @param tolerance the translational tolerance in inches
      */
     public void setTolerance(double tolerance) {
-        constraints.setTranslationalConstraint(tolerance);
+        config.translationalConstraint.set(tolerance);
     }
 
     /**
@@ -156,7 +193,7 @@ public class AutoDriveCommand extends CommandBase {
      * @param headingTolerance the heading tolerance in radians
      */
     public void setHeadingTolerance(double headingTolerance) {
-        constraints.setHeadingConstraint(headingTolerance);
+        config.headingConstraint.set(headingTolerance);
     }
 
     /**
@@ -165,7 +202,7 @@ public class AutoDriveCommand extends CommandBase {
      * @param timeout the amount of time in milliseconds before the command times out
      */
     public void setTimeoutConstraint(double timeout) {
-        constraints.setTimeoutConstraint(timeout);
+        config.timeoutConstraint.set(timeout);
     }
 
     /**
@@ -174,7 +211,7 @@ public class AutoDriveCommand extends CommandBase {
      * @param velocity the velocity under which the command will be considered complete
      */
     public void setVelocityConstraint(double velocity) {
-        constraints.setVelocityConstraint(velocity);
+        config.velocityConstraint.set(velocity);
     }
 
     /**
@@ -183,6 +220,6 @@ public class AutoDriveCommand extends CommandBase {
      * @param tValue the t-value under which the command will be considered complete
      */
     public void setTValue(double tValue) {
-        constraints.setTValueConstraint(tValue);
+        config.parametricTConstraint.set(tValue);
     }
 }
