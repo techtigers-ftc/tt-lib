@@ -20,6 +20,7 @@ public class AutoDriveCommand extends CommandBase {
 
     // Controllers/Constraints
     private final ForesightConfig config;
+    private final ForesightConfig originalConfig;
 
     /**
      * Constructs a new AutoDriveCommand.
@@ -35,6 +36,7 @@ public class AutoDriveCommand extends CommandBase {
 
         Foresight algorithm = (Foresight) follower.algorithm();
         config = algorithm.config;
+        originalConfig = algorithm.config;
     }
 
     @Override
@@ -71,6 +73,7 @@ public class AutoDriveCommand extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         TTLogger.dd(tag, "Path Following Completed");
+        follower.setAlgorithm(new Foresight(originalConfig));
     }
 
     @Override
@@ -187,7 +190,7 @@ public class AutoDriveCommand extends CommandBase {
      * @param pathSkip {@code true} to continue early into the next segment; {@code false} to finish
      *                 the current segment first
      */
-    public void setPathSkip(boolean pathSkip) {
+    public void setPathSkip( boolean pathSkip) {
         config.pathSkip.set(pathSkip);
     }
 
