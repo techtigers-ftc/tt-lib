@@ -1,6 +1,7 @@
 package team.techtigers.pathing;
 
 import android.annotation.SuppressLint;
+
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.drivetrain.Drivetrain;
 import com.pedropathing.utils.Utils;
@@ -11,12 +12,8 @@ import java.util.Map;
 
 import team.techtigers.subsystems.DriveSubsystem;
 
-/**
- * A custom implementation of the pedropathing Drivetrain class specifically designed
- * for usage within tt-lib
- */
 public class Mecanum implements Drivetrain {
-    private final DriveSubsystem drive;
+    private DriveSubsystem drive;
     public final double[] wheelPowers = new double[4];
 
     private static final int FL = 0;
@@ -27,13 +24,9 @@ public class Mecanum implements Drivetrain {
     private double powerScale = 1.0;
     private DrivePowers drivePowers = DrivePowers.zero();
 
-    /**
-     * Constructs a new Mecanum object
-     *
-     * @param drive the drive subsystem, used to set powers to the drive motors
-     */
     public Mecanum(DriveSubsystem drive) {
         this.drive = drive;
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     @SuppressLint("DefaultLocale")
@@ -99,14 +92,16 @@ public class Mecanum implements Drivetrain {
 
     @Override
     public void drive(DrivePowers powers, boolean manual) {
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         applyDrive(powers);
     }
 
     @Override
     public void stop() {
-        drive.stop();
+        stop(true);
     }
 
+    @Override
     public void stop(boolean brake) {
         if (brake) {
             setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
