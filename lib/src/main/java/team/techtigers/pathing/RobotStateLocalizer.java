@@ -3,6 +3,7 @@ package team.techtigers.pathing;
 import com.pedropathing.localization.Localizer;
 import com.pedropathing.localization.MotionState;
 import com.pedropathing.math.Pose;
+import com.pedropathing.math.Velocity;
 
 import team.techtigers.utils.RobotState;
 
@@ -25,7 +26,9 @@ public class RobotStateLocalizer implements Localizer {
 
     @Override
     public void update() {
-        motionState = MotionState.ofVelocity(robotState.get("robotPose"), robotState.get("robotVelocity"));
+        Pose robotVelocity = robotState.get("robotVelocity");
+        Velocity velocity = new Velocity(robotVelocity.x(), robotVelocity.y(), robotVelocity.heading());
+        motionState = MotionState.ofVelocity(robotState.get("robotPose"), velocity);
     }
 
     @Override

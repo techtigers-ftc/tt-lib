@@ -9,7 +9,7 @@ import team.techtigers.utils.RobotState;
 import team.techtigers.utils.enums.AutoStateCondition;
 
 /**
- * A base class for autonomous drive team.techtigers.states, using a parallel command group.
+ * A base class for autonomous drive states, using a parallel command group.
  */
 public abstract class DriveStateBase extends ParallelCommandGroupState<AutoStateCondition> {
     private static final String tag = DriveStateBase.class.getSimpleName();
@@ -51,7 +51,7 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
      * @param path the path, including its curve, heading interpolation, and any modifiers
      * @return this state for method chaining
      */
-    public DriveStateBase setPathChain(Path path) {
+    public DriveStateBase setPath(Path path) {
         autoDriveCommand.setPath(path);
         return this;
     }
