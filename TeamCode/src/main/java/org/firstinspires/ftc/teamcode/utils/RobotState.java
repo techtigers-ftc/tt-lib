@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.utils;
 
 import com.pedropathing.geometry.Pose;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
-
 /**
  * A class to store information that is global to the entire robot. This is
  * intended to be extended from, and child classes can add in additional
@@ -19,6 +17,7 @@ public class RobotState extends GlobalState{
     private String currentAutoState;
     private String previousAutoState;
     private double autoRemainingTime;
+    private boolean isXShowing;
 
     /**
      * Creates a new RobotState with the specified alliance color.
@@ -31,6 +30,7 @@ public class RobotState extends GlobalState{
         robotVelocity = new Pose(0, 0, 0);
         driveCurrent = 0;
         voltage = 0;
+        isXShowing = false;
     }
 
     /**
@@ -164,5 +164,20 @@ public class RobotState extends GlobalState{
      */
     public void setAutoRemainingTime(double autoRemainingTime) {
         this.autoRemainingTime = autoRemainingTime;
+    }
+
+    /**
+     * @return whether the LED is showing
+     */
+    public boolean isLedShowing() {
+        return isXShowing;
+    }
+
+    /**
+     *
+     * @param ledShowing
+     */
+    public void setLedShowing(boolean ledShowing) {
+        isXShowing = ledShowing;
     }
 }

@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.configuration.annotations.DevicePropertie
 import com.qualcomm.robotcore.hardware.configuration.annotations.I2cDeviceType;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.utils.TTLogger;
+
 /**
  * Driver for the Adafruit NeoPixel driver. This driver can be used to control individually
  * addressable LEDs over I2C.
@@ -38,15 +40,15 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     /**
      * Creates a new Adafruit NeoPixel driver.
      *
-     * @param i2cDeviceSynch      this item is traditioanally created through the hardwareMap
-     * @param deviceClientIsOwned this item is traditioanally created through the hardwareMap
+     * @param i2cDeviceSynch      this item is traditionally created through the hardwareMap
+     * @param deviceClientIsOwned this item is traditionally created through the hardwareMap
      */
     public AdafruitNeoPixel(I2cDeviceSynch i2cDeviceSynch, boolean deviceClientIsOwned) {
         super(i2cDeviceSynch, deviceClientIsOwned);
         this.deviceClient.setI2cAddress(ADDRESS_I2C_DEFAULT);
         this.deviceClient.engage();
         lowerBound = 0;
-        higherBound = 16;
+        higherBound = 8;
 
         bytesPerLed = 3;
         currentLedBuffer = new Color[]{};
@@ -231,10 +233,10 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
     public void incrementBounds() {
         if (higherBound > MAX_LEDS) {
             lowerBound = 0;
-            higherBound = 16;
+            higherBound = 8;
         } else {
-            lowerBound += 16;
-            higherBound += 16;
+            lowerBound += 8;
+            higherBound += 8;
         }
     }
 
@@ -248,7 +250,6 @@ public class AdafruitNeoPixel extends I2cDeviceSynchDevice<I2cDeviceSynch> {
         boolean showLeds = false;
         for (int index = 0; index < currentLedBuffer.length; index++) {
             boolean hasChanged = !currentLedBuffer[index].equals(lastLedBuffer[index]) || (index > lowerBound && index < higherBound);
-//            boolean isOff = currentLedBuffer[index].equals(Color.BLACK);
             if (hasChanged) {
                 if (startIndex == -1) {
                     startIndex = index;

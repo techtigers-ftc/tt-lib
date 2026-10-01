@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.display;
 
+import org.firstinspires.ftc.teamcode.subsystems.Subsystem;
+
 import java.util.HashMap;
 
 
 /**
  * A class that represents and controls all of your LED displays
  */
-public class VisualDisplay {
+public class VisualDisplaySubsystem extends Subsystem {
     private final AdafruitNeoPixel visualDisplay;
     private final HashMap<String, DisplayView> views;
     private DisplayView activeView;
@@ -17,7 +19,7 @@ public class VisualDisplay {
      * @param visualDisplay the visual display object (adafruit neopixel)
      * @param defaultView   the default view to display
      */
-    public VisualDisplay(AdafruitNeoPixel visualDisplay, DisplayView defaultView) {
+    public VisualDisplaySubsystem(AdafruitNeoPixel visualDisplay, DisplayView defaultView) {
         this.visualDisplay = visualDisplay;
         views = new HashMap<>();
         views.put("default", defaultView);
@@ -63,7 +65,8 @@ public class VisualDisplay {
     /**
      * Updates the displays and their regions
      */
-    public void update() {
+    @Override
+    public void periodic() {
         visualDisplay.clearLeds();
         for (DisplayRegion region : activeView.getRegions()) {
             region.update();
