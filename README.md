@@ -445,11 +445,7 @@ stateMachine
 stateMachine.setCurrentState(score);
 ```
 
-`addTransitions(from, to, conditions...)` means "while `from` is active, move to `to` when any supplied condition matches." The equivalent builder syntax is:
-
-```java
-stateMachine.from(score).to(park).when(AutoCondition.COMPLETE);
-```
+`addTransitions(from, to, conditions...)` means "while `from` is active, move to `to` when any supplied condition matches."
 
 > **Important:** `addState(...)` calls that state's `configureCommands()` method. Do not call `configureCommands()` yourself before adding the state, or its child commands may be added more than once.
 
