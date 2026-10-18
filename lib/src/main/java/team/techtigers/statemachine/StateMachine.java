@@ -19,6 +19,9 @@ public class StateMachine<T> {
     private State<T> currentState;
     private State<T> previousState;
     private ArrayList<Transition<T>> currentTransitions;
+    public final T RUNNING_CONDITION;
+    public final T END_CONDITION;
+    public final T TIMEOUT_CONDITION;
 
     /**
      * Initializes a new StateMachine
