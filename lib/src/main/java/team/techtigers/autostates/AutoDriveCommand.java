@@ -1,13 +1,10 @@
 package team.techtigers.autostates;
 
-import com.pedropathing.control.PIDFCoefficients;
-import com.pedropathing.control.PredictiveBrakingCoefficients;
+import com.pedropathing.algorithm.Foresight;
+import com.pedropathing.algorithm.ForesightConfig;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierPoint;
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
-import com.pedropathing.paths.PathConstraints;
 
 import team.techtigers.commands.CommandBase;
 import team.techtigers.utils.RobotState;
@@ -19,12 +16,11 @@ import team.techtigers.utils.TTLogger;
 public class AutoDriveCommand extends CommandBase {
     private final RobotState robotState;
     public Follower follower;
-    private PathChain pathChain;
+    private Path path;
 
     // Controllers/Constraints
-    private PIDFCoefficients headingPIDF;
-    private PredictiveBrakingCoefficients predictiveBrakingCoefficients;
-    private final PathConstraints constraints;
+    private final ForesightConfig config;
+    private final ForesightConfig originalConfig;
 
     /**
      * Constructs a new AutoDriveCommand.
@@ -38,59 +34,46 @@ public class AutoDriveCommand extends CommandBase {
         this.follower = follower;
         follower.update();
 
-        constraints = follower.getConstraints();
+        Foresight algorithm = (Foresight) follower.algorithm();
+        config = algorithm.config;
+        originalConfig = algorithm.config;
     }
 
     @Override
     public void initialize() {
-        // Keeps default predictive braking and heading PIDF coefficients if not set
-
-        if (headingPIDF != null) {
-            follower.setHeadingPIDFCoefficients(headingPIDF);
-        }
-        if (predictiveBrakingCoefficients != null) {
-            follower.setConstants(follower.getConstants().predictiveBrakingCoefficients(predictiveBrakingCoefficients));
-        }
-
         // Sets constraints
-        follower.setConstraints(constraints);
+        follower.setAlgorithm(new Foresight(config));
 
         // Makes sure that a path chain is set
-        if (pathChain == null) {
+        if (path == null) {
             throw new IllegalArgumentException("Path chain not set");
         }
 
         // Finds the final waypoint in the path chain
-        Path finalPath = pathChain.getPath(pathChain.size() - 1);
         Pose target =
-                finalPath.endPose();
+                path.endPose();
 
         // Sets the robot's final pose to the final waypoint found
         robotState.set("robotFinalPose", target);
-        TTLogger.dd(tag, "Initial Target is: %s", pathChain.getPath(0).endPose().toString());
-        TTLogger.dd(tag, "Final pose set to: %s", target.toString());
-        follower.followPath(pathChain, true);
+        TTLogger.dd(tag, "Initial Target: %s", path.endPose().toString());
+        TTLogger.dd(tag, "Final Pose: %s", target.toString());
+        follower.follow(path);
 
-        TTLogger.dd(tag, "Follower initializing");
+        TTLogger.dd(tag, "Follower Initializing");
     }
 
     @Override
     public void update() {
         follower.update();
-        TTLogger.dd(tag, "Follower driving towards point: %s", follower.getCurrentPath().endPose().toString());
         TTLogger.dd(tag, "Follower updating, robot pose: %s", robotState.get("robotPose").toString());
-        TTLogger.dd(tag, "Follower running, T Value: %f", follower.getCurrentTValue());
-        TTLogger.dd(tag, "Follower running, Distance Remaining: %f", follower.getDistanceRemaining());
+        TTLogger.dd(tag, "Follower running, T Value: %f", follower.parametricCompletion());
+        TTLogger.dd(tag, "Follower running, Distance Remaining: %f", follower.remainingDistance());
     }
 
     @Override
     public void end(boolean interrupted) {
-        TTLogger.dd(tag, "Follower done following");
-        // Holds the robots current position and heading, and internally stops any concurrent following
-        Pose robotPose = robotState.get("robotPose");
-        follower.holdPoint(new BezierPoint(robotPose.getX(),
-                robotPose.getY()),
-                robotPose.getHeading(), true);
+        TTLogger.dd(tag, "Path Following Completed");
+        follower.setAlgorithm(new Foresight(originalConfig));
     }
 
     @Override
@@ -100,89 +83,181 @@ public class AutoDriveCommand extends CommandBase {
     }
 
     /**
-     * Returns whether the robot is stuck. This is calculated by when the
-     * robot isn't moving for a period of time
+     * Sets the path that the follower will track when this command initializes. A {@link Path} may
+     * resolve to one or more segments; its end pose becomes the command's final pose target.
      *
-     * @return whether the robot is stuck
+     * @param path the path, including its curve, heading interpolation, and any modifiers
      */
-    public boolean isRobotStuck() {
-        return follower.isRobotStuck();
+    public void setPath(Path path) {
+        this.path = path;
     }
 
     /**
-     * Sets the path chain for the command.
+     * Controls what the follower does after it reaches the path's parametric end. When enabled,
+     * the follower enters hold mode and continues correcting toward the final pose. When disabled,
+     * it enters idle mode and stops commanding the drivetrain.
      *
-     * @param pathChain the path chain to run
+     * @param holdEnd {@code true} to hold the final pose; {@code false} to stop driving
      */
-    public void setPathChain(PathChain pathChain) {
-        this.pathChain = pathChain;
+    public void setHoldEnd(boolean holdEnd) {
+        follower.holdEnd.set(holdEnd);
     }
 
     /**
-     * Sets the heading PIDF coefficients for the command.
+     * Limits path speed to a fraction of the drivetrain's direction-dependent maximum achievable
+     * velocity. For example, {@code 0.75} caps the target speed at 75% of the achievable speed.
+     * If an absolute maximum velocity is also configured, Pedro uses the lower resulting limit.
      *
-     * @param p the proportional coefficient
-     * @param i the integral coefficient
-     * @param d the derivative coefficient
-     * @param f the feedforward coefficient
+     * @param maxPathSpeed a positive speed scale, normally in the range {@code (0, 1]}
      */
-    public void setHeadingPIDF(double p, double i, double d, double f) {
-        headingPIDF = new PIDFCoefficients(p, i, d, f);
+    public void setMaxPathSpeed(double maxPathSpeed) {
+        config.maxPathSpeed.set(maxPathSpeed);
     }
 
     /**
-     * Sets the predictive braking coefficients for the command.
+     * Sets an absolute cap on the target velocity while the follower is coasting along the path.
+     * Pedro also respects the drivetrain's achievable velocity and the fractional path-speed cap,
+     * using whichever limit produces the lowest target velocity.
      *
-     * @param proportional      the proportional coefficient for predictive braking
-     * @param linearBraking     the linear braking coefficient for predictive braking
-     * @param quadraticFriction the quadratic friction coefficient for predictive braking
+     * @param maxVelocityConstraint the maximum path velocity in distance units per second
      */
-    public void setPredictiveBrakingCoefficients(double proportional, double linearBraking, double quadraticFriction) {
-        predictiveBrakingCoefficients = new PredictiveBrakingCoefficients(proportional, linearBraking, quadraticFriction);
+    public void setMaxVelocityConstraint(double maxVelocityConstraint) {
+        config.maxVelocityConstraint.set(maxVelocityConstraint);
     }
 
     /**
-     * Sets the translational tolerance for the command.
+     * Limits how quickly the target tangential velocity can increase while coasting. The limit is
+     * applied each follower update before active braking begins.
      *
-     * @param tolerance the translational tolerance in inches
+     * @param maxAccelerationConstraint the maximum target acceleration in distance units per second
+     *                                  squared
+     */
+    public void setMaxAccelerationConstraint(double maxAccelerationConstraint) {
+        config.maxAccelerationConstraint.set(maxAccelerationConstraint);
+    }
+
+    /**
+     * Limits how quickly the target tangential velocity is allowed to decrease while coasting.
+     * Pedro uses the remaining path distance to build a deceleration profile before its normal
+     * active-braking phase. This value should not exceed the robot's natural deceleration.
+     *
+     * @param maxDecelerationConstraint the maximum coasting deceleration in distance units per
+     *                                  second squared
+     */
+    public void setMaxDecelerationConstraint(double maxDecelerationConstraint) {
+        config.maxDecelerationConstraint.set(maxDecelerationConstraint);
+    }
+
+    /**
+     * Sets the speed that the maximum-deceleration profile approaches instead of slowing all the
+     * way to zero. This setting has no effect unless a finite maximum deceleration constraint is
+     * configured.
+     *
+     * @param coastDownToVelocity the terminal coasting speed in distance units per second
+     */
+    public void setCoastDownToVelocity(double coastDownToVelocity) {
+        config.coastDownToVelocity.set(coastDownToVelocity);
+    }
+
+    /**
+     * Biases the braking prediction at the end of a segment. {@code 1.0} is neutral, values above
+     * {@code 1.0} permit more overshoot, and values below {@code 1.0} bias the robot to undershoot
+     * and stop more conservatively. This changes when Pedro commits to braking, not the braking
+     * power limit.
+     *
+     * @param brakeAggression a positive braking-bias value
+     */
+    public void setBrakeAggression(double brakeAggression) {
+        config.brakeAggression.set(brakeAggression);
+    }
+
+    /**
+     * Controls whether Pedro applies its active braking controller as the robot reaches the end of
+     * a path. Disabling it leaves the follower in its coasting behavior; path-to-path continuation
+     * is controlled separately by {@link #setPathSkip(boolean)}.
+     *
+     * @param brakeAtEnd {@code true} to actively brake at the path end; {@code false} to coast
+     */
+    public void setBrakeAtEnd(boolean brakeAtEnd) {
+        config.brakeAtEnd.set(brakeAtEnd);
+    }
+
+    /**
+     * Controls momentum-preserving transitions between segments of a compound path. When enabled,
+     * Pedro advances to the next segment once the current segment reaches its predicted braking
+     * point. When disabled, it remains on the current segment until the parametric end is reached.
+     *
+     * @param pathSkip {@code true} to continue early into the next segment; {@code false} to finish
+     *                 the current segment first
+     */
+    public void setPathSkip( boolean pathSkip) {
+        config.pathSkip.set(pathSkip);
+    }
+
+    /**
+     * Sets how Pedro prioritizes heading feedback relative to translational drive power when motor
+     * commands must be clamped. {@code 1.0} gives heading correction priority before drive power,
+     * while {@code 0.0} gives drive power priority before heading correction.
+     *
+     * @param headingDriveRatio the heading-priority ratio, normally from {@code 0.0} to {@code 1.0}
+     */
+    public void setHeadingDriveRatio(double headingDriveRatio) {
+        config.headingDriveRatio.set(headingDriveRatio);
+    }
+
+    /**
+     * Sets the maximum translational error allowed during final-pose correction. After the path's
+     * parametric end, this error, the heading error, and the tangential speed must all be below
+     * their thresholds for the follower to report that it is no longer busy.
+     *
+     * @param tolerance the maximum position error in the path's distance units
      */
     public void setTolerance(double tolerance) {
-        constraints.setTranslationalConstraint(tolerance);
+        config.translationalConstraint.set(tolerance);
     }
 
     /**
-     * Sets the heading tolerance for the command.
+     * Sets the maximum absolute heading error allowed during final-pose correction. The heading,
+     * translational, and velocity constraints must be satisfied together unless the endpoint
+     * correction timeout expires first.
      *
-     * @param headingTolerance the heading tolerance in radians
+     * @param headingTolerance the maximum heading error in radians
      */
     public void setHeadingTolerance(double headingTolerance) {
-        constraints.setHeadingConstraint(headingTolerance);
+        config.headingConstraint.set(headingTolerance);
     }
 
     /**
-     * Sets the timeout constraint for the command.
+     * Sets how long Pedro may correct at the final pose after reaching the parametric end before it
+     * reports completion even if the translational, heading, and velocity constraints have not all
+     * been met. This is an endpoint-settling timeout, not a timeout for the entire command.
      *
-     * @param timeout the amount of time in milliseconds before the command times out
+     * @param timeout the endpoint correction timeout in milliseconds
      */
     public void setTimeoutConstraint(double timeout) {
-        constraints.setTimeoutConstraint(timeout);
+        config.timeoutConstraint.set(timeout);
     }
 
     /**
-     * Sets the velocity constraint for the command.
+     * Sets the maximum tangential speed allowed during final-pose correction. After the parametric
+     * end, the robot must be moving below this speed and be within both pose-error tolerances for
+     * the follower to report completion before the endpoint timeout.
      *
-     * @param velocity the velocity under which the command will be considered complete
+     * @param velocity the endpoint speed threshold in distance units per second
      */
     public void setVelocityConstraint(double velocity) {
-        constraints.setVelocityConstraint(velocity);
+        config.velocityConstraint.set(velocity);
     }
 
     /**
-     * Sets the t-value constraint for the command.
+     * Sets how close the closest point on the current curve must be to {@code t = 1} before the
+     * segment is parametrically complete. Completion occurs when {@code t >= 1 - tValue}; for
+     * example, {@code 0.025} permits completion at {@code t >= 0.975}. Larger values finish the
+     * segment earlier, while smaller values require progress closer to its mathematical end.
      *
-     * @param tValue the t-value under which the command will be considered complete
+     * @param tValue the remaining parametric margin, normally in the range {@code (0.0, 1.0]}
      */
     public void setTValue(double tValue) {
-        constraints.setTValueConstraint(tValue);
+        config.parametricTConstraint.set(tValue);
     }
 }

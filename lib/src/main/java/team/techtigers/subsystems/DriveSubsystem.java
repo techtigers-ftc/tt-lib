@@ -1,6 +1,6 @@
 package team.techtigers.subsystems;
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
@@ -45,7 +45,7 @@ public class DriveSubsystem extends Subsystem {
         backLeftSlideCurrentAverage = new SlidingAverageCalculator(10);
         hardwareReader = new HardwareReader(driveConfig.drivetrainCurrentReadInterval);
 
-        motors = new CachedMotor[]{frontLeft, backLeft, frontRight, backRight};
+        motors = new CachedMotor[]{frontLeft, frontRight, backLeft, backRight};
         frontLeft.setDirection(driveConfig.flDirection);
         backLeft.setDirection(driveConfig.blDirection);
         frontRight.setDirection(driveConfig.frDirection);
@@ -146,7 +146,7 @@ public class DriveSubsystem extends Subsystem {
      * @param pose     The robot's pose
      */
     public void driveFieldCentric(double forward, double strafe, double rotation, Pose pose) {
-        driveFieldCentric(forward, strafe, rotation, pose.getHeading());
+        driveFieldCentric(forward, strafe, rotation, pose.heading());
     }
 
     /**
@@ -157,7 +157,7 @@ public class DriveSubsystem extends Subsystem {
      * @param bl The back left motor power
      * @param br The back right motor power
      */
-    public void setMotorPowers(double fl, double bl, double fr, double br) {
+    public void setMotorPowers(double fl, double fr, double bl, double br) {
         frontLeft.setPower(fl);
         frontRight.setPower(fr);
         backLeft.setPower(bl);
