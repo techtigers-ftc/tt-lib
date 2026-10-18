@@ -5,29 +5,32 @@ import com.pedropathing.paths.Path;
 
 import team.techtigers.statemachine.ParallelCommandGroupState;
 import team.techtigers.subsystems.AutoSubsystem;
+import team.techtigers.utils.DriveStateConfig;
 import team.techtigers.utils.RobotState;
 import team.techtigers.utils.enums.AutoStateCondition;
 
 /**
  * A base class for autonomous drive states, using a parallel command group.
  */
-public abstract class DriveStateBase extends ParallelCommandGroupState<AutoStateCondition> {
+public abstract class DriveStateBase<T> extends ParallelCommandGroupState<T> {
     private static final String tag = DriveStateBase.class.getSimpleName();
     protected final AutoDriveCommand autoDriveCommand;
     protected final RobotState robotState;
+    private final DriveStateConfig<T> config;
 
     /**
      * Constructor for the SequentialCommandGroupState
      *
      * @param name       The name of the state
-     * @param follower   The follower object
+     * @param config     The configuration for the drive state
      * @param robotState The robot state
      * @param timeout    Time limit of the drive in seconds
      */
-    public DriveStateBase(String name, Follower follower, RobotState robotState, double timeout) {
+    public DriveStateBase(String name, DriveStateConfig<T> config, RobotState robotState, double timeout) {
         super(name, timeout);
         this.robotState = robotState;
-        autoDriveCommand = new AutoDriveCommand(follower, robotState);
+        autoDriveCommand = new AutoDriveCommand(config.getFollower(), robotState);
+        this.config = config;
         setTolerance(AutoSubsystem.MEDIUM_TOLERANCE);
         setAngleTolerance(AutoSubsystem.MEDIUM_ANGLE_TOLERANCE);
     }
@@ -36,11 +39,11 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
      * Overload Constructor without Timeout
      *
      * @param name       The name of the state
-     * @param follower   The follower object
+     * @param config     The configuration for the drive state
      * @param robotState The robot state
      */
-    public DriveStateBase(String name, Follower follower, RobotState robotState) {
-        this(name, follower, robotState, -1);
+    public DriveStateBase(String name, DriveStateConfig<T> config, RobotState robotState) {
+        this(name, config, robotState, -1);
     }
 
     /**
@@ -254,15 +257,15 @@ public abstract class DriveStateBase extends ParallelCommandGroupState<AutoState
     }
 
     @Override
-    public AutoStateCondition getCurrentCondition() {
+    public T getCurrentCondition() {
         if (autoDriveCommand.isFinished()) {
-            return AutoStateCondition.DRIVE_END;
+            return config.getFinishedCondition();
         }
 
         if (isTimeoutReached()) {
-            return AutoStateCondition.TIMEOUT;
+            return config.getTimeoutCondition();
         }
 
-        return AutoStateCondition.RUNNING;
+        return config.getRunningCondition();
     }
 }
